@@ -7,7 +7,8 @@ const models = require('../models');
 const services = {
   ProvinceService: require('./province'),
   RecruitService: require('./recruit'),
-  MilitaryBaseService: require('./military_base')
+  MilitaryBaseService: require('./military_base'),
+  UserService: require('./user')
 };
 
 _.forEach(services, (service, key) => {

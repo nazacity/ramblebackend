@@ -33,7 +33,6 @@ const postRecruitHandler = async (req, res) => {
 
     const recruitData = schema.attempt(req.body);
   } catch (error) {
-
   }
 }
 

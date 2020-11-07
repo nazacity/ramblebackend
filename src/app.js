@@ -6,10 +6,10 @@ const helmet = require('helmet');
 const xssFilter = require('x-xss-protection')
 const cors = require('cors')
 
+const passport = require('./passport');
 const config = require('./utils/config');
 
 require('./models');
-
 const app = express();
 
 // security
@@ -17,7 +17,8 @@ app.use(helmet());
 app.use(xssFilter());
 app.use(cors());
 
-app.use(express.json()); 
+app.use(express.json());
+app.use(passport.initialize());
 
 const initializeServer = (resolve, reject) => {
   console.info('Waiting for database connection ...');
@@ -42,9 +43,12 @@ const createServer = async () => {
   })
 
   console.info('Server Initialized!');
-  app.use('/provinces', require('./routes/provinces'));
+
+  app.use('/login', passport.authenticate('local'), require('./routes/login'));
+  app.use('/api/provinces', require('./routes/provinces'));
   // app.use('/recruits', require('./routes/recruits'));
-  app.use('/militarybases', require('./routes/military_bases'));
+  app.use('/api/users', require('./routes/users'));
+  app.use('/api/militarybases', passport.authenticate('jwt'), require('./routes/military_bases'));
 
   app.listen(config.port)
   console.info(`Server is listening on port ${config.port}`)
