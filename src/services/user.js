@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+const permission = require('../utils/constants/permission').constant;
 
 const AbstractService = require('./abstract');
 
@@ -18,6 +19,17 @@ class UserService extends AbstractService {
 
   checkPassword (password, hash) {
     return bcrypt.compare(password, hash);
+  }
+
+  checkPermission (user, permissionLevel) {
+    if (permissionLevel === permission.ADMIN) {
+      return user.permission === permission.ADMIN;
+    } else if (permissionLevel === permission.EDITOR) {
+      return user.permission === permission.ADMIN || 
+        user.permission === permission.EDITOR;
+    } else {
+      return true;
+    }
   }
 
   async list (filter, skip, limit) {

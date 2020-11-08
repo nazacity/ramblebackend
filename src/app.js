@@ -46,7 +46,7 @@ const createServer = async () => {
 
   app.use('/login', passport.authenticate('local'), require('./routes/login'));
   app.use('/api/provinces', require('./routes/provinces'));
-  // app.use('/recruits', require('./routes/recruits'));
+  app.use('/api/recruits', passport.authenticate('jwt'), require('./routes/recruits'));
   app.use('/api/users', require('./routes/users'));
   app.use('/api/militarybases', passport.authenticate('jwt'), require('./routes/military_bases'));
 

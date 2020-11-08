@@ -5,10 +5,10 @@ const config = require('../utils/config');
 const models = require('../models');
 
 const services = {
-  ProvinceService: require('./province'),
   RecruitService: require('./recruit'),
   MilitaryBaseService: require('./military_base'),
-  UserService: require('./user')
+  UserService: require('./user'),
+  FormService: require('./form')
 };
 
 _.forEach(services, (service, key) => {

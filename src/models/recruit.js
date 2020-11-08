@@ -3,34 +3,40 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const draftDurationEnum = require('../utils/constants/draft_duration').enum;
+const { provinceEnum, regionEnum } = require('../utils/constants/provinces');
+
 const recruit = new Schema({
   // personal information
-  first_name: { type: String, required: true },
-  last_name: { type: String, required: true },
-  citizen_id: { type: String, required: true, unique: true },
-  date_of_birth: { type: Number, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  citizenId: { type: String, required: true, unique: true },
+  dateOfBirth: { type: Date, required: true },
   
   // address
-  provinceId: { type: String, required: true },
-  regionId: { type: String, required: true },
+  province: { type: String, required: true, enum: provinceEnum },
+  region: { type: String, required: true, enum: regionEnum },
 
   // health
-  height: { type: Number },
-  weight: { type: Number },
-  adddiction: { type: Boolean, default: false },
+  height: { type: Number, required: true },
+  weight: { type: Number, required: true },
+  bmi: { type: Number, required: true },
 
   specialAbilities: [String],
   education: { type: String, required: true },
-  placeOfGraduation: { type: String, required: true },
+  placeOfGraduation: { type: String },
   major: String,
   job: String,
 
-  baseId: { type: String, required: true },
-  militaryId: { type: String, unique: true },
-  draftDuration: { type: String, required: true },
+  baseId: { type: Schema.Types.ObjectId, required: true },
+  militaryId: { type: Schema.Types.ObjectId, unique: true },
+  draftDuration: { type: String, required: true, enum: draftDurationEnum },
+  draftDate: { type: Date, required: true },
   religion: String
 });
 
 const Recruit = mongoose.model('Recruit', recruit);
 
 module.exports = Recruit;
+// TODO 
+// check many form answers, intersect recruitId, and filter by recruit's data

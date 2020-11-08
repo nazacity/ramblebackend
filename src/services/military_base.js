@@ -27,6 +27,10 @@ class MilitaryBaseService extends AbstractService {
     }
   }
 
+  async getAllowedBases (_id) {
+    return [_id].concat((await this.getAllChildren(_id)).map(({ _id })  => _id));
+  }
+
   async getAllChildren (_id) {
     const { path } = await this.models.MilitaryBase.findOne({
       _id
