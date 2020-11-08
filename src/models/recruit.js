@@ -38,5 +38,3 @@ const recruit = new Schema({
 const Recruit = mongoose.model('Recruit', recruit);
 
 module.exports = Recruit;
-// TODO 
-// check many form answers, intersect recruitId, and filter by recruit's data
