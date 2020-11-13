@@ -73,9 +73,18 @@ class MilitaryBaseService extends AbstractService {
   }
 
   async getAllLowest (_id) {
-    const { path } = await this.models.MilitaryBase.findOne({
-      _id
+    return this.models.MilitaryBase.find({
+      isLowest: true
     });
+  }
+
+  async getLowest (_id) {
+    const base = await this.models.MilitaryBase.findOne({ _id });
+
+    const { path, isLowest } = base;
+    if (isLowest) {
+      return [base];
+    }
 
     const childPath = this._createPathFromParent(path, _id);
     return this.models.MilitaryBase.find({

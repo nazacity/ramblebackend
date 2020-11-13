@@ -29,6 +29,10 @@ const getAllLowestMilitaryBases = standardize(async (req, res) => {
   return res.json(await MilitaryBaseService.getAllLowest(req.user.base));
 }, permission.VIEWER);
 
+const getLowestMilitaryBases = standardize(async (req, res) => {
+  return res.json(await MilitaryBaseService.getLowest(req.user.base));
+}, permission.VIEWER);
+
 const getAllChildrenMilitaryBases = standardize(async (req, res) => {
   const schema = Joi.object({
     id: Joi.string().required()
@@ -40,6 +44,7 @@ const getAllChildrenMilitaryBases = standardize(async (req, res) => {
 router.get('/', listMilitaryBases);
 router.post('/', createMilitaryBase);
 router.get('/:id/allchildren', getAllChildrenMilitaryBases);
-router.get('/lowest', getAllLowestMilitaryBases);
+router.get('/lowest/all', getAllLowestMilitaryBases);
+router.get('/lowest', getLowestMilitaryBases);
 
 module.exports = router;
