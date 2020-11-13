@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config()
+
 const config = {
   port: process.env.SERVER_PORT || '5000',
   mongo: {

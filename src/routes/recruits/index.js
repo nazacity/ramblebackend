@@ -8,6 +8,8 @@ const permission = require('../../utils/constants/permission').constant;
 const { standardize } = require('../../utils/request');
 const { RecruitService, MilitaryBaseService } = require('../../services');
 
+const mongoose = require('mongoose');
+
 const draftDurationEnum = require('../../utils/constants/draft_duration').enum;
 const educationEnum = require('../../utils/constants/education').enum;
 const { provinceEnum, regionEnum } = require('../../utils/constants/provinces');
@@ -53,8 +55,9 @@ const getRecruit = standardize(async (req, res) => {
   const recruit = await RecruitService.get(id);
 
   // check permission
-  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.baseId);
-  if (allowedBases.indexOf(recruit.baseId) === -1) {
+  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.base);
+
+  if (allowedBases.indexOf(recruit.base._id.toString()) === -1) {
     return res.status(401).send();
   }
 
@@ -82,8 +85,8 @@ const listRecruits = standardize(async (req, res) => {
 
     bmi: Joi.string(),
 
-    baseId: Joi.string().allow(null),
-    trainingBaseId: Joi.string().allow(null),
+    base: Joi.string().allow(null),
+    trainingBase: Joi.string().allow(null),
     militaryId: Joi.string().allow(null),
     draftDuration: Joi.string().allow(null).valid(...draftDurationEnum),
     religion: Joi.string().allow(null),
@@ -111,17 +114,17 @@ const listRecruits = standardize(async (req, res) => {
   }
 
   // only show the baseId within the scope allowed
-  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.baseId);
-  if (filter.baseId) {
-    if (allowedBases.indexOf(filter.baseId) === -1) {
+  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.base);
+  if (filter.base) {
+    if (allowedBases.indexOf(filter.base) === -1) {
       return res.status(401).send();
     } else {
-      filter.baseId = {
-        $in: await MilitaryBaseService.getAllowedBases(filter.baseId)
+      filter.base = {
+        $in: await MilitaryBaseService.getAllowedBases(filter.base)
       }      
     }
   } else {
-    filter.baseId = {
+    filter.base = {
       $in: allowedBases
     }
   };
@@ -134,7 +137,61 @@ const listRecruits = standardize(async (req, res) => {
   return res.json(await RecruitService.list(filter, skip, limit));
 }, permission.VIEWER);
 
+const countRecruits = standardize(async (req, res) => {
+  const schema = Joi.object({
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    citizenId: Joi.string(),
+    dateOfBirth: Joi.date().less('now'),
+
+    province: Joi.string().valid(...provinceEnum),
+    region: Joi.string().valid(...regionEnum),
+
+    height: Joi.number(),
+    weight: Joi.number(),
+    drugUse: Joi.boolean(),
+
+    specialAbilities: Joi.array().items(Joi.string()),
+    education: Joi.string().valid(...educationEnum),
+    placeOfGraduation: Joi.string(),
+    major: Joi.string(),
+    job: Joi.string(),
+
+    bmiGroup: Joi.string(),
+
+    base: Joi.string().allow(null),
+    trainingBase: Joi.string().allow(null),
+    militaryId: Joi.string().allow(null),
+    draftDuration: Joi.string().allow(null).valid(...draftDurationEnum),
+    religion: Joi.string().allow(null),
+
+    fieldOfInterest: Joi.string().default('education')
+  });
+
+  const filters = Joi.attempt(req.query, schema);
+
+  let allowedBases = await MilitaryBaseService.getAllowedBases(req.user.base);
+  if (filters.base) {
+    if (allowedBases.indexOf(filters.base) === -1) {
+      return res.status(401).send();
+    } else {
+      allowedBases = await MilitaryBaseService.getAllowedBases(filters.base);
+    }
+  }
+
+  filters.base = {
+    $in: allowedBases.map(base => mongoose.Types.ObjectId(base))
+  };
+
+  const { fieldOfInterest } = filters;
+
+  delete filters.fieldOfInterest;
+
+  return res.json(await RecruitService.count(filters, fieldOfInterest));
+}, permission.VIEWER);
+
 router.get('/', listRecruits);
+router.get('/count', countRecruits);
 router.get('/:id', getRecruit);
 router.post('/', postRecruit);
 

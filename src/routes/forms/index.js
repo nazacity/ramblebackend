@@ -6,37 +6,62 @@ const router = express.Router();
 
 const permission = require('../../utils/constants/permission').constant;
 const { standardize } = require('../../utils/request');
-const { FormService } = require('../../services');
+const { FormService, MilitaryBaseService } = require('../../services');
 
 const draftDurationEnum = require('../../utils/constants/draft_duration').enum;
 const educationEnum = require('../../utils/constants/education').enum;
 const { provinceEnum, regionEnum } = require('../../utils/constants/provinces');
 
-const createForm = async (req, res) => {
+const createForm = standardize(async (req, res) => {
   const schema = Joi.object({
     name: Joi.string().required(),
-    data: Joi.object({
+    data: Joi.array().items(Joi.object({
       prompt: Joi.string().required(),
       type: Joi.string().required()
-    })
+    }))
   });
 
-  const { name, data } = Joi.schema(req.body, schema);
+  const { name, data } = Joi.attempt(req.body, schema);
   await FormService.create(name, data);
   return res.status(201).send();
-};
+}, permission.EDITOR);
 
-const submitForm = async (req, res) => {
+const getForm = standardize(async (req, res) => {
   const schema = Joi.object({
+    id: Joi.string().required(),
+  });
 
-  })
-};
+  const { id } = Joi.attempt(req.params, schema);
+  res.json(await FormService.get(id));
+}, permission.VIEWER);
+
+const submitForm = standardize(async (req, res) => {
+  const bodySchema = Joi.object({
+    draftDate: Joi.date().required(),
+    data: Joi.array().items(Joi.object({
+      _id: Joi.string().required(),
+      prompt: Joi.string().required(),
+      type: Joi.string().required(),
+      answer: Joi.any().required()
+    }))
+  });
+
+  const paramSchema = Joi.object({
+    formId: Joi.string().required(),
+    recruitId: Joi.string().required()
+  });
+
+  const { draftDate, data } = Joi.attempt(req.body, bodySchema);
+  const { formId, recruitId } = Joi.attempt(req.params, paramSchema);
+  await FormService.submit(formId, recruitId, draftDate, data);
+  return res.status(201).send();
+}, permission.EDITOR);
 
 const getRecruitsWithFormValues = standardize(async (req, res) => {
   const schema = Joi.object({
     formIds: Joi.string().required(),
-    indices: Joi.string().required(),
-    values: Joi.string().required(),
+    questionIds: Joi.string().required(),
+    answers: Joi.string().required(),
 
     firstName: Joi.string(),
     lastName: Joi.string(),
@@ -66,13 +91,16 @@ const getRecruitsWithFormValues = standardize(async (req, res) => {
 
   const filter = Joi.attempt(req.query, schema);
 
-  const { formIds, indices, values } = filter;
+  filter.formIds = filter.formIds.split(',');
+  filter.questionIds = filter.questionIds.split(',');
+  filter.answers = filter.answers.split(',');
+  const { formIds, questionIds, answers } = filter;
 
   delete filter.formIds;
-  delete filter.indices;
-  delete filter.values;
+  delete filter.questionIds;
+  delete filter.answers;
 
-  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.baseId);
+  const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.base);
   if (filter.baseId) {
     if (allowedBases.indexOf(filter.baseId) === -1) {
       return res.status(401).send();
@@ -87,11 +115,12 @@ const getRecruitsWithFormValues = standardize(async (req, res) => {
     }
   };
 
-  return res.json(await FormService.getRecruitsWithFormValues(formIds, indices, values, filter));
+  return res.json(await FormService.getRecruitsWithFormValues(formIds, questionIds, answers, filter));
 }, permission.VIEWER);
 
 router.post('/', createForm);
-router.post('/:id/submit', submitForm)
+router.get('/:id', getForm);
+router.post('/:formId/recruits/:recruitId', submitForm);
 router.get('/:id/recruits', getRecruitsWithFormValues);
 
 module.exports = router;

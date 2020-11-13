@@ -4,7 +4,6 @@ const { UserService } = require('../services');
 
 const withPermission = (fn, permissionLevel) => (req, res) => {
   if (!UserService.checkPermission(req.user, permissionLevel)) {
-    console.log(req.user.permission, permissionLevel)
     return res.status(401).send();
   }
   return fn(req, res);

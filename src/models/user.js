@@ -9,7 +9,12 @@ const permissionEnum = require('../utils/constants/permission').enum;
 const user = new Schema({
   username: { type: String, required: true, unqiue: true },
   password: { type: String, required: true },
-  baseId: { type: String, requiredd: true },
+
+  // personal information
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+
+  base: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },
   permission: { type: String, enum: permissionEnum },
 
   avatar: { type: String },

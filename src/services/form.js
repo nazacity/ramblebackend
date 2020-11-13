@@ -1,34 +1,36 @@
 'use strict';
 
-const { query } = require('express');
 const AbstractService = require('./abstract');
 
 class FormService extends AbstractService {
+  get (id) {
+    return this.models.Form.findById(id);
+  }
+
   getFormsForRecruit (recruitId) {
     return this.models.FormRecruit.find({ recruitId });
   }
 
-  getRecruitsWithFormValues (formIds, indices, values, filter) {
+  async getRecruitsWithFormValues (formIds, questionIds, answers, filter) {
     let recruitIds;
     for (let i = 0; i < formIds.length; i++) {
       const formId = formIds[i];
-      const index = indices[i];
-      const value = values[i];
-      const key = `data.${index}`;
-      query = {
+      const questionId = questionIds[i];
+      const answer = answers[i];
+      const query = {
         formId,
-        [key]: value
+        data: { $elemMatch: { _id: questionId, answer } }
       };
       if (recruitIds) {
         query.recruitId = { $in: recruitIds };
       }
-      const formRecruits = await this.models.FormRecruit.find();
+      const formRecruits = await this.models.FormRecruit.find(query);
       recruitIds = formRecruits.map(formRecruit => formRecruit.recruitId);
     }
 
     if (filter) {
       filter._id = { $in: recruitIds }
-      return this.models.Recruit.find(filter).skip(skip).limit(limit);
+      return this.models.Recruit.find(filter);
     }
   }
   
@@ -39,10 +41,11 @@ class FormService extends AbstractService {
     });
   }
 
-  submit (formId, recruitId, data) {
+  submit (formId, recruitId, draftDate, data) {
     return this.models.FormRecruit.create({
       formId,
       recruitId,
+      draftDate,
       data
     });
   }

@@ -8,6 +8,11 @@ const permission = require('../../utils/constants/permission').constant;
 const { standardize } = require('../../utils/request');
 const { MilitaryBaseService } = require('../../services');
 
+
+const listMilitaryBases = standardize(async (req, res) => {
+  return res.json(await MilitaryBaseService.list());
+}, permission.VIEWER);
+
 const createMilitaryBase = standardize(async (req, res) => {
   const schema = Joi.object({
     name: Joi.string().required(),
@@ -21,7 +26,7 @@ const createMilitaryBase = standardize(async (req, res) => {
 }, permission.ADMIN);
 
 const getAllLowestMilitaryBases = standardize(async (req, res) => {
-  return res.json(await MilitaryBaseService.getAllLowest());
+  return res.json(await MilitaryBaseService.getAllLowest(req.user.base));
 }, permission.VIEWER);
 
 const getAllChildrenMilitaryBases = standardize(async (req, res) => {
@@ -32,6 +37,7 @@ const getAllChildrenMilitaryBases = standardize(async (req, res) => {
   return res.json(await MilitaryBaseService.getAllChildren(id));
 }, permission.VIEWER);
 
+router.get('/', listMilitaryBases);
 router.post('/', createMilitaryBase);
 router.get('/:id/allchildren', getAllChildrenMilitaryBases);
 router.get('/lowest', getAllLowestMilitaryBases);

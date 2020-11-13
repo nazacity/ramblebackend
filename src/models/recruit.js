@@ -17,10 +17,14 @@ const recruit = new Schema({
   province: { type: String, required: true, enum: provinceEnum },
   region: { type: String, required: true, enum: regionEnum },
 
+  avatarURL: String,
+
   // health
   height: { type: Number, required: true },
   weight: { type: Number, required: true },
   bmi: { type: Number, required: true },
+  bmiGroup: { type: String, required: true },
+  drugUse: { type: Boolean, required: true },
 
   specialAbilities: [String],
   education: { type: String, required: true },
@@ -28,8 +32,9 @@ const recruit = new Schema({
   major: String,
   job: String,
 
-  baseId: { type: Schema.Types.ObjectId, required: true },
-  militaryId: { type: Schema.Types.ObjectId, unique: true },
+  base: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },
+  trainingBase: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },
+  militaryId: { type: Schema.Types.ObjectId },
   draftDuration: { type: String, required: true, enum: draftDurationEnum },
   draftDate: { type: Date, required: true },
   religion: String

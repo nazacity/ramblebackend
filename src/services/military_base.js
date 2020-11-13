@@ -3,6 +3,10 @@
 const AbstractService = require('./abstract');
 
 class MilitaryBaseService extends AbstractService {
+  list () {
+    return this.models.MilitaryBase.find({});
+  }
+
   async create (name, parent, children) {
     let path = null;
     if (parent) {
@@ -13,11 +17,13 @@ class MilitaryBaseService extends AbstractService {
       path = this._createPathFromParent(parentPath, parentId);
     }
 
-    const { _id } = await this.models.MilitaryBase.create({ 
+    const militaryBase = await this.models.MilitaryBase.create({ 
       name, 
       path, 
       isLowest: !children || children.length === 0
     });
+
+    const { _id } = militaryBase;
 
     if (children) { // in the future this should be moved to queue
       for (let i = 0; i < children.length; i++) {
@@ -25,10 +31,11 @@ class MilitaryBaseService extends AbstractService {
         await this._updatePathAndChildren(children[i], childPath);
       }
     }
+    return militaryBase;
   }
 
   async getAllowedBases (_id) {
-    return [_id].concat((await this.getAllChildren(_id)).map(({ _id })  => _id));
+    return [_id.toString()].concat((await this.getAllChildren(_id)).map(({ _id })  => _id.toString()));
   }
 
   async getAllChildren (_id) {
@@ -65,8 +72,15 @@ class MilitaryBaseService extends AbstractService {
     }
   }
 
-  async getAllLowest () {
-    return this.models.MilitaryBase.find({ isLowest: true });
+  async getAllLowest (_id) {
+    const { path } = await this.models.MilitaryBase.findOne({
+      _id
+    });
+
+    const childPath = this._createPathFromParent(path, _id);
+    return this.models.MilitaryBase.find({
+      path: new RegExp(`^${childPath}`), isLowest: true
+    });
   }
 }
 

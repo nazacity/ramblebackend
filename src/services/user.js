@@ -6,9 +6,28 @@ const permission = require('../utils/constants/permission').constant;
 const AbstractService = require('./abstract');
 
 class UserService extends AbstractService {
-  async create (data) {
+  list (filter, skip, limit) {
+    return this.models.User.find(filter, { password: 0 }).skip(skip).limit(limit).populate({
+      path: 'base'
+    });
+  }
+
+  async _preProcessedUser (data) {
+    data.username = data.username.toLowerCase();
     data.password = await this.hashPassword(data.password);
+    return data;
+  }
+
+  async create (data) {
+    data = await this._preProcessedUser(data);
     return this.models.User.create(data);
+  }
+
+  async edit (id, data) {
+    data = await this._preProcessedUser(data);
+    return this.models.User.findOneAndUpdate({ _id: id }, {
+      $set: data
+    });
   }
 
   async hashPassword (password) {
@@ -30,12 +49,6 @@ class UserService extends AbstractService {
     } else {
       return true;
     }
-  }
-
-  async list (filter, skip, limit) {
-    await this.models.User.find({
-      
-    });
   }
 }
 

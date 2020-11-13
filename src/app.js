@@ -8,6 +8,7 @@ const cors = require('cors')
 
 const passport = require('./passport');
 const config = require('./utils/config');
+const { waitForDBConnection } = require('./utils/mongo');
 
 require('./models');
 const app = express();
@@ -20,34 +21,15 @@ app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
 
-const initializeServer = (resolve, reject) => {
-  console.info('Waiting for database connection ...');
-
-  // mongoDB connection
-  mongoose.connection.on('reconnected', function() {
-    console.warn('MongoDB reconnected!');
-  });
-  mongoose.connection.on('disconnected', function() {
-    console.warn('Database disconnected!');
-    reject();
-  });
-  mongoose.connection.on('connected', function() {
-    console.info(`Database connection ${config.mongo.URL} initiated!`);
-    resolve();
-  });
-}
-
 const createServer = async () => {
-  await new Promise((resolve, reject) => {
-    initializeServer(resolve, reject);
-  })
-
+  await waitForDBConnection;
   console.info('Server Initialized!');
 
   app.use('/login', passport.authenticate('local'), require('./routes/login'));
+  app.use('/api/forms', passport.authenticate('jwt'), require('./routes/forms'));
   app.use('/api/provinces', require('./routes/provinces'));
   app.use('/api/recruits', passport.authenticate('jwt'), require('./routes/recruits'));
-  app.use('/api/users', require('./routes/users'));
+  app.use('/api/users', passport.authenticate('jwt'), require('./routes/users'));
   app.use('/api/militarybases', passport.authenticate('jwt'), require('./routes/military_bases'));
 
   app.listen(config.port)

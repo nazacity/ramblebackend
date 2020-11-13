@@ -13,7 +13,7 @@ const loginHandler = (req, res) => {
   {
     issuer: config.jwt.issuer
   });
-  res.json({ token });
+  res.json({ token, user: req.user });
 }
 
 router.post('/', loginHandler);
