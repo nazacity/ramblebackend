@@ -14,6 +14,8 @@ const recruit = new Schema({
   dateOfBirth: { type: Date, required: true },
   
   // address
+  address: { type: String, required: true },
+  district: { type: String, required: true },
   province: { type: String, required: true, enum: provinceEnum },
   region: { type: String, required: true, enum: regionEnum },
 
@@ -25,12 +27,16 @@ const recruit = new Schema({
   bmi: { type: Number, required: true },
   bmiGroup: { type: String, required: true },
   drugUse: { type: Boolean, required: true },
+  bloodType: { type: String, required: true },
 
-  specialAbilities: [String],
   education: { type: String, required: true },
   placeOfGraduation: { type: String },
   major: String,
   job: String,
+  jobIncome: String,
+  partTime: String,
+  partTimeIncome: String,
+  specialAbilities: String,
 
   base: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },
   trainingBase: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },

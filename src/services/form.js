@@ -34,17 +34,18 @@ class FormService extends AbstractService {
     }
   }
   
-  create (name, data) {
+  create (name, data, _id) {
     return this.models.Form.create({
+      _id,
       name,
       data
     });
   }
 
-  submit (formId, recruitId, draftDate, data) {
+  submit (form, recruit, draftDate, data) {
     return this.models.FormRecruit.create({
-      formId,
-      recruitId,
+      form,
+      recruit,
       draftDate,
       data
     });

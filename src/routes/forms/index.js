@@ -12,6 +12,8 @@ const draftDurationEnum = require('../../utils/constants/draft_duration').enum;
 const educationEnum = require('../../utils/constants/education').enum;
 const { provinceEnum, regionEnum } = require('../../utils/constants/provinces');
 
+const { registerForm } = require('./register');
+
 const createForm = standardize(async (req, res) => {
   const schema = Joi.object({
     name: Joi.string().required(),
@@ -119,6 +121,7 @@ const getRecruitsWithFormValues = standardize(async (req, res) => {
 }, permission.VIEWER);
 
 router.post('/', createForm);
+router.post('/register', registerForm);
 router.get('/:id', getForm);
 router.post('/:formId/recruits/:recruitId', submitForm);
 router.get('/:id/recruits', getRecruitsWithFormValues);

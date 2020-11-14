@@ -5,11 +5,7 @@ const { Schema } = mongoose;
 
 const form = new Schema({
   name: { type: String, required: true },
-  data: [{
-    prompt: String,
-    type: { type: String, enum: ['number', 'boolean', 'string', 'multiSelect', 'select'] },
-    choices: [ String ]
-  }]
+  data: Object
 });
 
 const Form = mongoose.model('Form', form);
