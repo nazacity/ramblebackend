@@ -15,6 +15,7 @@ const standardize = (fn, permissionLevel) => async (req, res) => {
     await withPermission(fn, permissionLevel)(req, res);
   } catch (error) {
     if (error.isJoi) {
+      console.error(error.message);
       res.status(400).send(error.message);
     } else {
       console.error(error.message);

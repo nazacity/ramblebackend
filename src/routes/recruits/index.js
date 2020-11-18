@@ -57,7 +57,7 @@ const getRecruit = standardize(async (req, res) => {
   // check permission
   const allowedBases = await MilitaryBaseService.getAllowedBases(req.user.base);
 
-  if (allowedBases.indexOf(recruit.base._id.toString()) === -1) {
+  if (allowedBases.indexOf(recruit.trainingBase._id.toString()) === -1) {
     return res.status(401).send();
   }
 
@@ -119,12 +119,12 @@ const listRecruits = standardize(async (req, res) => {
     if (allowedBases.indexOf(filter.base) === -1) {
       return res.status(401).send();
     } else {
-      filter.base = {
+      filter.trainingBase = {
         $in: await MilitaryBaseService.getAllowedBases(filter.base)
       }      
     }
   } else {
-    filter.base = {
+    filter.trainingBase = {
       $in: allowedBases
     }
   };
@@ -179,7 +179,7 @@ const countRecruits = standardize(async (req, res) => {
     }
   }
 
-  filters.base = {
+  filters.trainingBase = {
     $in: allowedBases.map(base => mongoose.Types.ObjectId(base))
   };
 

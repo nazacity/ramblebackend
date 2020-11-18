@@ -12,6 +12,7 @@ const recruit = new Schema({
   lastName: { type: String, required: true },
   citizenId: { type: String, required: true, unique: true },
   dateOfBirth: { type: Date, required: true },
+  soldierNumber: String,
   
   // address
   address: { type: String, required: true },

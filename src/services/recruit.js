@@ -1,6 +1,5 @@
 'use strict';
 
-const { filter } = require('lodash');
 const AbstractService = require('./abstract');
 const bmi = require('../utils/constants/bmi_group').constant;
 
@@ -12,9 +11,9 @@ class RecruitService extends AbstractService {
   create (data) {
     data.bmi = this._getBMI(data.weight, data.height);
 
-    if (data.bmi < 22.9) {
+    if (data.bmi < 28) {
       data.bmiGroup = bmi.AVERAGE;
-    } else if (data.bmi < 25) {
+    } else if (data.bmi < 30) {
       data.bmiGroup = bmi.OVER_AVERAGE;
     } else {
       data.bmiGroup = bmi.OVER_WEIGHT;
@@ -44,7 +43,7 @@ class RecruitService extends AbstractService {
     if (filters.lastName) {
       filters.lastName = new RegExp(`^${filters.lastName}`);
     }
-    return this.models.Recruit.find(filters).skip(skip).limit(limit).populate('base').populate('trainingBase');
+    return this.models.Recruit.find(filters).sort({ soldierNumber: 1 }).skip(skip).limit(limit).populate('base').populate('trainingBase');
   }
 
   _getBMI (weight, height) {

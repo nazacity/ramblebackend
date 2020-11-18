@@ -46,6 +46,7 @@ const registerForm = standardize(async (req, res) => {
     trainingBase: Joi.string().required(),
     draftDuration: Joi.string().required().valid(...draftDurationEnum),
     draftDate: Joi.date().required(),
+    soldierNumber: Joi.string().allow(''),
 
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
@@ -144,6 +145,7 @@ const registerForm = standardize(async (req, res) => {
     lastName: data.lastName,
     citizenId: data.citizenId,
     dateOfBirth: data.dateOfBirth, // missing
+    soldierNumber: data.soldierNumber,
 
     address: data.address,
     district: data.district,

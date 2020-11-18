@@ -1,7 +1,6 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const { Recruit } = require('.');
 const { Schema } = mongoose;
 
 const formRecruit = new Schema({
