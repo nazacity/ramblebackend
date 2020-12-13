@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "dev": "nodemon src/app.js",
     "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,6 +32,7 @@
     "lodash": "^4.17.20",
     "mongoose": "^5.10.12",
     "passport": "^0.4.1",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "x-xss-protection": "^2.0.0"

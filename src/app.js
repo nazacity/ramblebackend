@@ -1,10 +1,13 @@
 'use strict';
 
+// ก่อนlanuch express-rate-limit สำหรับป้องกันการยิงรีเควสมากๆ
+// Mo
+
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const xssFilter = require('x-xss-protection')
-const cors = require('cors')
+const xssFilter = require('x-xss-protection');
+const cors = require('cors');
 
 const passport = require('./passport');
 const config = require('./utils/config');
@@ -25,15 +28,44 @@ const createServer = async () => {
   await waitForDBConnection;
   console.info('Server Initialized!');
 
-  app.use('/login', passport.authenticate('local'), require('./routes/login'));
-  app.use('/api/forms', passport.authenticate('jwt'), require('./routes/forms'));
-  app.use('/api/provinces', require('./routes/provinces'));
-  app.use('/api/recruits', passport.authenticate('jwt'), require('./routes/recruits'));
-  app.use('/api/users', passport.authenticate('jwt'), require('./routes/users'));
-  app.use('/api/militarybases', passport.authenticate('jwt'), require('./routes/military_bases'));
+  // User Routes
+  app.use(
+    '/users/login',
+    passport.authenticate('user'),
+    require('./routes/users/login')
+  );
+  app.use(
+    '/api/users',
+    passport.authenticate('userJwt'),
+    require('./routes/users')
+  );
 
-  app.listen(config.port)
-  console.info(`Server is listening on port ${config.port}`)
-}
+  // Employee Routes
+  app.use(
+    '/employees/login',
+    passport.authenticate('employee'),
+    require('./routes/employees/login')
+  );
+  app.use(
+    '/api/employees',
+    passport.authenticate('employeeJwt'),
+    require('./routes/employees')
+  );
+
+  // Partner Routes
+  app.use(
+    '/partners/login',
+    passport.authenticate('partner'),
+    require('./routes/partners/login')
+  );
+  app.use(
+    '/api/partners',
+    passport.authenticate('partnerJwt'),
+    require('./routes/partners')
+  );
+
+  app.listen(config.port);
+  console.info(`Server is listening on port ${config.port}`);
+};
 
 createServer();

@@ -4,17 +4,21 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 
-const config = require('../utils/config');
+const config = require('../../utils/config');
 
 const loginHandler = (req, res) => {
-  const token = jwt.sign({
-    sub: req.user._id,
-  }, config.jwt.secret, 
-  {
-    issuer: config.jwt.issuer
-  });
+  const token = jwt.sign(
+    {
+      sub: req.user._id,
+      type: 'user',
+    },
+    config.jwt.secret,
+    {
+      issuer: config.jwt.issuer,
+    }
+  );
   res.json({ token, user: req.user });
-}
+};
 
 router.post('/', loginHandler);
 

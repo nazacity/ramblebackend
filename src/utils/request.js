@@ -1,14 +1,14 @@
 'use strict';
 
-const { UserService } = require('../services');
+const { EmployeeService } = require('../services');
 
 const withPermission = (fn, permissionLevel) => (req, res) => {
-  if (!UserService.checkPermission(req.user, permissionLevel)) {
+  if (!EmployeeService.checkPermission(req.user, permissionLevel)) {
     console.log(req.user, permissionLevel);
     return res.status(401).send();
   }
   return fn(req, res);
-}
+};
 
 const standardize = (fn, permissionLevel) => async (req, res) => {
   try {
@@ -22,10 +22,9 @@ const standardize = (fn, permissionLevel) => async (req, res) => {
       res.status(500).send(error.message);
     }
   }
-}
-
+};
 
 module.exports = {
   withPermission,
-  standardize
-}
+  standardize,
+};

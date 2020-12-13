@@ -4,21 +4,53 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
-const permissionEnum = require('../utils/constants/permission').enum;
+const {
+  user_state,
+  user_gender,
+  blood_type,
+} = require('../utils/constants/user');
 
 const user = new Schema({
   username: { type: String, required: true, unqiue: true },
   password: { type: String, required: true },
 
   // personal information
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  display_name: { type: String, required: true },
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  phone_number: { type: String, required: true },
+  birthday: { type: Date, required: true },
+  gender: { type: String, enum: user_gender, required: true },
+  blood_type: { type: String, enum: blood_type, required: true },
+  id_card_no: { type: String, required: true },
+  user_picture_url: { type: String, required: true },
 
-  base: { type: Schema.Types.ObjectId, required: true, ref: 'MilitaryBase' },
-  permission: { type: String, enum: permissionEnum },
+  state: { type: String, enum: user_state, required: true, default: 'active' },
 
-  avatar: { type: String },
-  rank: { type: String }
+  emergency_contacts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Emergency_Contact',
+    },
+  ],
+  user_posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User_Post',
+    },
+  ],
+  user_records: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User_Year_Record',
+    },
+  ],
+  user_activities: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User_Activity',
+    },
+  ],
 });
 
 user.methods.validatePassword = function (password) {

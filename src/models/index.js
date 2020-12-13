@@ -3,12 +3,15 @@
 const mongoose = require('mongoose');
 const config = require('../utils/config');
 
-mongoose.connect(config.mongo.URL, {useNewUrlParser: true});
+mongoose.connect(config.mongo.URL, { useNewUrlParser: true });
 
 module.exports = {
-  MilitaryBase: require('./military_base'),
-  Recruit: require('./recruit'),
+  Activity: require('./activity'),
+  EmergencyContact: require('./emergency_contact'),
+  Employee: require('./employee'),
+  Partner: require('./partner'),
   User: require('./user'),
-  Form: require('./form'),
-  FormRecruit: require('./formRecruit')
+  UserActivity: require('./user_activity'),
+  UserPost: require('./user_post'),
+  UserYearRecord: require('./user_year_record'),
 };
