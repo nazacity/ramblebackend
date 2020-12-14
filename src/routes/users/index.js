@@ -202,7 +202,7 @@ const deleteEmergencyContact = standardize(async (req, res) => {
   });
 
   const { id } = Joi.attempt(req.params, paramSchema);
-  console.log(id);
+
   await UserService.deleteEmergencyContact(req.user.id, id);
   res.json(await EmergencyContactService.deleteEmergencyContact(id));
 });

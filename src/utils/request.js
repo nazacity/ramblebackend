@@ -12,7 +12,11 @@ const withPermission = (fn, permissionLevel) => (req, res) => {
 
 const standardize = (fn, permissionLevel) => async (req, res) => {
   try {
-    await withPermission(fn, permissionLevel)(req, res);
+    if (permissionLevel) {
+      await withPermission(fn, permissionLevel)(req, res);
+    } else {
+      await fn(req, res);
+    }
   } catch (error) {
     if (error.isJoi) {
       console.error(error.message);

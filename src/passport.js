@@ -154,7 +154,7 @@ passport.use(
       if (jwt_payload.type !== 'employee') {
         done(null, false);
       }
-      const employee = await Employee.findOne({ _id: jwt_payload.sub });
+      const employee = await Employee.findOne({ _id: jwt_payload.sub }).lean();
       employee.type = 'employee';
       if (employee) {
         done(null, employee);
@@ -172,7 +172,9 @@ passport.use(
   new CustomStrategy(async function (req, done) {
     const token = extractToken(req.headers);
     try {
-      await jwt.verify(token, config.jwt.secret, { issuer: config.jwt.issuer });
+      await jwt
+        .verify(token, config.jwt.secret, { issuer: config.jwt.issuer })
+        .lean();
       const jwt_payload = jwt.decode(token);
       if (jwt_payload.type !== 'partner') {
         done(null, false);

@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+const { provinceDict } = require('../utils/constants/provinces');
 
 const AbstractService = require('./abstract');
 
@@ -49,6 +50,11 @@ class ActivityService extends AbstractService {
   }
 
   async createActivity(data) {
+    const region = provinceDict[data.province];
+    data.location = {
+      ...data.location,
+      region: region,
+    };
     return this.models.Activity.create(data);
   }
 

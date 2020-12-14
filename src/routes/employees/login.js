@@ -15,6 +15,7 @@ const loginHandler = (req, res) => {
     config.jwt.secret,
     {
       issuer: config.jwt.issuer,
+      expiresIn: '6h',
     }
   );
   res.json({ token, employee: req.user });

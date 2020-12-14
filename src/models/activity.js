@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const activityStateEnum = require('../utils/constants/activity').activity_state;
+const { provinceEnum, regionEnum } = require('../utils/constants/provinces');
 
 const activity = new Schema({
   partner: {
@@ -19,8 +20,8 @@ const activity = new Schema({
   location: {
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
-    province: { type: String, required: true },
-    region: { type: String, required: true },
+    province: { type: String, required: true, enum: provinceEnum },
+    region: { type: String, required: true, enum: regionEnum },
     place_name: { type: String, required: true },
   },
   actual_date: { type: Date, required: true },

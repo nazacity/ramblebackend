@@ -74,6 +74,11 @@ const editEmployee = standardize(async (req, res) => {
   res.json(await EmployeeService.editEmployee(id, user));
 }, permission.ADMIN);
 
+const getEmployeeByJwt = standardize(async (req, res) => {
+  return res.json(req.user);
+});
+
+router.get('/getemployeebyjwt', getEmployeeByJwt);
 router.get('/getemployees', listEmployees);
 router.post('/createemployee', createEmployee);
 router.post('/editemployee/:id', editEmployee);
@@ -166,7 +171,6 @@ const createActivity = standardize(async (req, res) => {
       lat: Joi.number().required(),
       lng: Joi.number().required(),
       province: Joi.string().required(),
-      region: Joi.string().required(),
       place_name: Joi.string().required(),
     },
     actual_date: Joi.date().required(),
