@@ -16,6 +16,7 @@ const {
   EmployeeService,
   PartnerService,
   ActivityService,
+  UserService,
 } = require('../../services');
 
 const listEmployees = standardize(async (req, res) => {
@@ -129,9 +130,63 @@ const editPartner = standardize(async (req, res) => {
   res.json(await PartnerService.editPartner(id, user));
 }, permission.ADMIN);
 
+const getPartnerById = standardize(async (req, res) => {
+  const schema = Joi.object({
+    permission: Joi.string(),
+  });
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.json(await PartnerService.findById(id));
+}, permission.ADMIN);
+
 router.get('/getpartners', listPartners);
+router.get('/getpartner/:id', getPartnerById);
 router.post('/createpartner', createPartner);
 router.post('/editpartner/:id', editPartner);
+
+// User
+
+const listUsers = standardize(async (req, res) => {
+  const schema = Joi.object({
+    first_name: Joi.string(),
+    last_name: Joi.string(),
+    display_name: Joi.string(),
+    gender: Joi.string(),
+    min_age: Joi.string(),
+    max_age: Joi.string(),
+
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(25),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  res.json(await UserService.listUsers(filter, skip, limit));
+}, permission.ADMIN);
+
+const editUser = standardize(async (req, res) => {
+  const schema = Joi.object({
+    permission: Joi.string(),
+  });
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const user = Joi.attempt(req.body, schema);
+  const { id } = Joi.attempt(req.params, paramSchema);
+  res.json(await UserService.editUser(id, user));
+}, permission.ADMIN);
+
+router.get('/getusers', listUsers);
+router.post('/edituser/:id', editUser);
 
 // Activity
 const listActivities = standardize(async (req, res) => {
@@ -216,12 +271,18 @@ const createActivity = standardize(async (req, res) => {
         id: Joi.string().required(),
         style: Joi.string().required(),
         shirt_picturl_url: Joi.string().required(),
-        size: [
-          {
-            id: Joi.string().required(),
-            size: Joi.string().required(),
-          },
-        ],
+      },
+    ],
+    size: [
+      {
+        id: Joi.string().required(),
+        size: Joi.string().required(),
+      },
+    ],
+    condition: [
+      {
+        id: Joi.string().required(),
+        description: Joi.string().required(),
       },
     ],
   });
@@ -245,7 +306,7 @@ const editActivity = standardize(async (req, res) => {
 }, permission.ADMIN);
 
 router.get('/getactivities', listActivities);
-router.post('/getactivity', createActivity);
+router.post('/createactivity', createActivity);
 router.post('/editactivity/:id', editActivity);
 
 module.exports = router;

@@ -16,12 +16,8 @@ const { user_gender, blood_type } = require('../../utils/constants/user');
 
 const listUsers = standardize(async (req, res) => {
   const schema = Joi.object({
-    username: Joi.string(),
-
     firstname: Joi.string(),
     lastname: Joi.string(),
-
-    base: Joi.string(),
 
     skip: Joi.string().default(0),
     limit: Joi.string().default(25),

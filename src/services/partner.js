@@ -7,15 +7,14 @@ const AbstractService = require('./abstract');
 class PartnerService extends AbstractService {
   listPartner(filter, skip, limit) {
     return this.models.Partner.find(filter, { password: 0 })
-      .skip(skip)
-      .limit(limit)
-      .populate({
-        path: 'base',
-      });
+      .skip(+skip)
+      .limit(+limit);
   }
 
   findById(id) {
-    return this.models.Partner.findById(id);
+    return this.models.Partner.findById(id, { password: 0 }).populate({
+      path: 'activities',
+    });
   }
 
   async _preProcessedUser(data) {

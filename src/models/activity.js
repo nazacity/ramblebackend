@@ -49,7 +49,7 @@ const activity = new Schema({
 
   rules: [
     {
-      id: { type: Number, required: true },
+      id: { type: String, required: true },
       title: { type: String, required: true },
       detail: [
         {
@@ -71,14 +71,15 @@ const activity = new Schema({
     {
       style: { type: String, required: true },
       shirt_picturl_url: { type: String, required: true },
-      size: [
-        {
-          id: { type: String, required: true },
-          size: { type: String, required: true },
-          description: { type: String, required: true },
-        },
-      ],
       quality: { type: Number, required: true, default: 0 },
+    },
+  ],
+
+  size: [
+    {
+      id: { type: String, required: true },
+      size: { type: String, required: true },
+      description: { type: String, required: true },
     },
   ],
 
@@ -97,7 +98,7 @@ const activity = new Schema({
 
   condition: [
     {
-      id: { type: Number, required: true },
+      id: { type: String, required: true },
       description: { type: String, required: true },
     },
   ],

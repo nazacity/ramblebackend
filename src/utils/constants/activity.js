@@ -2,7 +2,7 @@
 
 module.exports = {
   activity_state: [
-    'pre-register',
+    'pre_register',
     'registering',
     'end_register',
     'actual_date',

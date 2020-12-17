@@ -20,6 +20,7 @@ const user = new Schema({
   last_name: { type: String, required: true },
   phone_number: { type: String, required: true },
   birthday: { type: Date, required: true },
+  age: { type: Number, required: true },
   gender: { type: String, enum: user_gender, required: true },
   blood_type: { type: String, enum: blood_type, required: true },
   id_card_no: { type: String, required: true },
