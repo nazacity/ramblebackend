@@ -60,6 +60,13 @@ const activity = new Schema({
     },
   ],
 
+  rules1: [
+    {
+      id: { type: String, required: true },
+      title: { type: String, required: true },
+    },
+  ],
+
   more_detail: [
     {
       id: { type: String, required: true },
@@ -103,12 +110,35 @@ const activity = new Schema({
     },
   ],
 
-  state: { type: String, enum: activityStateEnum },
+  state: { type: String, enum: activityStateEnum, default: 'pre_register' },
 
   user_activities: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User_Activity',
+    },
+  ],
+  gifts: [
+    {
+      id: { type: String },
+      description: { type: String },
+      gift_picture_url: { type: String },
+    },
+  ],
+
+  gifts: [
+    {
+      id: { type: String },
+      description: { type: String },
+      gift_picture_url: { type: String },
+    },
+  ],
+
+  coupons: [
+    {
+      id: { type: String },
+      description: { type: String },
+      coupon_picture_url: { type: String },
     },
   ],
 });

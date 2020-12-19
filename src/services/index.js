@@ -12,6 +12,7 @@ const services = {
   UserService: require('./user'),
   UserActivityService: require('./user_activity'),
   UserPostService: require('./user_post'),
+  AddressService: require('./address'),
 };
 
 _.forEach(services, (service, key) => {

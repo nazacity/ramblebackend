@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 const emergency_contact = new Schema({
   name: { type: String, required: true },
   phone_number: { type: String, required: true },
-  relation: { type: String, required: true },
+  relationship: { type: String, required: true },
 });
 
 const Emergency_Contact = mongoose.model(

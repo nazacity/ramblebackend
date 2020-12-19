@@ -123,6 +123,43 @@ class UserService extends AbstractService {
     }
   }
 
+  async updateAddress(id, addressesId) {
+    const user = await this.models.User.findById(id);
+    if (user.addresses) {
+      return this.models.User.findOneAndUpdate(
+        { _id: id },
+        {
+          addresses: [...user.addresses, addressesId],
+        }
+      );
+    } else {
+      return this.models.User.findOneAndUpdate(
+        { _id: id },
+        {
+          addresses: [addressesId],
+        }
+      );
+    }
+  }
+
+  async deleteAddress(id, addressesId) {
+    const user = await this.models.User.findById(id);
+
+    if (user.addresses) {
+      const newAddresses = user.addresses.filter(
+        (item) => item.toString() !== addressesId.toString()
+      );
+      return this.models.User.findOneAndUpdate(
+        { _id: id },
+        {
+          addresses: newAddresses,
+        }
+      );
+    } else {
+      return user;
+    }
+  }
+
   async hashPassword(password) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);

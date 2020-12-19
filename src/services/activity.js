@@ -30,7 +30,7 @@ class ActivityService extends AbstractService {
               },
             }
           : { $ne: null },
-        state: { $in: ['registering', 'pre-register'] },
+        state: { $in: ['registering', 'pre_register'] },
       },
       {
         user_activities: 0,
@@ -45,12 +45,38 @@ class ActivityService extends AbstractService {
         user_activities: 0,
       }
     )
-      .skip(skip)
-      .limit(limit);
+      .skip(+skip)
+      .limit(+limit);
+  }
+
+  findById(id) {
+    return this.models.Activity.findById(id);
+  }
+
+  listPromoteActivity(filter, skip, limit) {
+    return this.models.Activity.find(
+      {
+        state: { $in: ['registering', 'pre_register'] },
+      },
+      {
+        user_activities: 0,
+        description: 0,
+        courses: 0,
+        timeline: 0,
+        rules: 0,
+        more_detail: 0,
+        shirt_detail: 0,
+        report_infomation: 0,
+        condition: 0,
+        user_activities: 0,
+      }
+    )
+      .skip(+skip)
+      .limit(+limit);
   }
 
   async createActivity(data) {
-    const region = provinceDict[data.province];
+    const region = provinceDict[data.location.province];
     data.location = {
       ...data.location,
       region: region,
@@ -59,12 +85,32 @@ class ActivityService extends AbstractService {
   }
 
   async editActivity(id, data) {
-    return this.models.Activity.findOneAndUpdate(
-      { _id: id },
-      {
-        ...data,
-      }
-    );
+    if (data.location?.province) {
+      let region = provinceDict[data.location.province];
+      data.location = {
+        ...data.location,
+        region: region,
+      };
+      return this.models.Activity.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: data,
+        },
+        {
+          new: true,
+        }
+      );
+    } else {
+      return this.models.Activity.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: data,
+        },
+        {
+          new: true,
+        }
+      );
+    }
   }
 
   async updateUserActivity(id, userActivityId) {

@@ -29,13 +29,31 @@ class PartnerService extends AbstractService {
   }
 
   async editPartner(id, data) {
-    data = await this._preProcessedUser(data);
     return this.models.Partner.findOneAndUpdate(
       { _id: id },
       {
-        ...data,
+        $set: data,
       }
     );
+  }
+
+  async updatePartnerActivity(id, ActivityId) {
+    const partner = await this.models.Partner.findById(id);
+    if (partner.activities) {
+      return this.models.Partner.findOneAndUpdate(
+        { _id: id },
+        {
+          activities: [...partner.activities, ActivityId],
+        }
+      );
+    } else {
+      return this.models.Partner.findOneAndUpdate(
+        { _id: id },
+        {
+          activities: [ActivityId],
+        }
+      );
+    }
   }
 
   async hashPassword(password) {

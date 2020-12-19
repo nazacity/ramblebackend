@@ -212,7 +212,10 @@ const listActivities = standardize(async (req, res) => {
   delete filter.skip;
   delete filter.limit;
 
-  res.json(await ActivityService.listActivity(filter, skip, limit));
+  res.status(200).send({
+    status: 200,
+    data: await ActivityService.listActivity(filter, skip, limit),
+  });
 });
 
 const createActivity = standardize(async (req, res) => {
@@ -231,81 +234,199 @@ const createActivity = standardize(async (req, res) => {
     actual_date: Joi.date().required(),
     register_start_date: Joi.date().required(),
     register_end_date: Joi.date().required(),
-    courses: [
-      {
-        id: { type: String, required: true },
+    courses: Joi.array().items({
+      id: Joi.string().required(),
+      title: Joi.string().required(),
+      range: Joi.number().required(),
+      price: Joi.number().required(),
+      course_picture_url: Joi.string().required(),
+    }),
+
+    timeline: Joi.array().items({
+      id: Joi.string().required(),
+      time: Joi.string().required(),
+      title: Joi.string().required(),
+      description: Joi.string().allow(''),
+    }),
+    rules: Joi.array().items({
+      id: Joi.string().required(),
+      title: Joi.string().required(),
+      detail: Joi.array().items({
+        id: Joi.string().allow(''),
+        description: Joi.string().allow(''),
+      }),
+    }),
+    rules1: Joi.array().items({
+      id: Joi.string().required(),
+      title: Joi.string().required(),
+    }),
+    more_detail: Joi.array().items({
+      id: Joi.string().required(),
+      description: Joi.string().required(),
+    }),
+    shirt_detail: Joi.array().items({
+      id: Joi.string().required(),
+      style: Joi.string().required(),
+      shirt_picturl_url: Joi.string().required(),
+    }),
+    size: Joi.array().items({
+      id: Joi.string().required(),
+      size: Joi.string().required(),
+      description: Joi.string().allow(''),
+    }),
+    condition: Joi.array().items({
+      id: Joi.string().required(),
+      description: Joi.string().required(),
+    }),
+    gifts: Joi.array().items({
+      id: Joi.string(),
+      description: Joi.string().allow(''),
+      gift_picture_url: Joi.string().allow(''),
+    }),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+  if (req.body.gifts.length === 0) {
+    delete data.gifts;
+  }
+  const resData = await ActivityService.createActivity(data);
+  await PartnerService.updatePartnerActivity(data.partner, resData.id);
+  res.status(201).send({ status: 201, data: resData });
+}, permission.ADMIN);
+
+const editActivity = standardize(async (req, res) => {
+  let schema;
+  const request = { ...req.body };
+  delete request.type;
+  console.log(request);
+  if (req.body.type === 'banner') {
+    schema = Joi.object({
+      activity_picture_url: Joi.string().required(),
+    });
+  } else if (req.body.type === 'title') {
+    schema = Joi.object({
+      title: Joi.string().required(),
+      sub_title: Joi.string().required(),
+      description: Joi.string().required(),
+    });
+  } else if (req.body.type === 'location') {
+    schema = Joi.object({
+      location: {
+        lat: Joi.number().required(),
+        lng: Joi.number().required(),
+        province: Joi.string().required(),
+        place_name: Joi.string().required(),
+      },
+    });
+  } else if (req.body.type === 'dateinfo') {
+    schema = Joi.object({
+      actual_date: Joi.date().required(),
+      register_start_date: Joi.date().required(),
+      register_end_date: Joi.date().required(),
+    });
+  } else if (req.body.type === 'courses') {
+    schema = Joi.object({
+      courses: Joi.array().items({
+        id: Joi.string().required(),
         title: Joi.string().required(),
         range: Joi.number().required(),
         price: Joi.number().required(),
         course_picture_url: Joi.string().required(),
-      },
-    ],
-    timeline: [
-      {
+      }),
+    });
+  } else if (req.body.type === 'timeline') {
+    schema = Joi.object({
+      timeline: Joi.array().items({
         id: Joi.string().required(),
         time: Joi.string().required(),
         title: Joi.string().required(),
-        description: Joi.string().required(),
-      },
-    ],
-    rules: [
-      {
-        id: Joi.string().required(),
-        title: Joi.string().required(),
-        detail: [
-          {
-            id: Joi.string().required(),
-            description: Joi.string().required(),
-          },
-        ],
-      },
-    ],
-    more_detail: [
-      {
-        id: Joi.string().required(),
-        title: Joi.string().required(),
-      },
-    ],
-    shirt_detail: [
-      {
+        description: Joi.string().allow(''),
+      }),
+    });
+  } else if (req.body.type === 'gifts') {
+    schema = Joi.object({
+      gifts: Joi.array().items({
+        id: Joi.string(),
+        description: Joi.string().allow(''),
+        gift_picture_url: Joi.string().allow(''),
+      }),
+    });
+  } else if (req.body.type === 'shirt_detail') {
+    schema = Joi.object({
+      shirt_detail: Joi.array().items({
         id: Joi.string().required(),
         style: Joi.string().required(),
         shirt_picturl_url: Joi.string().required(),
-      },
-    ],
-    size: [
-      {
+      }),
+    });
+  } else if (req.body.type === 'size') {
+    schema = Joi.object({
+      size: Joi.array().items({
         id: Joi.string().required(),
         size: Joi.string().required(),
-      },
-    ],
-    condition: [
-      {
+        description: Joi.string().allow(''),
+      }),
+    });
+  } else if (req.body.type === 'rules') {
+    schema = Joi.object({
+      rules: Joi.array().items({
+        id: Joi.string().required(),
+        title: Joi.string().required(),
+        detail: Joi.array().items({
+          id: Joi.string().allow(''),
+          description: Joi.string().allow(''),
+        }),
+      }),
+    });
+  } else if (req.body.type === 'rules1') {
+    schema = Joi.object({
+      rules1: Joi.array().items({
+        id: Joi.string().required(),
+        title: Joi.string().required(),
+      }),
+    });
+  } else if (req.body.type === 'more_detail') {
+    schema = Joi.object({
+      more_detail: Joi.array().items({
         id: Joi.string().required(),
         description: Joi.string().required(),
-      },
-    ],
-  });
+      }),
+    });
+  } else if (req.body.type === 'condition') {
+    schema = Joi.object({
+      condition: Joi.array().items({
+        id: Joi.string().required(),
+        description: Joi.string().required(),
+      }),
+    });
+  }
 
-  const data = Joi.attempt(req.body, schema);
-  await ActivityService.createActivity(data);
-  res.status(201).send();
-}, permission.ADMIN);
-
-const editActivity = standardize(async (req, res) => {
-  const schema = Joi.object({
-    permission: Joi.string(),
-  });
   const paramSchema = Joi.object({
     id: Joi.string().required(),
   });
 
-  const data = Joi.attempt(req.body, schema);
+  const data = Joi.attempt(request, schema);
   const { id } = Joi.attempt(req.params, paramSchema);
-  res.json(await ActivityService.editActivity(id, data));
+
+  res
+    .status(200)
+    .send({ status: 200, data: await ActivityService.editActivity(id, data) });
+}, permission.ADMIN);
+
+const getActivityById = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await ActivityService.findById(id) });
 }, permission.ADMIN);
 
 router.get('/getactivities', listActivities);
+router.get('/getactivity/:id', getActivityById);
 router.post('/createactivity', createActivity);
 router.post('/editactivity/:id', editActivity);
 

@@ -11,6 +11,7 @@ const {
   ActivityService,
   UserPostService,
   EmergencyContactService,
+  AddressService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
@@ -121,7 +122,11 @@ const createUserActivity = standardize(async (req, res) => {
   );
   res.status(201).send();
 });
+const getUserByJwt = standardize(async (req, res) => {
+  return res.json(req.user);
+});
 
+router.get('/getuserbyjwt', getUserByJwt);
 router.post('/createuseractivity', createUserActivity);
 
 // User Post
@@ -179,7 +184,7 @@ const createEmergencyContact = standardize(async (req, res) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     phone_number: Joi.string().required(),
-    relation: Joi.string().required(),
+    relationship: Joi.string().required(),
   });
 
   const emergencyContact = Joi.attempt({ ...req.body }, schema);
@@ -202,9 +207,37 @@ const deleteEmergencyContact = standardize(async (req, res) => {
   await UserService.deleteEmergencyContact(req.user.id, id);
   res.json(await EmergencyContactService.deleteEmergencyContact(id));
 });
-
 router.post('/createemergencycontact', createEmergencyContact);
 router.delete('/deleteemergencycontact/:id', deleteEmergencyContact);
+
+const createAddress = standardize(async (req, res) => {
+  const schema = Joi.object({
+    address: Joi.string().required(),
+    province: Joi.string().required(),
+    zip: Joi.string().required(),
+    phone_number: Joi.string().required(),
+  });
+
+  const address = Joi.attempt({ ...req.body }, schema);
+
+  const data = await AddressService.createAddress(address);
+  await UserService.updateAddress(req.user.id, data.id);
+
+  res.status(201).send();
+});
+
+const deleteAddress = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  await UserService.deletAddress(req.user.id, id);
+  res.json(await AddressService.deleteAddress(id));
+});
+router.post('/createaddress', createAddress);
+router.delete('/deleteemergencycontact/:id', deleteAddress);
 
 // Activity
 const listActivities = standardize(async (req, res) => {
@@ -233,6 +266,25 @@ const listActivities = standardize(async (req, res) => {
   res.json(await ActivityService.listActivity(filter, skip, limit));
 });
 
+const listPromoteActivities = standardize(async (req, res) => {
+  const schema = Joi.object({
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(5),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  res.json({
+    status: 200,
+    data: await ActivityService.listPromoteActivity(filter, skip, limit),
+  });
+});
+
 router.get('/getactivities', listActivities);
+router.get('/getpromoteactivities', listPromoteActivities);
 
 module.exports = router;

@@ -25,6 +25,7 @@ const user = new Schema({
   blood_type: { type: String, enum: blood_type, required: true },
   id_card_no: { type: String, required: true },
   user_picture_url: { type: String, required: true },
+  user_background_picture_url: { type: String },
 
   state: { type: String, enum: user_state, required: true, default: 'active' },
 
@@ -32,6 +33,12 @@ const user = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Emergency_Contact',
+    },
+  ],
+  addresses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Address',
     },
   ],
   user_posts: [

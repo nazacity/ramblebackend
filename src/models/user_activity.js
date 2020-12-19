@@ -61,6 +61,14 @@ const user_activity = new Schema({
     required: true,
     default: 'upcoming',
   },
+  coupons: [
+    {
+      id: { type: String },
+      description: { type: String },
+      coupon_picture_url: { type: String },
+      state: { type: String },
+    },
+  ],
 });
 
 const User_Activity = mongoose.model('User_Activity', user_activity);

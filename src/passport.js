@@ -37,7 +37,10 @@ passport.use(
     try {
       const user = await User.findOne({
         username: username.toLowerCase(),
-      }).populate('base');
+      })
+        .populate({ path: 'addresses' })
+        .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_activities' });
 
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
@@ -66,7 +69,7 @@ passport.use(
     try {
       const employee = await Employee.findOne({
         username: username.toLowerCase(),
-      }).populate('base');
+      });
 
       if (!employee) {
         return done(null, false, { message: 'Incorrect username.' });
@@ -95,7 +98,7 @@ passport.use(
     try {
       const partner = await Partner.findOne({
         username: username.toLowerCase(),
-      }).populate('base');
+      });
 
       if (!partner) {
         return done(null, false, { message: 'Incorrect username.' });
@@ -131,7 +134,11 @@ passport.use(
       if (jwt_payload.type !== 'user') {
         done(null, false);
       }
-      const user = await User.findOne({ _id: jwt_payload.sub });
+      const user = await User.findOne({ _id: jwt_payload.sub }, { password: 0 })
+        .populate({ path: 'addresses' })
+        .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_activities' });
+
       user.type = 'user';
       if (user) {
         done(null, user);
@@ -172,14 +179,17 @@ passport.use(
   new CustomStrategy(async function (req, done) {
     const token = extractToken(req.headers);
     try {
-      await jwt
-        .verify(token, config.jwt.secret, { issuer: config.jwt.issuer })
-        .lean();
+      await jwt.verify(token, config.jwt.secret, { issuer: config.jwt.issuer });
+
       const jwt_payload = jwt.decode(token);
       if (jwt_payload.type !== 'partner') {
         done(null, false);
       }
-      const partner = await Partner.findOne({ _id: jwt_payload.sub });
+      const partner = await Partner.findOne({ _id: jwt_payload.sub })
+        .populate({
+          path: 'activities',
+        })
+        .lean();
       partner.type = 'partner';
       if (partner) {
         done(null, partner);
