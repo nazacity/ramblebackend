@@ -9,5 +9,11 @@ module.exports = {
     'finished',
     'cancel',
   ],
-  user_activity_state: ['upcoming', 'actual_date', 'finished', 'cancel'],
+  user_activity_state: [
+    'waiting_payment',
+    'upcoming',
+    'actual_date',
+    'finished',
+    'cancel',
+  ],
 };

@@ -35,6 +35,7 @@ const activity = new Schema({
       range: { type: Number, required: true },
       price: { type: Number, required: true },
       course_picture_url: { type: String, required: true },
+      register_no: { type: Number, required: true, default: 0 },
     },
   ],
 
@@ -78,7 +79,7 @@ const activity = new Schema({
     {
       style: { type: String, required: true },
       shirt_picturl_url: { type: String, required: true },
-      quality: { type: Number, required: true, default: 0 },
+      // quality: { type: Number, required: true, default: 0 },
     },
   ],
 
@@ -116,13 +117,6 @@ const activity = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User_Activity',
-    },
-  ],
-  gifts: [
-    {
-      id: { type: String },
-      description: { type: String },
-      gift_picture_url: { type: String },
     },
   ],
 

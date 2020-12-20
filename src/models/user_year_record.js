@@ -10,9 +10,10 @@ const user_year_record = new Schema({
     ref: 'User',
   },
   activity_number: { type: Number, required: true, default: 0 },
-  year_range: { type: Number, required: true, default: 0 },
-  year_time: { type: Number, required: true, default: 0 },
-  year_speed_average: { type: Number, required: true, default: 0 },
+  distance: { type: Number, required: true, default: 0 },
+  time_hr: { type: Number, required: true, default: 0 },
+  time_min: { type: Number, required: true, default: 0 },
+  average: { type: Number, required: true, default: 0 },
 });
 
 user_year_record.index({ user: 1, year: 1 });

@@ -55,6 +55,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           user_activities: [...user.user_activities, userActivityId],
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -62,6 +65,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           user_activities: [userActivityId],
+        },
+        {
+          new: true,
         }
       );
     }
@@ -74,6 +80,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           user_posts: [...user.user_posts, userPostId],
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -81,6 +90,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           user_posts: [userPostId],
+        },
+        {
+          new: true,
         }
       );
     }
@@ -93,6 +105,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           emergency_contacts: [...user.emergency_contacts, emergenyContactId],
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -100,6 +115,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           emergency_contacts: [emergenyContactId],
+        },
+        {
+          new: true,
         }
       );
     }
@@ -116,6 +134,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           emergency_contacts: newEmergencyContacts,
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -130,6 +151,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           addresses: [...user.addresses, addressesId],
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -137,6 +161,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           addresses: [addressesId],
+        },
+        {
+          new: true,
         }
       );
     }
@@ -153,6 +180,9 @@ class UserService extends AbstractService {
         { _id: id },
         {
           addresses: newAddresses,
+        },
+        {
+          new: true,
         }
       );
     } else {

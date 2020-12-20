@@ -3,6 +3,7 @@
 const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
+const config = require('../../utils/config');
 
 const { standardize } = require('../../utils/request');
 const {
@@ -79,16 +80,6 @@ const createUserActivity = standardize(async (req, res) => {
     user: Joi.string().required(), // user id
     activity: {
       id: Joi.string().required(), // activity id
-      activity_picture_url: Joi.string().required(),
-      actual_date: Joi.date().required(),
-      title: Joi.string().required(),
-      sub_title: Joi.string().required(),
-      location: {
-        lat: Joi.number().required(),
-        lng: Joi.number().required(),
-        province: Joi.string().required(),
-        place_name: Joi.string().required(),
-      },
       course: {
         title: Joi.string().required(),
         range: Joi.number().required(),
@@ -96,17 +87,15 @@ const createUserActivity = standardize(async (req, res) => {
         course_picture_url: Joi.string().required(),
       },
     },
-
-    shirt_detail: {
-      style: Joi.string().required(),
-      shirt_picturl_url: Joi.string().required(),
+    size: {
+      id: Joi.string().required(),
       size: Joi.string().required(),
+      description: Joi.string().required(),
     },
-    address: {
-      address: Joi.string().required(),
-      province: Joi.string().required(),
-      zip: Joi.string().required(),
-    },
+
+    address: Joi.string().required(),
+
+    emergency_contact: Joi.string().required(),
   });
 
   const userActivity = Joi.attempt({ user: req.user.id, ...req.body }, schema);
@@ -114,11 +103,15 @@ const createUserActivity = standardize(async (req, res) => {
   const newUserActivity = await UserActivityService.createUserActivity(
     userActivity
   );
-  await UserService.updateUserActivity(req.user.id, newUserActivity.id);
+  const user = await UserService.updateUserActivity(
+    req.user.id,
+    newUserActivity.id
+  );
 
   await ActivityService.updateUserActivity(
     req.body.activity.id,
-    newUserActivity.id
+    newUserActivity.id,
+    user
   );
   res.status(201).send();
 });
@@ -126,8 +119,66 @@ const getUserByJwt = standardize(async (req, res) => {
   return res.json(req.user);
 });
 
+const paymentRequest = standardize(async (req, res) => {
+  const schema = Joi.object({
+    user: Joi.string().required(), // user id
+    activity_title: Joi.string().required(),
+  });
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const data = Joi.attempt({ user: req.user.id, ...req.body }, schema);
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  try {
+    const scbRes = await axios({
+      method: 'post',
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: orderId,
+      },
+      data: {
+        applicationKey: config.scb.key,
+        applicationSecret: config.scb.secret,
+        authCode: '',
+      },
+    });
+
+    const accessToken = scbRes.data.data.accessToken;
+
+    const qrcodeRes = await axios({
+      method: 'post',
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: id,
+        authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        qrType: 'PP',
+        ppType: 'BILLERID',
+        ppId: '199101400833647',
+        amount: amount,
+        ref1: id.substring(0, 5).toUpperCase(),
+        ref2: id.substring(5).toUpperCase(),
+        ref3: data.activity_title.substring(0, 20),
+      },
+    });
+
+    return res.status(200).send(qrcodeRes.data);
+  } catch (error) {
+    console.log('error: ', error);
+  }
+});
+
 router.get('/getuserbyjwt', getUserByJwt);
 router.post('/createuseractivity', createUserActivity);
+router.post('/confirmpayment/:id', paymentRequest);
 
 // User Post
 const createUserPost = standardize(async (req, res) => {
@@ -221,9 +272,11 @@ const createAddress = standardize(async (req, res) => {
   const address = Joi.attempt({ ...req.body }, schema);
 
   const data = await AddressService.createAddress(address);
-  await UserService.updateAddress(req.user.id, data.id);
 
-  res.status(201).send();
+  res.status(201).send({
+    status: 201,
+    data: await UserService.updateAddress(req.user.id, data.id),
+  });
 });
 
 const deleteAddress = standardize(async (req, res) => {
@@ -233,11 +286,11 @@ const deleteAddress = standardize(async (req, res) => {
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
-  await UserService.deletAddress(req.user.id, id);
+  await UserService.deleteAddress(req.user.id, id);
   res.json(await AddressService.deleteAddress(id));
 });
 router.post('/createaddress', createAddress);
-router.delete('/deleteemergencycontact/:id', deleteAddress);
+router.delete('/deleteaddress/:id', deleteAddress);
 
 // Activity
 const listActivities = standardize(async (req, res) => {
@@ -284,7 +337,20 @@ const listPromoteActivities = standardize(async (req, res) => {
   });
 });
 
+const getActivityById = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await ActivityService.findById(id) });
+});
+
 router.get('/getactivities', listActivities);
+router.get('/getactivity/:id', getActivityById);
 router.get('/getpromoteactivities', listPromoteActivities);
 
 module.exports = router;

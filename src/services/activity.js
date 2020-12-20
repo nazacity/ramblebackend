@@ -113,20 +113,93 @@ class ActivityService extends AbstractService {
     }
   }
 
-  async updateUserActivity(id, userActivityId) {
+  async updateUserActivity(id, userActivityId, user) {
     const activity = await this.models.Activity.findById(id);
+
+    let newParticipantBygender;
+    if (user.gender === 'male') {
+      newParticipantBygender = {
+        participant_male_number:
+          activity.report_infomation.participant_male_number + 1,
+        participant_female_number:
+          activity.report_infomation.participant_female_number,
+      };
+    } else if (user.gender === 'male') {
+      newParticipantBygender = {
+        participant_male_number:
+          activity.report_infomation.participant_male_number,
+        participant_female_number:
+          activity.report_infomation.participant_female_number + 1,
+      };
+    }
+
+    let newAgeGroup;
+    if (user.age <= 20) {
+      newAgeGroup = {
+        age_20: activity.report_infomation.age_20 + 1,
+        age_20_30: activity.report_infomation.age_20_30,
+        age_30_40: activity.report_infomation.age_30_40,
+        age_40_50: activity.report_infomation.age_40_50,
+        age_50: activity.report_infomation.age_50,
+      };
+    } else if (user.age > 20 && user.age <= 30) {
+      newAgeGroup = {
+        age_20: activity.report_infomation.age_20,
+        age_20_30: activity.report_infomation.age_20_30 + 1,
+        age_30_40: activity.report_infomation.age_30_40,
+        age_40_50: activity.report_infomation.age_40_50,
+        age_50: activity.report_infomation.age_50,
+      };
+    } else if (user.age > 30 && user.age <= 40) {
+      newAgeGroup = {
+        age_20: activity.report_infomation.age_20,
+        age_20_30: activity.report_infomation.age_20_30,
+        age_30_40: activity.report_infomation.age_30_40 + 1,
+        age_40_50: activity.report_infomation.age_40_50,
+        age_50: activity.report_infomation.age_50,
+      };
+    } else if (user.age > 40 && user.age <= 50) {
+      newAgeGroup = {
+        age_20: activity.report_infomation.age_20,
+        age_20_30: activity.report_infomation.age_20_30,
+        age_30_40: activity.report_infomation.age_30_40,
+        age_40_50: activity.report_infomation.age_40_50 + 1,
+        age_50: activity.report_infomation.age_50,
+      };
+    } else if (user.age > 50) {
+      newAgeGroup = {
+        age_20: activity.report_infomation.age_20,
+        age_20_30: activity.report_infomation.age_20_30,
+        age_30_40: activity.report_infomation.age_30_40,
+        age_40_50: activity.report_infomation.age_40_50,
+        age_50: activity.report_infomation.age_50 + 1,
+      };
+    }
+
+    const new_report_infomation = {
+      participant_number: activity.report_infomation.participant_number + 1,
+      ...newParticipantBygender,
+      ...newAgeGroup,
+    };
+
     if (activity.user_activities) {
       return this.models.Activity.findOneAndUpdate(
         { _id: id },
         {
-          user_activities: [...activity.user_activities, userActivityId],
+          $set: {
+            user_activities: [...activity.user_activities, userActivityId],
+            report_infomation: { ...new_report_infomation },
+          },
         }
       );
     } else {
       return this.models.Activity.findOneAndUpdate(
         { _id: id },
         {
-          user_activities: [userActivityId],
+          $set: {
+            user_activities: [userActivityId],
+            report_infomation: { ...new_report_infomation },
+          },
         }
       );
     }

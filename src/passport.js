@@ -137,7 +137,13 @@ passport.use(
       const user = await User.findOne({ _id: jwt_payload.sub }, { password: 0 })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_activities' });
+        .populate({
+          path: 'user_activities',
+          populate: {
+            path: 'activity.id',
+            select: { activity_picture_url: 1, title: 1 },
+          },
+        });
 
       user.type = 'user';
       if (user) {

@@ -17,16 +17,16 @@ const user_activity = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Activity',
     },
-    activity_picture_url: { type: String },
-    actual_date: { type: Date, required: true },
-    title: { type: String, required: true },
-    sub_title: { type: String, required: true },
-    location: {
-      lat: { type: Number },
-      lng: { type: Number },
-      province: { type: String, required: true },
-      place_name: { type: String, required: true },
-    },
+    // activity_picture_url: { type: String },
+    // actual_date: { type: Date, required: true },
+    // title: { type: String, required: true },
+    // sub_title: { type: String, required: true },
+    // location: {
+    //   lat: { type: Number },
+    //   lng: { type: Number },
+    //   province: { type: String, required: true },
+    //   place_name: { type: String, required: true },
+    // },
     course: {
       title: { type: String, required: true },
       range: { type: Number, required: true },
@@ -36,30 +36,36 @@ const user_activity = new Schema({
   },
 
   contest_no: { type: Number, default: '' },
-  shirt_detail: {
-    style: { type: String, required: true },
-    shirt_picturl_url: { type: String, required: true },
+  // shirt_detail: {
+  //   style: { type: String, required: true },
+  //   shirt_picturl_url: { type: String, required: true },
+  //   size: { type: String, required: true },
+  // },
+  size: {
+    id: { type: String, required: true },
     size: { type: String, required: true },
+    description: { type: String, required: true },
   },
   address: {
-    address: { type: String, required: true },
-    province: { type: String, required: true },
-    zip: { type: String, required: true },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address',
   },
-  user_emergency_contact: {
+  emergency_contact: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'EmergencyContact',
   },
   user_record: {
-    total_time: { type: Number },
-    range: { type: Number },
-    average_time: { type: Number },
+    time_hr: { type: Number, default: 0 },
+    time_min: { type: Number, default: 0 },
+    time_second: { type: Number, default: 0 },
+    distance: { type: Number, default: 0 },
+    average: { type: Number, default: 0 },
   },
   state: {
     type: String,
     enum: userActivityStateEnum,
     required: true,
-    default: 'upcoming',
+    default: 'waiting_payment',
   },
   coupons: [
     {
