@@ -53,10 +53,11 @@ class ActivityService extends AbstractService {
     return this.models.Activity.findById(id);
   }
 
-  listPromoteActivity(filter, skip, limit) {
+  listPromoteActivity(activityIds, skip, limit) {
     return this.models.Activity.find(
       {
         state: { $in: ['registering', 'pre_register'] },
+        _id: { $nin: activityIds },
       },
       {
         user_activities: 0,

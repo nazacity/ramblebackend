@@ -81,6 +81,7 @@ const createUserActivity = standardize(async (req, res) => {
     activity: {
       id: Joi.string().required(), // activity id
       course: {
+        _id: Joi.string().required(),
         title: Joi.string().required(),
         range: Joi.number().required(),
         price: Joi.number().required(),
@@ -331,9 +332,15 @@ const listPromoteActivities = standardize(async (req, res) => {
   delete filter.skip;
   delete filter.limit;
 
+  const user = await UserService.findById(req.user.id).populate({
+    path: 'user_activities',
+  });
+
+  const activityIds = user.user_activities.map((item) => item.activity.id);
+
   res.json({
     status: 200,
-    data: await ActivityService.listPromoteActivity(filter, skip, limit),
+    data: await ActivityService.listPromoteActivity(activityIds, skip, limit),
   });
 });
 
@@ -349,8 +356,37 @@ const getActivityById = standardize(async (req, res) => {
     .send({ status: 200, data: await ActivityService.findById(id) });
 });
 
+const checkinActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await UserActivityService.updateCheckedin(id) });
+});
+
+const checkoutActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({
+      status: 200,
+      data: await UserActivityService.updateCheckedOut(id),
+    });
+});
+
 router.get('/getactivities', listActivities);
 router.get('/getactivity/:id', getActivityById);
+router.get('/checkinactivity/:id', checkinActivity);
+router.get('/checkoutactivity/:id', checkoutActivity);
 router.get('/getpromoteactivities', listPromoteActivities);
 
 module.exports = router;

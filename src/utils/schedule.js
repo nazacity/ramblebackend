@@ -2,49 +2,90 @@ const schedule = require('node-schedule');
 
 const models = require('../models');
 
-// module.exports = job = schedule.scheduleJob('1-50 * * * * *', function () {
+// module.exports = job = schedule.scheduleJob('* 59 0 * * 0-6', function () {
 //   console.log('The answer to life, the universe, and everything!');
 // });
 
 const updateActivitiesState = async () => {
-  const activities = await models.Activity.find({
-    state: 'end_register',
+  const actualDateActivities = await models.Activity.find({
+    state: 'actual_date',
     actual_date: {
-      $lt: new Date(),
-      $gt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 7 * 60 * 60),
     },
   });
 
-  activities.map(async (item) => {
+  actualDateActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
       item._id,
       {
         $set: {
-          //   state: 'actual_date',
+          state: 'finished',
         },
       },
       {
         new: true,
       }
     );
-
-    return Promise.all(
-      item.user_activities.map(async (item) => {
-        const test = await models.UserActivity.findByIdAndUpdate(
-          item,
-          {
-            $set: {
-              state: 'actual_date',
-            },
-          },
-          {
-            new: true,
-          }
-        );
-        console.log(test);
-      })
-    );
+    await updateUserActivitiesFinished(item.user_activities);
   });
+
+  const endRegisterActivities = await models.Activity.find({
+    state: 'end_register',
+    actual_date: {
+      $lt: new Date(Date.now() + 7 * 60 * 60),
+    },
+  });
+
+  endRegisterActivities.map(async (item) => {
+    await models.Activity.findByIdAndUpdate(
+      item._id,
+      {
+        $set: {
+          state: 'actual_date',
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    await updateUserActivitiesActualDate(item.user_activities);
+  });
+};
+
+const updateUserActivitiesActualDate = async (userActivities) => {
+  return Promise.all(
+    userActivities.map(async (item) => {
+      await models.UserActivity.findOneAndUpdate(
+        { _id: item, state: 'upcoming' },
+        {
+          $set: {
+            state: 'actual_date',
+          },
+        },
+        {
+          new: true,
+        }
+      );
+    })
+  );
+};
+
+const updateUserActivitiesFinished = async (userActivities) => {
+  return Promise.all(
+    userActivities.map(async (item) => {
+      await models.UserActivity.findOneAndUpdate(
+        { _id: item, state: 'actual_date' },
+        {
+          $set: {
+            state: 'not_finished',
+          },
+        },
+        {
+          new: true,
+        }
+      );
+    })
+  );
 };
 
 updateActivitiesState();

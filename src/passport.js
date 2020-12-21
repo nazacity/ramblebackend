@@ -30,7 +30,6 @@ passport.use(
   'user',
   new CustomStrategy(async function (req, done) {
     const { username, password } = req.body;
-
     if (!username || !password) {
       return done(null, false, { message: 'missing username & password' });
     }
@@ -40,7 +39,13 @@ passport.use(
       })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_activities' });
+        .populate({
+          path: 'user_activities',
+          populate: {
+            path: 'activity.id',
+            select: { activity_picture_url: 1, title: 1 },
+          },
+        });
 
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });

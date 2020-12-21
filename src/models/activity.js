@@ -130,7 +130,6 @@ const activity = new Schema({
 
   coupons: [
     {
-      id: { type: String },
       description: { type: String },
       coupon_picture_url: { type: String },
     },

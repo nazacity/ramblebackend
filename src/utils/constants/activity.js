@@ -13,7 +13,9 @@ module.exports = {
     'waiting_payment',
     'upcoming',
     'actual_date',
+    'checked_in',
     'finished',
     'cancel',
+    'not_finished',
   ],
 };

@@ -28,6 +28,7 @@ const user_activity = new Schema({
     //   place_name: { type: String, required: true },
     // },
     course: {
+      _id: { type: String, required: true },
       title: { type: String, required: true },
       range: { type: Number, required: true },
       price: { type: Number, required: true },
@@ -69,10 +70,9 @@ const user_activity = new Schema({
   },
   coupons: [
     {
-      id: { type: String },
       description: { type: String },
       coupon_picture_url: { type: String },
-      state: { type: String },
+      state: { type: Boolean, default: false },
     },
   ],
 });

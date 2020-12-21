@@ -290,19 +290,545 @@ const { ActivityService, PartnerService } = require('../services');
 //   ],
 // };
 
+// const data = {
+//   partner: '5fd5930e0cde09272c47c705',
+//   activity_picture_url:
+//     'https://ev.runlah.com/api/1/images/e-NZcb5G9wEG3-banner.jpg?size=xl',
+//   title: 'อัลตร้า-เทรล ห้วยยาง 2020',
+//   sub_title: 'จัดซื้อเตียงนอนสำหรับผู้ป่วยอัมพาตติดเตียง',
+//   description:
+//     'บ.เนเวอเรสท์ ร่วมกับ เทศบาลตำบลห้วยยาง จ.ชัยภูมิ จัดการวิ่งอัลตร้าเทรลให้นักวิ่งได้สัมผัสสายน้ำผุดที่ใสเย็น ภายใต้อ้อมกอดของขุนเขา เพื่อส่งเสริมการท่องเที่ยวและกระตุ้นเศรษฐกิจในระดับชุมชนของจังหวัดชัยภูมิ และสาธารณะกุศล รายได้หลังหักค่าใช้จ่ายเพื่อปรับปรุงห้องน้ำที่สวนรุกขชาติน้ำผุดทัพลาวและมอบให้กองทุนผู้พิทักษ์ป่า และจัดซื้อเตียงนอนสำหรับผู้ป่วยอัมพาตติดเตียง',
+//   location: {
+//     lat: 16.5442098,
+//     lng: 101.8488139,
+//     province: 'ชัยภูมิ',
+//     place_name: 'น้ำผุดทัพลาว',
+//   },
+//   actual_date: new Date('2021-4-19'),
+//   register_start_date: new Date('2020-1-10'),
+//   register_end_date: new Date('2021-2-20'),
+//   courses: [
+//     {
+//       id: '1',
+//       title: 'แฟมิลี่ ฟันรัน 3.5 กม.',
+//       range: 3.5,
+//       price: 300,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-PzXn9FMDi.jpg?size=xl',
+//     },
+//     {
+//       id: '2',
+//       title: 'ฟันรัน 5.5 กม.',
+//       range: 5.5,
+//       price: 400,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+//     },
+//     {
+//       id: '3',
+//       title: 'มินิมาราธอน 10.5 กม.',
+//       range: 10.5,
+//       price: 500,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+//     },
+//     {
+//       id: '4',
+//       title:
+//         'VIP – เสื้อวีไอพี, เหรียญวีไอพี, โล่วีไอพี, เหรียญเจ้าแก้วมงคล + ชิพจับเวลา 5.5',
+//       range: 10.5,
+//       price: 1000,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+//     },
+//     {
+//       id: '5',
+//       title:
+//         'VIP – เสื้อวีไอพี, เหรียญวีไอพี, โล่วีไอพี, เหรียญเจ้าแก้วมงคล + ชิพจับเวลา 10.5',
+//       range: 10.5,
+//       price: 1000,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+//     },
+//     {
+//       id: '6',
+//       title:
+//         'Super VIP – เสื้อคอปก ซุปเปอร์วีไอพี, เสื้อวีไอพี, ถ้วยวีไอพี, เหรียญเจ้าแก้วมงคลขนาดกลาง + ชิพจับเวลา 5.5',
+//       range: 10.5,
+//       price: 2500,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+//     },
+//     {
+//       id: '7',
+//       title:
+//         'Super VIP – เสื้อคอปก ซุปเปอร์วีไอพี, เสื้อวีไอพี, ถ้วยวีไอพี, เหรียญเจ้าแก้วมงคลขนาดกลาง + ชิพจับเวลา 10.5',
+//       range: 10.5,
+//       price: 25000,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+//     },
+//   ],
+//   gifts: [
+//     {
+//       id: '1',
+//       description: 'ถ้วยรางวัล',
+//       gift_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-FRheY-O1m.jpg?size=xl',
+//     },
+//     {
+//       id: '2',
+//       description: 'รางวัล',
+//       gift_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-czCGrMu9S.jpg?size=xl',
+//     },
+//   ],
+//   timeline: [
+//     {
+//       id: '1',
+//       time: '04:30 - 05:00',
+//       title: 'ลงทะเบียน นักวิ่ง',
+//       description: '',
+//     },
+//     {
+//       id: '2',
+//       time: '05:00 - 05:30',
+//       title: 'กิจกรรม',
+//       description:
+//         'กิจกรรม วอร์มอัพ เตรียมความพร้อม สื่อ แสง เสียง ประชาสัมพันธ์ การรับรู้ “สุวรรณภูมิ นครแห่งช้างเผือก”',
+//     },
+//     {
+//       id: '3',
+//       time: '05:30',
+//       title: 'ปล่อยตัวนักวิ่งระยะ 10.5 กม.',
+//       description: '',
+//     },
+//     {
+//       id: '4',
+//       time: '05:45',
+//       title: 'ปล่อยตัวนักวิ่ง ระยะ 5.5 กม.',
+//       description: '',
+//     },
+//     {
+//       id: '5',
+//       time: '06:00',
+//       title: 'ปล่อยตัวนักวิ่ง ระยะ 3.5 กม. *',
+//       description: '',
+//     },
+//     {
+//       id: '6',
+//       time: '08:00 - 09:30',
+//       title: 'ปิดกิจกรรม',
+//       description:
+//         'มอบรางวัลผู้ชนะการแข่งขันประเภทต่างๆ มอบเกียรติบัตรผู้สนับสนุน ทุกรายการ อื่นๆ ปิดการจัดงาน',
+//     },
+//   ],
+//   rules: [
+//     {
+//       id: '1',
+//       title: 'รางวัล Overall จำนวน 1 รางวัล (ชาย/หญิง)',
+//       detail: [
+//         {
+//           id: '1',
+//           description: 'โอเวอร์ออล อันดับที่ 1 ชาย 2,500 บาท',
+//         },
+//         {
+//           id: '2',
+//           description: 'โอเวอร์ออล อันดับที่ 1 หญิง 2,500 บาท',
+//         },
+//       ],
+//     },
+//     {
+//       id: '2',
+//       title: 'รางวัลรุ่นอายุ อันดับที่ 1 - 5 (ชาย/หญิง)',
+//       detail: [
+//         {
+//           id: '1',
+//           description: 'รุ่นอายุ อันดับที่ 1 1,000 บาท',
+//         },
+//         {
+//           id: '2',
+//           description: 'รุ่นอายุ อันดับที่ 2 800 บาท',
+//         },
+//         {
+//           id: '3',
+//           description: 'รุ่นอายุ อันดับที่ 3 600 บาท',
+//         },
+//         {
+//           id: '4',
+//           description: 'รุ่นอายุ อันดับที่ 4 400 บาท',
+//         },
+//       ],
+//     },
+//   ],
+//   more_detail: [
+//     {
+//       id: '1',
+//       description: 'สอบถามข้อมูลทั่วไป (ผู้จัดการแข่งขัน)',
+//     },
+//     { id: '2', description: 'E-Mail : Sp.sriphume@gmail.com' },
+//     { id: '3', description: 'Call : +66 (0)6 1906 4429' },
+//     {
+//       id: '1',
+//       description: 'สอบถามเกี่ยวกับการสมัคร (รันลา)',
+//     },
+//     { id: '2', description: 'Line@ : https://lin.ee/BTOwTuz' },
+//     { id: '3', description: 'Call : +66 (0)8 1818 6155' },
+//   ],
+//   shirt_detail: [
+//     {
+//       id: '1',
+//       style: 'เสื้อที่ระลึก ซุปเปอร์วีไอพี',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-I3e3i6MD1.jpg?size=xl',
+//     },
+//     {
+//       id: '2',
+//       style: 'เสื้อที่ระลึก วีไอพี',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-Cf0RUAc4z.jpg?size=xl',
+//     },
+//     {
+//       id: '3',
+//       style: 'เสื้อที่ระลึก 10.5 กิโลเมตร',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-7ID6Ce5bV.jpg?size=xl',
+//     },
+//     {
+//       id: '4',
+//       style: 'เสื้อที่ระลึก 5.5 กิโลเมตร',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-FCKXlI19x.jpg?size=xl',
+//     },
+//     {
+//       id: '5',
+//       style: 'เสื้อที่ระลึก 3.5 กิโลเมตร',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-RobmksUDl.jpg?size=xl',
+//     },
+//   ],
+//   size: [
+//     {
+//       id: '1',
+//       size: 's',
+//       description: 'รอบอก 36"',
+//     },
+//     {
+//       id: '2',
+//       size: 'm',
+//       description: 'รอบอก 38"',
+//     },
+//     {
+//       id: '3',
+//       size: 'l',
+//       description: 'รอบอก 40"',
+//     },
+//     {
+//       id: '4',
+//       size: 'xl',
+//       description: 'รอบอก 42"',
+//     },
+//   ],
+//   condition: [
+//     {
+//       id: '1',
+//       description:
+//         'ข้าพเจ้าขอรับรองว่าข้อความข้างต้นเป็นความจริง ซึ่งข้าพเจ้ามีสภาพร่างกายสมบูรณ์พร้อม และสามารถลงแข่งขันในประเภทที่ลงสมัคร และจะปฏิบัติตามกฎกติกาทุกประการโดยไม่เรียกร้องค่าเสียหายใดๆ หากเกิดอันตราย หรือบาดเจ็บ ทั้งก่อน และระหว่างแข่งขัน อีกทั้งยินดีแสดงหลักฐานพิสูจน์ตนเองต่อผู้จัด และยินยอมให้ผู้จัดถ่ายภาพเคลื่อนไหว เพื่อบันทึกการแข่งขัน และถือเป็นลิขสิทธิ์ของผู้จัด ในกรณีกิจกรรมนี้ต้องยกเลิกทั้งหมด หรือส่วนใดส่วนหนึ่ง โดยสืบเนื่องจากสาเหตุสุดวิสัยใดๆ ทางธรรมชาติ หรือภาวะอื่นใดก็ตาม',
+//     },
+//     {
+//       id: '2',
+//       description:
+//         'ข้าพเจ้าทราบ และยินยอมว่าจะไม่มีการคืนเงินค่าสมัครให้แก่ข้าพเจ้า',
+//     },
+//   ],
+//   state: 'pre_register',
+//   rules1: [
+//     {
+//       id: '1',
+//       title: 'กติกาของงานซึ่งผู้สมัครเข้าร่วมการแข่งขันต้องยอมรับและปฏิบัติตาม',
+//     },
+//     {
+//       id: '2',
+//       title: '1. กติกาของงานสอดคล้องกับกฎหมาย',
+//     },
+//     {
+//       id: '3',
+//       title:
+//         '2. นอกจากกติกาของงานแล้ว ยังประกอบด้วยกติกาการแข่งขัน และกติกาในการสมัคร',
+//     },
+//     {
+//       id: '4',
+//       title:
+//         '3. นักวิ่งผู้เข้าร่วมจะถูกปฏิบัติตามข้อควรระวังของผู้จัดงานเพื่อให้แน่ใจว่าผู้เข้าร่วมเกิดความปลอดภัย และผู้เข้าร่วมจะทำการวิ่งโดยยอมรับความเสี่ยงของตนเอง และผู้จัดงานจะไม่รับผิดชอบหรือต้องระวางโทษต่อการบาดเจ็บหรือเสียชีวิต ไม่ว่ากรณีฝึกซ้อมหรือระหว่างเข้าร่วมแข่งขัน ทั้งนี้ ผู้เข้าร่วมควรพบแพทย์หรือที่ปรึกษาทางสุขภาพก่อนทำการลงทะเบียน และก่อนวันแข่งขันจริง',
+//     },
+//     {
+//       id: '5',
+//       title:
+//         '4. ผู้จัดไม่รับผิดชอบในความเสียหายที่เกิดจากสิ่งต่อไปนี้: o (ก) ความเจ็บป่วยหรืออุบัติเหตุ (ผู้จัดจะจัดเตรียมแพทย์ พยาบาล อาสาสมัคร และเจ้าหน้าที่เพื่อช่วยเหลือในกรณีฉุกเฉิน และมีการทำประกันภัยให้แก่นักวิ่งที่เข้าร่วมทุกคน) o (ข) การสูญหายหรือเสียหายของทรัพย์สินส่วนบุคคล o (ค) การล่าช้าของการแข่งขันที่เกิดจากสิ่งที่ผู้จัดควบคุมไม่ได้',
+//     },
+//   ],
+// };
+
+// const data = {
+//   partner: '5fd5930e0cde09272c47c705',
+//   activity_picture_url:
+//     'https://ev.runlah.com/api/1/images/e-zTitlBtE98G-banner.png?size=xl',
+//   title: 'ไทยยังรัน 2021',
+//   sub_title: 'จัดซื้อเตียงนอนสำหรับผู้ป่วยอัมพาตติดเตียง',
+//   description:
+//     'จุดเริ่มต้นเล็กๆ ของ ”นักวิ่ง” ที่จะทำให้พลังของการวิ่งจากหนึ่งเป็นสิบจากสิบสู่ “นักทอผ้าขาวม้า” ที่หมู่บ้านหนองเขื่อนช้าง จังหวัดมหาสารคาม ครั้งนี้เราอยากท้านักวิ่ง มาวิ่งชนะใจตัวเองก้าวเข้าสู่ปี 2021 ด้วยเส้นชัย 21 กิโลเมตร ทำให้ได้! เพราะเส้นชัยนี้มีผ้าขาวม้าหมักโคลนที่ถักทอเป็นผ้าพันคอและผ้าคลุมไหล่ ฝีมือทอจากชุมชน ที่มีความถนัดด้านการทอผ้ามายาวนานกว่า 32 ปี (ก่อตั้งปี 2531) พร้อมกับเสื้อ 21KM FINISHER ที่ออกแบบเฉพาะตัวมีส่วนผสมของลายผ้าขาวม้าและความเป็นนัก FINISHER ด้วยระยะทาง 21 กิโลเมตร การออกไปวิ่งครั้งนี้ถือเป็นโอกาสที่จะเอาชนะใจตัวเองต้อนรับปี 2021 และเป็นการส่งต่อไปถึงชัยชนะของคนที่ทำอาชีพทอผ้าในชุมชนเล็กๆ แห่งหนึ่งในจังหวัดมหาสารคามที่ชื่อว่าหนองเขื่อนช้างอีกด้วย ขอให้การวิ่งและอาชีพของคนไทยในปี 2021 เป็นปีแห่งพลังและฝ่าฟันกับเรื่องราวต่างๆ กลับมายืนยิ้มอยู่หน้าเส้นชัยของตัวเอง เป็นความสุขที่อยากให้เกิดขึ้นอีกครั้ง 3 2 1 RUN!!!',
+//   location: {
+//     lat: 16.5442098,
+//     lng: 101.8488139,
+//     province: 'ชัยภูมิ',
+//     place_name: 'น้ำผุดทัพลาว',
+//   },
+//   actual_date: new Date('2021-4-19'),
+//   register_start_date: new Date('2020-1-10'),
+//   register_end_date: new Date('2021-2-20'),
+//   courses: [
+//     {
+//       id: '1',
+//       title: 'PACKAGE A : เสื้อที่ระลึก + CERTIFICATE',
+//       range: 21,
+//       price: 299,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-PzXn9FMDi.jpg?size=xl',
+//     },
+//     {
+//       id: '2',
+//       title: 'PACKAGE B : ผ้าพันคอหมักโคลน + CERTIFICATE',
+//       range: 21,
+//       price: 299,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+//     },
+//     {
+//       id: '3',
+//       title: 'PACKAGE C : ผ้าพันคอหมักโคลน + เสื้อที่ระลึก + CERTIFICATE',
+//       range: 21,
+//       price: 399,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+//     },
+//     {
+//       id: '4',
+//       title: 'PACKAGE D : ผ้าคลุมไหล่หมักโคลน + CERTIFICATE',
+//       range: 21,
+//       price: 599,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+//     },
+//     {
+//       id: '5',
+//       title: 'PACKAGE E : ผ้าคลุมไหล่หมักโคลน + เสื้อที่ระลึก + CERTIFICATE',
+//       range: 21,
+//       price: 699,
+//       course_picture_url:
+//         'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+//     },
+//   ],
+//   gifts: [
+//     {
+//       id: '1',
+//       description: 'ถ้วยรางวัล',
+//       gift_picture_url:
+//         'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-VJbYBIkPj.png?size=xl',
+//     },
+//     {
+//       id: '2',
+//       description: 'รางวัล',
+//       gift_picture_url:
+//         'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-eqjsWUaQ.png?size=xl',
+//     },
+//   ],
+//   timeline: [
+//     {
+//       id: '1',
+//       time: '04:30 - 05:00',
+//       title: 'ลงทะเบียน นักวิ่ง',
+//       description: '',
+//     },
+//     {
+//       id: '2',
+//       time: '05:00 - 05:30',
+//       title: 'กิจกรรม',
+//       description:
+//         'กิจกรรม วอร์มอัพ เตรียมความพร้อม สื่อ แสง เสียง ประชาสัมพันธ์ การรับรู้ “สุวรรณภูมิ นครแห่งช้างเผือก”',
+//     },
+//     {
+//       id: '3',
+//       time: '05:30',
+//       title: 'ปล่อยตัวนักวิ่งระยะ 10.5 กม.',
+//       description: '',
+//     },
+//     {
+//       id: '4',
+//       time: '05:45',
+//       title: 'ปล่อยตัวนักวิ่ง ระยะ 5.5 กม.',
+//       description: '',
+//     },
+//     {
+//       id: '5',
+//       time: '06:00',
+//       title: 'ปล่อยตัวนักวิ่ง ระยะ 3.5 กม. *',
+//       description: '',
+//     },
+//     {
+//       id: '6',
+//       time: '08:00 - 09:30',
+//       title: 'ปิดกิจกรรม',
+//       description:
+//         'มอบรางวัลผู้ชนะการแข่งขันประเภทต่างๆ มอบเกียรติบัตรผู้สนับสนุน ทุกรายการ อื่นๆ ปิดการจัดงาน',
+//     },
+//   ],
+//   rules: [
+//     {
+//       id: '1',
+//       title: 'รางวัล Overall จำนวน 1 รางวัล (ชาย/หญิง)',
+//       detail: [
+//         {
+//           id: '1',
+//           description: 'โอเวอร์ออล อันดับที่ 1 ชาย 2,500 บาท',
+//         },
+//         {
+//           id: '2',
+//           description: 'โอเวอร์ออล อันดับที่ 1 หญิง 2,500 บาท',
+//         },
+//       ],
+//     },
+//     {
+//       id: '2',
+//       title: 'รางวัลรุ่นอายุ อันดับที่ 1 - 5 (ชาย/หญิง)',
+//       detail: [
+//         {
+//           id: '1',
+//           description: 'รุ่นอายุ อันดับที่ 1 1,000 บาท',
+//         },
+//         {
+//           id: '2',
+//           description: 'รุ่นอายุ อันดับที่ 2 800 บาท',
+//         },
+//         {
+//           id: '3',
+//           description: 'รุ่นอายุ อันดับที่ 3 600 บาท',
+//         },
+//         {
+//           id: '4',
+//           description: 'รุ่นอายุ อันดับที่ 4 400 บาท',
+//         },
+//       ],
+//     },
+//   ],
+//   more_detail: [
+//     {
+//       id: '1',
+//       description: 'สอบถามข้อมูลทั่วไป (ผู้จัดการแข่งขัน)',
+//     },
+//     { id: '2', description: 'E-Mail : Sp.sriphume@gmail.com' },
+//     { id: '3', description: 'Call : +66 (0)6 1906 4429' },
+//     {
+//       id: '1',
+//       description: 'สอบถามเกี่ยวกับการสมัคร (รันลา)',
+//     },
+//     { id: '2', description: 'Line@ : https://lin.ee/BTOwTuz' },
+//     { id: '3', description: 'Call : +66 (0)8 1818 6155' },
+//   ],
+//   shirt_detail: [
+//     {
+//       id: '1',
+//       style: 'เสื้อที่ระลึก ซุปเปอร์วีไอพี',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-z9hbT56fo.png?size=xl',
+//     },
+//     {
+//       id: '2',
+//       style: 'เสื้อที่ระลึก วีไอพี',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-AikmkzTcs.jpg?size=xl',
+//     },
+//     {
+//       id: '3',
+//       style: 'เสื้อที่ระลึก 10.5 กิโลเมตร',
+//       shirt_picturl_url:
+//         'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-qVmRJ6CF5.jpg?size=xl',
+//     },
+//   ],
+//   size: [
+//     {
+//       id: '1',
+//       size: 's',
+//       description: 'รอบอก 36"',
+//     },
+//     {
+//       id: '2',
+//       size: 'm',
+//       description: 'รอบอก 38"',
+//     },
+//     {
+//       id: '3',
+//       size: 'l',
+//       description: 'รอบอก 40"',
+//     },
+//     {
+//       id: '4',
+//       size: 'xl',
+//       description: 'รอบอก 42"',
+//     },
+//   ],
+//   condition: [
+//     {
+//       id: '1',
+//       description:
+//         'ข้าพเจ้าขอรับรองว่าข้อความข้างต้นเป็นความจริง ซึ่งข้าพเจ้ามีสภาพร่างกายสมบูรณ์พร้อม และสามารถลงแข่งขันในประเภทที่ลงสมัคร และจะปฏิบัติตามกฎกติกาทุกประการโดยไม่เรียกร้องค่าเสียหายใดๆ หากเกิดอันตราย หรือบาดเจ็บ ทั้งก่อน และระหว่างแข่งขัน อีกทั้งยินดีแสดงหลักฐานพิสูจน์ตนเองต่อผู้จัด และยินยอมให้ผู้จัดถ่ายภาพเคลื่อนไหว เพื่อบันทึกการแข่งขัน และถือเป็นลิขสิทธิ์ของผู้จัด ในกรณีกิจกรรมนี้ต้องยกเลิกทั้งหมด หรือส่วนใดส่วนหนึ่ง โดยสืบเนื่องจากสาเหตุสุดวิสัยใดๆ ทางธรรมชาติ หรือภาวะอื่นใดก็ตาม',
+//     },
+//     {
+//       id: '2',
+//       description:
+//         'ข้าพเจ้าทราบ และยินยอมว่าจะไม่มีการคืนเงินค่าสมัครให้แก่ข้าพเจ้า',
+//     },
+//   ],
+//   state: 'pre_register',
+//   rules1: [
+//     {
+//       id: '1',
+//       title: 'กติกาของงานซึ่งผู้สมัครเข้าร่วมการแข่งขันต้องยอมรับและปฏิบัติตาม',
+//     },
+//     {
+//       id: '2',
+//       title: '1. กติกาของงานสอดคล้องกับกฎหมาย',
+//     },
+//     {
+//       id: '3',
+//       title:
+//         '2. นอกจากกติกาของงานแล้ว ยังประกอบด้วยกติกาการแข่งขัน และกติกาในการสมัคร',
+//     },
+//     {
+//       id: '4',
+//       title:
+//         '3. นักวิ่งผู้เข้าร่วมจะถูกปฏิบัติตามข้อควรระวังของผู้จัดงานเพื่อให้แน่ใจว่าผู้เข้าร่วมเกิดความปลอดภัย และผู้เข้าร่วมจะทำการวิ่งโดยยอมรับความเสี่ยงของตนเอง และผู้จัดงานจะไม่รับผิดชอบหรือต้องระวางโทษต่อการบาดเจ็บหรือเสียชีวิต ไม่ว่ากรณีฝึกซ้อมหรือระหว่างเข้าร่วมแข่งขัน ทั้งนี้ ผู้เข้าร่วมควรพบแพทย์หรือที่ปรึกษาทางสุขภาพก่อนทำการลงทะเบียน และก่อนวันแข่งขันจริง',
+//     },
+//     {
+//       id: '5',
+//       title:
+//         '4. ผู้จัดไม่รับผิดชอบในความเสียหายที่เกิดจากสิ่งต่อไปนี้: o (ก) ความเจ็บป่วยหรืออุบัติเหตุ (ผู้จัดจะจัดเตรียมแพทย์ พยาบาล อาสาสมัคร และเจ้าหน้าที่เพื่อช่วยเหลือในกรณีฉุกเฉิน และมีการทำประกันภัยให้แก่นักวิ่งที่เข้าร่วมทุกคน) o (ข) การสูญหายหรือเสียหายของทรัพย์สินส่วนบุคคล o (ค) การล่าช้าของการแข่งขันที่เกิดจากสิ่งที่ผู้จัดควบคุมไม่ได้',
+//     },
+//   ],
+// };
+
 const data = {
   partner: '5fd5930e0cde09272c47c705',
   activity_picture_url:
-    'https://ev.runlah.com/api/1/images/e-NZcb5G9wEG3-banner.jpg?size=xl',
-  title: 'อัลตร้า-เทรล ห้วยยาง 2020',
+    'https://ev.runlah.com/api/1/images/e-hvPBgbwj-ew-banner.jpg?size=xl',
+  title: 'ศรีสะเกษ มินิ-ฮาล์ฟมาราธอน',
   sub_title: 'จัดซื้อเตียงนอนสำหรับผู้ป่วยอัมพาตติดเตียง',
   description:
-    'บ.เนเวอเรสท์ ร่วมกับ เทศบาลตำบลห้วยยาง จ.ชัยภูมิ จัดการวิ่งอัลตร้าเทรลให้นักวิ่งได้สัมผัสสายน้ำผุดที่ใสเย็น ภายใต้อ้อมกอดของขุนเขา เพื่อส่งเสริมการท่องเที่ยวและกระตุ้นเศรษฐกิจในระดับชุมชนของจังหวัดชัยภูมิ และสาธารณะกุศล รายได้หลังหักค่าใช้จ่ายเพื่อปรับปรุงห้องน้ำที่สวนรุกขชาติน้ำผุดทัพลาวและมอบให้กองทุนผู้พิทักษ์ป่า และจัดซื้อเตียงนอนสำหรับผู้ป่วยอัมพาตติดเตียง',
+    'จุดเริ่มต้นเล็กๆ ของ ”นักวิ่ง” ที่จะทำให้พลังของการวิ่งจากหนึ่งเป็นสิบจากสิบสู่ “นักทอผ้าขาวม้า” ที่หมู่บ้านหนองเขื่อนช้าง จังหวัดมหาสารคาม ครั้งนี้เราอยากท้านักวิ่ง มาวิ่งชนะใจตัวเองก้าวเข้าสู่ปี 2021 ด้วยเส้นชัย 21 กิโลเมตร ทำให้ได้! เพราะเส้นชัยนี้มีผ้าขาวม้าหมักโคลนที่ถักทอเป็นผ้าพันคอและผ้าคลุมไหล่ ฝีมือทอจากชุมชน ที่มีความถนัดด้านการทอผ้ามายาวนานกว่า 32 ปี (ก่อตั้งปี 2531) พร้อมกับเสื้อ 21KM FINISHER ที่ออกแบบเฉพาะตัวมีส่วนผสมของลายผ้าขาวม้าและความเป็นนัก FINISHER ด้วยระยะทาง 21 กิโลเมตร การออกไปวิ่งครั้งนี้ถือเป็นโอกาสที่จะเอาชนะใจตัวเองต้อนรับปี 2021 และเป็นการส่งต่อไปถึงชัยชนะของคนที่ทำอาชีพทอผ้าในชุมชนเล็กๆ แห่งหนึ่งในจังหวัดมหาสารคามที่ชื่อว่าหนองเขื่อนช้างอีกด้วย ขอให้การวิ่งและอาชีพของคนไทยในปี 2021 เป็นปีแห่งพลังและฝ่าฟันกับเรื่องราวต่างๆ กลับมายืนยิ้มอยู่หน้าเส้นชัยของตัวเอง เป็นความสุขที่อยากให้เกิดขึ้นอีกครั้ง 3 2 1 RUN!!!',
   location: {
-    lat: 16.5442098,
-    lng: 101.8488139,
-    province: 'ชัยภูมิ',
-    place_name: 'น้ำผุดทัพลาว',
+    lat: 15.0919622,
+    lng: 104.3285916,
+    province: 'ศรีสะเกษ',
+    place_name: 'เกาะห้วยน้ำคำ',
   },
   actual_date: new Date('2021-4-19'),
   register_start_date: new Date('2020-1-10'),
@@ -310,63 +836,27 @@ const data = {
   courses: [
     {
       id: '1',
-      title: 'แฟมิลี่ ฟันรัน 3.5 กม.',
-      range: 3.5,
-      price: 300,
+      title: 'วีไอพี : 4 กิโลเมตร',
+      range: 4,
+      price: 1000,
       course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-PzXn9FMDi.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-Y9NTdAuUY.jpg?size=xl',
     },
     {
       id: '2',
-      title: 'ฟันรัน 5.5 กม.',
-      range: 5.5,
-      price: 400,
+      title: 'วีไอพี : 10.1 กิโลเมตร',
+      range: 10.1,
+      price: 1000,
       course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-AOQKJSFGa.jpg?size=xl',
     },
     {
       id: '3',
-      title: 'มินิมาราธอน 10.5 กม.',
-      range: 10.5,
-      price: 500,
-      course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
-    },
-    {
-      id: '4',
-      title:
-        'VIP – เสื้อวีไอพี, เหรียญวีไอพี, โล่วีไอพี, เหรียญเจ้าแก้วมงคล + ชิพจับเวลา 5.5',
-      range: 10.5,
+      title: 'วีไอพี : 21.1 กิโลเมตร',
+      range: 21.1,
       price: 1000,
       course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
-    },
-    {
-      id: '5',
-      title:
-        'VIP – เสื้อวีไอพี, เหรียญวีไอพี, โล่วีไอพี, เหรียญเจ้าแก้วมงคล + ชิพจับเวลา 10.5',
-      range: 10.5,
-      price: 1000,
-      course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
-    },
-    {
-      id: '6',
-      title:
-        'Super VIP – เสื้อคอปก ซุปเปอร์วีไอพี, เสื้อวีไอพี, ถ้วยวีไอพี, เหรียญเจ้าแก้วมงคลขนาดกลาง + ชิพจับเวลา 5.5',
-      range: 10.5,
-      price: 2500,
-      course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-_iUTyf5Cd.jpg?size=xl',
-    },
-    {
-      id: '7',
-      title:
-        'Super VIP – เสื้อคอปก ซุปเปอร์วีไอพี, เสื้อวีไอพี, ถ้วยวีไอพี, เหรียญเจ้าแก้วมงคลขนาดกลาง + ชิพจับเวลา 10.5',
-      range: 10.5,
-      price: 25000,
-      course_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-O4LETDc5i.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-_7p3gAGBQ.jpg?size=xl',
     },
   ],
   gifts: [
@@ -374,13 +864,13 @@ const data = {
       id: '1',
       description: 'ถ้วยรางวัล',
       gift_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-FRheY-O1m.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-JL6EsOs4r.jpg?size=xl',
     },
     {
       id: '2',
       description: 'รางวัล',
       gift_picture_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-czCGrMu9S.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-_eTKJ3NrD.jpg?size=xl',
     },
   ],
   timeline: [
@@ -478,33 +968,27 @@ const data = {
   shirt_detail: [
     {
       id: '1',
-      style: 'เสื้อที่ระลึก ซุปเปอร์วีไอพี',
+      style: 'อุปกรณ์การแข่งขัน สำหรับ วีไอพี',
       shirt_picturl_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-I3e3i6MD1.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-zTitlBtE98G-z9hbT56fo.png?size=xl',
     },
     {
       id: '2',
-      style: 'เสื้อที่ระลึก วีไอพี',
+      style: 'อุปกรณ์การแข่งขัน ระยะ 21.1 กิโลเมตร',
       shirt_picturl_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-Cf0RUAc4z.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-uB0VXZ1xY.jpg?size=xl',
     },
     {
       id: '3',
-      style: 'เสื้อที่ระลึก 10.5 กิโลเมตร',
+      style: 'อุปกรณ์การแข่งขัน ระยะ 10.1 กิโลเมตร',
       shirt_picturl_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-7ID6Ce5bV.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-QwAmvI9T9.jpg?size=xl',
     },
     {
       id: '4',
-      style: 'เสื้อที่ระลึก 5.5 กิโลเมตร',
+      style: 'อุปกรณ์การแข่งขัน ระยะ 4 กิโลเมตร',
       shirt_picturl_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-FCKXlI19x.jpg?size=xl',
-    },
-    {
-      id: '5',
-      style: 'เสื้อที่ระลึก 3.5 กิโลเมตร',
-      shirt_picturl_url:
-        'https://ev.runlah.com/api/1/images/st--CeYGXmCR1jE-RobmksUDl.jpg?size=xl',
+        'https://ev.runlah.com/api/1/images/st-lQ0ADSIGrH5-mfKc0vdDg.jpg?size=xl',
     },
   ],
   size: [
