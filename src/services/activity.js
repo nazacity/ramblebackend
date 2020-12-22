@@ -205,6 +205,8 @@ class ActivityService extends AbstractService {
       );
     }
   }
+
+  async createCoupons(id, data) {}
 }
 
 module.exports = ActivityService;

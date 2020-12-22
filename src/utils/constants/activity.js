@@ -17,5 +17,6 @@ module.exports = {
     'finished',
     'cancel',
     'not_finished',
+    'history',
   ],
 };

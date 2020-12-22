@@ -125,6 +125,13 @@ const editActivity = standardize(async (req, res) => {
         description: Joi.string().required(),
       }),
     });
+  } else if (req.body.type === 'coupons') {
+    schema = Joi.object({
+      coupons: Joi.array().items({
+        description: Joi.string().required(),
+        coupon_picture_url: Joi.string().required(),
+      }),
+    });
   }
 
   const paramSchema = Joi.object({

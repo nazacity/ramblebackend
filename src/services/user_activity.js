@@ -49,8 +49,50 @@ class UserActivityService extends AbstractService {
       { _id: id },
       {
         $set: data,
+      },
+      {
+        new: true,
       }
     );
+  }
+
+  async useCoupon(id, couponId) {
+    const user_activity = await this.models.UserActivity.findById(id);
+
+    const coupons = user_activity.coupons.map((item) => {
+      if (item._id.toString() === couponId) {
+        item.state = true;
+        return item;
+      }
+      return item;
+    });
+
+    if (coupons.every((item) => item.state)) {
+      return this.models.UserActivity.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            coupons: coupons,
+            state: 'history',
+          },
+        },
+        {
+          new: true,
+        }
+      ).populate({ path: 'activity.id' });
+    } else {
+      return this.models.UserActivity.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            coupons: coupons,
+          },
+        },
+        {
+          new: true,
+        }
+      ).populate({ path: 'activity.id' });
+    }
   }
 }
 

@@ -375,18 +375,36 @@ const checkoutActivity = standardize(async (req, res) => {
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
-  res
-    .status(200)
-    .send({
-      status: 200,
-      data: await UserActivityService.updateCheckedOut(id),
-    });
+  res.status(200).send({
+    status: 200,
+    data: await UserActivityService.updateCheckedOut(id),
+  });
+});
+
+const useCoupon = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    couponId: Joi.string().required(),
+  });
+
+  const { couponId } = Joi.attempt({ ...req.body }, schema);
+
+  res.status(200).send({
+    status: 200,
+    data: await UserActivityService.useCoupon(id, couponId),
+  });
 });
 
 router.get('/getactivities', listActivities);
 router.get('/getactivity/:id', getActivityById);
 router.get('/checkinactivity/:id', checkinActivity);
 router.get('/checkoutactivity/:id', checkoutActivity);
+router.post('/usecoupon/:id', useCoupon);
 router.get('/getpromoteactivities', listPromoteActivities);
 
 module.exports = router;
