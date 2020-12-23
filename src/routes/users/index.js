@@ -4,6 +4,7 @@ const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
 const config = require('../../utils/config');
+const axios = require('axios');
 
 const { standardize } = require('../../utils/request');
 const {
@@ -70,8 +71,24 @@ const editUser = standardize(async (req, res) => {
   res.json(await UserService.edit(id, user));
 });
 
+const updateDeviceToken = async (req, res) => {
+  const schema = Joi.object({
+    user: Joi.string().required(),
+    device_token: Joi.string().required(),
+    platform: Joi.string().required(),
+  });
+
+  const { device_token, user, platform } = Joi.attempt(
+    { user: req.user.id, ...req.body },
+    schema
+  );
+  await UserService.updateDeviceToken(user, device_token, platform);
+  res.status(200).json();
+};
+
 router.get('/getusers', listUsers);
 router.post('/createuser', createUser);
+router.post('/updatedevicetoken', updateDeviceToken);
 router.post('/edituser/:id', editUser);
 
 // User Activity
@@ -114,22 +131,22 @@ const createUserActivity = standardize(async (req, res) => {
     newUserActivity.id,
     user
   );
-  res.status(201).send();
+  res.status(201).send({ id: newUserActivity.id });
 });
 const getUserByJwt = standardize(async (req, res) => {
   return res.json(req.user);
 });
 
-const paymentRequest = standardize(async (req, res) => {
+const requestPayment = standardize(async (req, res) => {
   const schema = Joi.object({
-    user: Joi.string().required(), // user id
+    amount: Joi.number().required(),
     activity_title: Joi.string().required(),
   });
   const paramSchema = Joi.object({
     id: Joi.string().required(),
   });
 
-  const data = Joi.attempt({ user: req.user.id, ...req.body }, schema);
+  const { amount, activity_title } = Joi.attempt(req.body, schema);
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
@@ -140,12 +157,11 @@ const paymentRequest = standardize(async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
-        requestUId: orderId,
+        requestUId: 'testestes',
       },
       data: {
         applicationKey: config.scb.key,
         applicationSecret: config.scb.secret,
-        authCode: '',
       },
     });
 
@@ -157,17 +173,17 @@ const paymentRequest = standardize(async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
-        requestUId: id,
+        requestUId: 'testestes',
         authorization: `Bearer ${accessToken}`,
       },
       data: {
         qrType: 'PP',
         ppType: 'BILLERID',
-        ppId: '199101400833647',
-        amount: amount,
-        ref1: id.substring(0, 5).toUpperCase(),
-        ref2: id.substring(5).toUpperCase(),
-        ref3: data.activity_title.substring(0, 20),
+        ppId: '041031474109502',
+        amount: `${amount.toFixed(2)}`,
+        ref1: id.substring(0, 10).toUpperCase(),
+        ref2: id.substring(10).toUpperCase(),
+        ref3: 'RAMBLEPAYMENT',
       },
     });
 
@@ -179,7 +195,7 @@ const paymentRequest = standardize(async (req, res) => {
 
 router.get('/getuserbyjwt', getUserByJwt);
 router.post('/createuseractivity', createUserActivity);
-router.post('/confirmpayment/:id', paymentRequest);
+router.post('/requestpayment/:id', requestPayment);
 
 // User Post
 const createUserPost = standardize(async (req, res) => {

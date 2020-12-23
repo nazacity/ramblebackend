@@ -29,6 +29,9 @@ const createServer = async () => {
   await waitForDBConnection;
   console.info('Server Initialized!');
 
+  // Everyone
+  app.use('/api/everyone', require('./routes/everyone'));
+
   // User Routes
   app.use(
     '/users/login',

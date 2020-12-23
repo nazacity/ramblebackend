@@ -26,6 +26,8 @@ const user = new Schema({
   id_card_no: { type: String, required: true },
   user_picture_url: { type: String, required: true },
   user_background_picture_url: { type: String },
+  device_token: { type: String },
+  platform: { type: String },
 
   state: { type: String, enum: user_state, required: true, default: 'active' },
 

@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const userPostStateEnum = require('../utils/constants/activity').user_post;
 
 const user_post = new Schema({
   form_team: { type: Boolean, required: true },
@@ -20,6 +21,14 @@ const user_post = new Schema({
   },
   description: { type: String, require: true },
   province: { type: String, require: true },
+  createdAt: { type: Date, default: new Date() },
+  updatedAt: { type: Date, default: new Date() },
+  state: {
+    type: String,
+    enum: userPostStateEnum,
+    required: true,
+    default: 'finding',
+  },
 });
 
 const User_Post = mongoose.model('User_Post', user_post);

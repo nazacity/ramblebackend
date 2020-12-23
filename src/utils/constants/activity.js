@@ -19,4 +19,5 @@ module.exports = {
     'not_finished',
     'history',
   ],
+  user_post: ['finding', 'closing'],
 };

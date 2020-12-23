@@ -75,6 +75,11 @@ const user_activity = new Schema({
       state: { type: Boolean, default: false },
     },
   ],
+  transaction: {
+    id: { type: String },
+    sendingBank: { type: String },
+    payDate: { type: Date },
+  },
 });
 
 const User_Activity = mongoose.model('User_Activity', user_activity);
