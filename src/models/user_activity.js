@@ -36,6 +36,11 @@ const user_activity = new Schema({
     },
   },
 
+  user_post: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserPost',
+  },
+
   contest_no: { type: Number, default: '' },
   // shirt_detail: {
   //   style: { type: String, required: true },

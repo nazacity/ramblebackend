@@ -4,9 +4,16 @@ const router = express.Router();
 const config = require('../../utils/config');
 const axios = require('axios');
 const model = require('../../models');
+const {
+  UserService,
+  UserActivityService,
+  ActivityService,
+  UserPostService,
+  EmergencyContactService,
+  AddressService,
+} = require('../../services');
 
 const confirmPayment = async (req, res) => {
-  console.log(req.body);
   const userActivity = await model.UserActivity.findByIdAndUpdate(
     req.body.billPaymentRef1.toLowerCase() +
       req.body.billPaymentRef2.toLowerCase(),
@@ -53,5 +60,34 @@ const confirmPayment = async (req, res) => {
 };
 
 router.post('/confirmpayment', confirmPayment);
+
+// Activity
+const listActivities = async (req, res) => {
+  const schema = Joi.object({
+    title: Joi.string(),
+
+    region: Joi.string(),
+    province: Joi.string(),
+
+    from: Joi.date(),
+    to: Joi.date().greater(Joi.ref('from')),
+
+    range_min: Joi.number(),
+    range_max: Joi.number().greater(Joi.ref('range_min')),
+
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(5),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  res.json(await ActivityService.listActivity(filter, skip, limit));
+};
+
+router.get('/getactivities', listActivities);
 
 module.exports = router;

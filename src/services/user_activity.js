@@ -40,6 +40,14 @@ class UserActivityService extends AbstractService {
     });
   }
 
+  async updateUserPost(id, newUserPostId) {
+    return this.models.UserActivity.findByIdAndUpdate(id, {
+      $set: {
+        user_post: newUserPostId,
+      },
+    });
+  }
+
   async createUserActivity(data) {
     return this.models.UserActivity.create(data);
   }

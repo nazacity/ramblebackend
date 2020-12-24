@@ -75,14 +75,14 @@ const updateDeviceToken = async (req, res) => {
   const schema = Joi.object({
     user: Joi.string().required(),
     device_token: Joi.string().required(),
-    platform: Joi.string().required(),
+    // platform: Joi.string().required(),
   });
 
-  const { device_token, user, platform } = Joi.attempt(
+  const { device_token, user } = Joi.attempt(
     { user: req.user.id, ...req.body },
     schema
   );
-  await UserService.updateDeviceToken(user, device_token, platform);
+  await UserService.updateDeviceToken(user, device_token);
   res.status(200).json();
 };
 
@@ -209,13 +209,18 @@ const createUserPost = standardize(async (req, res) => {
     activity: Joi.string().required(),
     user: Joi.string().required(),
     description: Joi.string().required(),
-    province: Joi.string().required(),
+    province: Joi.string(),
+    user_activity_id: Joi.string().required(),
   });
 
   const userPost = Joi.attempt({ user: req.user.id, ...req.body }, schema);
 
   const newUserPost = await UserPostService.createUserPost(userPost);
   await UserService.updateUserPost(req.user.id, newUserPost.id);
+  await UserActivityService.updateUserPost(
+    userPost.user_activity_id,
+    newUserPost.id
+  );
 
   res.status(201).send();
 });
@@ -310,7 +315,7 @@ router.post('/createaddress', createAddress);
 router.delete('/deleteaddress/:id', deleteAddress);
 
 // Activity
-const listActivities = standardize(async (req, res) => {
+const userListActivities = standardize(async (req, res) => {
   const schema = Joi.object({
     title: Joi.string(),
 
@@ -328,13 +333,30 @@ const listActivities = standardize(async (req, res) => {
   });
 
   const filter = Joi.attempt(req.query, schema);
+
   const { skip, limit } = filter;
 
   delete filter.skip;
   delete filter.limit;
 
-  res.json(await ActivityService.listActivity(filter, skip, limit));
+  const user = await UserService.findById(req.user.id).populate({
+    path: 'user_activities',
+  });
+
+  const activityIds = user.user_activities.map((item) => item.activity.id);
+
+  res.json({
+    status: 200,
+    data: await ActivityService.userListActivities(
+      activityIds,
+      filter,
+      skip,
+      limit
+    ),
+  });
 });
+
+router.get('/getactivities', userListActivities);
 
 const listPromoteActivities = standardize(async (req, res) => {
   const schema = Joi.object({
@@ -416,7 +438,6 @@ const useCoupon = standardize(async (req, res) => {
   });
 });
 
-router.get('/getactivities', listActivities);
 router.get('/getactivity/:id', getActivityById);
 router.get('/checkinactivity/:id', checkinActivity);
 router.get('/checkoutactivity/:id', checkoutActivity);
