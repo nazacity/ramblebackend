@@ -27,6 +27,14 @@ class UserService extends AbstractService {
     return this.models.User.findById(id, { password: 0 });
   }
 
+  async updateDeviceToken(id, device_token) {
+    return this.models.User.findByIdAndUpdate(id, {
+      $set: {
+        device_token: device_token,
+      },
+    });
+  }
+
   async _preProcessedUser(data) {
     data.username = data.username.toLowerCase();
     data.password = await this.hashPassword(data.password);

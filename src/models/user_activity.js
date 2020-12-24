@@ -36,6 +36,11 @@ const user_activity = new Schema({
     },
   },
 
+  user_post: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserPost',
+  },
+
   contest_no: { type: Number, default: '' },
   // shirt_detail: {
   //   style: { type: String, required: true },
@@ -75,6 +80,11 @@ const user_activity = new Schema({
       state: { type: Boolean, default: false },
     },
   ],
+  transaction: {
+    id: { type: String },
+    sendingBank: { type: String },
+    payDate: { type: Date },
+  },
 });
 
 const User_Activity = mongoose.model('User_Activity', user_activity);

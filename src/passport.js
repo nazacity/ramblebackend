@@ -40,10 +40,17 @@ passport.use(
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
         .populate({
+          path: 'user_posts',
+          populate: {
+            path: 'activity',
+            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+          },
+        })
+        .populate({
           path: 'user_activities',
           populate: {
             path: 'activity.id',
-            select: { activity_picture_url: 1, title: 1 },
+            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
           },
         });
 
@@ -143,10 +150,17 @@ passport.use(
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
         .populate({
+          path: 'user_posts',
+          populate: {
+            path: 'activity',
+            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+          },
+        })
+        .populate({
           path: 'user_activities',
           populate: {
             path: 'activity.id',
-            select: { activity_picture_url: 1, title: 1 },
+            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
           },
         });
 
