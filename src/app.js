@@ -12,7 +12,7 @@ const cors = require('cors');
 const passport = require('./passport');
 const config = require('./utils/config');
 const { waitForDBConnection } = require('./utils/mongo');
-// const { job } = require('./utils/schedule');
+require('./utils/schedule');
 
 require('./models');
 const app = express();

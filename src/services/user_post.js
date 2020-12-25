@@ -3,16 +3,27 @@
 const AbstractService = require('./abstract');
 
 class UserPostService extends AbstractService {
-  listUserPosts(filter, skip, limit) {
+  listFilteredUserPosts(filter, skip, limit, user_post_ids) {
     return this.models.UserPost.find({
+      _id: { $nin: user_post_ids },
       form_team: filter.form_team ? true : { $ne: null },
       share_accommodation: filter.share_accommodation ? true : { $ne: null },
-      share_transportaion: filter.share_transportaion ? true : { $ne: null },
+      share_transportation: filter.share_transportation ? true : { $ne: null },
       share_trip: filter.share_trip ? true : { $ne: null },
       male: filter.male ? true : { $ne: null },
       female: filter.female ? true : { $ne: null },
       activity: filter.activity ? filter.activity : { $ne: null },
-      province: filter.province ? filter.province : { $ne: null },
+      state: 'finding',
+    })
+      .skip(skip)
+      .limit(limit);
+  }
+
+  listUserPostsByActivity(filter, skip, limit, user_post_ids) {
+    return this.models.UserPost.find({
+      _id: { $nin: user_post_ids },
+      state: 'finding',
+      activity: filter.activity,
     })
       .skip(skip)
       .limit(limit);
