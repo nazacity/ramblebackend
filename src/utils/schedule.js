@@ -3,8 +3,18 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-// module.exports = job = schedule.scheduleJob('* 59 0 * * 0-6', function () {
-//   console.log('The answer to life, the universe, and everything!');
+module.exports = job = schedule.scheduleJob('* 59 0 * * 0-6', async () => {
+  console.log(new Date());
+  await updateActivitiesState();
+  await sendNotification14DaysBefore();
+  await sendNotification7DaysBefore();
+});
+
+// module.exports = test = schedule.scheduleJob('1-59 * * * * *', async () => {
+//   console.log(new Date());
+//   // await updateActivitiesState();
+//   // await sendNotification14DaysBefore();
+//   // await sendNotification7DaysBefore();
 // });
 
 const updateActivitiesState = async () => {
@@ -88,8 +98,6 @@ const updateUserActivitiesFinished = async (userActivities) => {
     })
   );
 };
-
-// updateActivitiesState();
 
 const sendNotification14DaysBefore = async () => {
   const upcoming14DaysActivities = await models.Activity.find({
@@ -235,6 +243,3 @@ const sendNotification7DaysBefore = async () => {
     }
   });
 };
-
-// sendNotification14DaysBefore();
-sendNotification7DaysBefore();

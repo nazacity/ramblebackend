@@ -43,14 +43,24 @@ passport.use(
           path: 'user_posts',
           populate: {
             path: 'activity',
-            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
           },
         })
         .populate({
           path: 'user_activities',
           populate: {
             path: 'activity.id',
-            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
           },
         });
 
@@ -153,14 +163,24 @@ passport.use(
           path: 'user_posts',
           populate: {
             path: 'activity',
-            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
           },
         })
         .populate({
           path: 'user_activities',
           populate: {
             path: 'activity.id',
-            select: { activity_picture_url: 1, title: 1, actual_date: 1 },
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
           },
         });
 

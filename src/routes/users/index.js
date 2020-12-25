@@ -202,7 +202,7 @@ const createUserPost = standardize(async (req, res) => {
   const schema = Joi.object({
     form_team: Joi.boolean().required(),
     share_accommodation: Joi.boolean().required(),
-    share_transportaion: Joi.boolean().required(),
+    share_transportation: Joi.boolean().required(),
     share_trip: Joi.boolean().required(),
     male: Joi.boolean().required(),
     female: Joi.boolean().required(),
@@ -225,19 +225,18 @@ const createUserPost = standardize(async (req, res) => {
   res.status(201).send();
 });
 
-const listUserPosts = standardize(async (req, res) => {
+const listFilteredUserPosts = standardize(async (req, res) => {
   const schema = Joi.object({
-    form_team: Joi.boolean(),
-    share_accommodation: Joi.boolean(),
-    share_transportaion: Joi.boolean(),
-    share_trip: Joi.boolean(),
-    male: Joi.boolean(),
-    female: Joi.boolean(),
-    activity: Joi.string(),
-    province: Joi.string(),
+    form_team: Joi.boolean().required(),
+    share_accommodation: Joi.boolean().required(),
+    share_transportation: Joi.boolean().required(),
+    share_trip: Joi.boolean().required(),
+    male: Joi.boolean().required(),
+    female: Joi.boolean().required(),
+    activity: Joi.string().required(),
 
     skip: Joi.string().default(0),
-    limit: Joi.string().default(25),
+    limit: Joi.string().default(100),
   });
 
   const filter = Joi.attempt(req.query, schema);
@@ -246,10 +245,52 @@ const listUserPosts = standardize(async (req, res) => {
   delete filter.skip;
   delete filter.limit;
 
-  res.json(await UserPostService.listUserPosts(filter, skip, limit));
+  const user_post_ids = req.user.user_posts.map((item) => {
+    return item._id;
+  });
+
+  res.json({
+    status: 200,
+    data: await UserPostService.listFilteredUserPosts(
+      filter,
+      skip,
+      limit,
+      user_post_ids
+    ),
+  });
 });
 
-router.get('/getuserposts', listUserPosts);
+const listUserPostsByActivity = standardize(async (req, res) => {
+  const schema = Joi.object({
+    activity: Joi.string().required(),
+
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(10),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  const user_post_ids = req.user.user_posts.map((item) => {
+    return item._id;
+  });
+
+  res.json({
+    status: 200,
+    data: await UserPostService.listUserPostsByActivity(
+      filter,
+      skip,
+      limit,
+      user_post_ids
+    ),
+  });
+});
+
+router.get('/userpostsbyactivity', listUserPostsByActivity);
+router.get('/filtereduserposts', listFilteredUserPosts);
 router.post('/createuserpost', createUserPost);
 
 // Emergency Contact

@@ -7,7 +7,7 @@ const userPostStateEnum = require('../utils/constants/activity').user_post;
 const user_post = new Schema({
   form_team: { type: Boolean, required: true },
   share_accommodation: { type: Boolean, required: true },
-  share_transportaion: { type: Boolean, required: true },
+  share_transportation: { type: Boolean, required: true },
   share_trip: { type: Boolean, required: true },
   male: { type: Boolean, required: true },
   female: { type: Boolean, required: true },
