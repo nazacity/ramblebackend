@@ -3,7 +3,7 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-module.exports = job = schedule.scheduleJob('1 39 8 * * 0-6', async () => {
+module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
   console.log(new Date());
   await updateActivitiesState();
   await sendNotification14DaysBefore();
