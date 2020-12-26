@@ -3,7 +3,7 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-module.exports = job = schedule.scheduleJob('1 7 8 * * 0-6', async () => {
+module.exports = job = schedule.scheduleJob('1 10 8 * * 0-6', async () => {
   console.log(new Date());
   await updateActivitiesState();
   await sendNotification14DaysBefore();
@@ -46,6 +46,8 @@ const updateActivitiesState = async () => {
       $lt: new Date(Date.now()),
     },
   });
+
+  console.log(endRegisterActivities);
 
   endRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
