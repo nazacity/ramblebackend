@@ -256,14 +256,8 @@ const createActivity = standardize(async (req, res) => {
         description: Joi.string().allow(''),
       }),
     }),
-    rules1: Joi.array().items({
-      id: Joi.string().required(),
-      title: Joi.string().required(),
-    }),
-    more_detail: Joi.array().items({
-      id: Joi.string().required(),
-      description: Joi.string().required(),
-    }),
+    rules1: Joi.string().required(),
+    more_detail: Joi.string().required(),
     shirt_detail: Joi.array().items({
       id: Joi.string().required(),
       style: Joi.string().required(),
@@ -274,10 +268,7 @@ const createActivity = standardize(async (req, res) => {
       size: Joi.string().required(),
       description: Joi.string().allow(''),
     }),
-    condition: Joi.array().items({
-      id: Joi.string().required(),
-      description: Joi.string().required(),
-    }),
+    condition: Joi.string().required(),
     gifts: Joi.array().items({
       id: Joi.string(),
       description: Joi.string().allow(''),
@@ -298,7 +289,6 @@ const editActivity = standardize(async (req, res) => {
   let schema;
   const request = { ...req.body };
   delete request.type;
-  console.log(request);
   if (req.body.type === 'banner') {
     schema = Joi.object({
       activity_picture_url: Joi.string().required(),
@@ -380,24 +370,15 @@ const editActivity = standardize(async (req, res) => {
     });
   } else if (req.body.type === 'rules1') {
     schema = Joi.object({
-      rules1: Joi.array().items({
-        id: Joi.string().required(),
-        title: Joi.string().required(),
-      }),
+      rules1: Joi.string().required(),
     });
   } else if (req.body.type === 'more_detail') {
     schema = Joi.object({
-      more_detail: Joi.array().items({
-        id: Joi.string().required(),
-        description: Joi.string().required(),
-      }),
+      more_detail: Joi.string().required(),
     });
   } else if (req.body.type === 'condition') {
     schema = Joi.object({
-      condition: Joi.array().items({
-        id: Joi.string().required(),
-        description: Joi.string().required(),
-      }),
+      condition: Joi.string().required(),
     });
   }
 
