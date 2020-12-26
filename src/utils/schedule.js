@@ -3,19 +3,12 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-module.exports = job = schedule.scheduleJob('1 10 8 * * 0-6', async () => {
+module.exports = job = schedule.scheduleJob('1 39 8 * * 0-6', async () => {
   console.log(new Date());
   await updateActivitiesState();
   await sendNotification14DaysBefore();
   await sendNotification7DaysBefore();
 });
-
-// module.exports = test = schedule.scheduleJob('1-59 * * * * *', async () => {
-//   console.log(new Date());
-//   // await updateActivitiesState();
-//   // await sendNotification14DaysBefore();
-//   // await sendNotification7DaysBefore();
-// });
 
 const updateActivitiesState = async () => {
   const actualDateActivities = await models.Activity.find({
@@ -46,8 +39,6 @@ const updateActivitiesState = async () => {
       $lt: new Date(Date.now()),
     },
   });
-
-  console.log(endRegisterActivities);
 
   endRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
@@ -105,8 +96,8 @@ const sendNotification14DaysBefore = async () => {
   const upcoming14DaysActivities = await models.Activity.find({
     state: 'end_register',
     actual_date: {
-      $lt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-      $gt: new Date(Date.now() + 13 * 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -207,8 +198,8 @@ const sendNotification7DaysBefore = async () => {
   const upcoming7DaysActivities = await models.Activity.find({
     state: 'end_register',
     actual_date: {
-      $lt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      $gt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
 
