@@ -61,20 +61,6 @@ const activity = new Schema({
     },
   ],
 
-  rules1: [
-    {
-      id: { type: String, required: true },
-      title: { type: String, required: true },
-    },
-  ],
-
-  more_detail: [
-    {
-      id: { type: String, required: true },
-      description: { type: String, required: true },
-    },
-  ],
-
   shirt_detail: [
     {
       style: { type: String, required: true },
@@ -104,12 +90,11 @@ const activity = new Schema({
     age_50: { type: Number, required: true, default: 0 },
   },
 
-  condition: [
-    {
-      id: { type: String, required: true },
-      description: { type: String, required: true },
-    },
-  ],
+  rules1: { type: String, required: true },
+
+  more_detail: { type: String, required: true },
+
+  condition: { type: String, required: true },
 
   state: { type: String, enum: activityStateEnum, default: 'pre_register' },
 
