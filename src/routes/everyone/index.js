@@ -12,6 +12,7 @@ const {
   EmergencyContactService,
   AddressService,
 } = require('../../services');
+const { user_gender, blood_type } = require('../../utils/constants/user');
 
 const confirmPayment = async (req, res) => {
   const userActivity = await model.UserActivity.findByIdAndUpdate(
@@ -89,5 +90,40 @@ const listActivities = async (req, res) => {
 };
 
 router.get('/getactivities', listActivities);
+
+function _calculateAge(birthday) {
+  // birthday is a date
+  var ageDifMs = Date.now() - birthday.getTime();
+  var ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+const createUser = async (req, res) => {
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    display_name: Joi.string().required(),
+
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    phone_number: Joi.string().required(),
+    birthday: Joi.date().required(),
+    gender: Joi.string()
+      .valid(...user_gender)
+      .required(),
+    blood_type: Joi.string()
+      .valid(...blood_type)
+      .required(),
+    user_picture_url: Joi.string().required(),
+  });
+
+  const user = Joi.attempt(req.body, schema);
+
+  user.age = _calculateAge(user.birthday);
+
+  res.status(201).send({ status: 200, data: await UserService.create(user) });
+};
+
+router.post('/createuser', createUser);
 
 module.exports = router;

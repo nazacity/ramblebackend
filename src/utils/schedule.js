@@ -123,8 +123,8 @@ const sendNotification14DaysBefore = async () => {
             include_player_ids: [...user_device_tokens1],
             headings: { en: '14 Days Before', th: '14 วัน ก่อนวันกิจกรรม' },
             contents: {
-              en: `Activity is upcoming please check`,
-              th: `กิจกรรมกำลังจะมาถึง กรุณาตรวจสอบ`,
+              en: `${activity.title} Activity is upcoming please check`,
+              th: `กิจกรรม ${activity.title} กำลังจะมาถึง กรุณาตรวจสอบ`,
             },
           },
           headers: {
@@ -144,8 +144,8 @@ const sendNotification14DaysBefore = async () => {
             include_player_ids: [...user_device_tokens2],
             headings: { en: '14 Days Before', th: '14 วัน ก่อนวันกิจกรรม' },
             contents: {
-              en: `Activity is upcoming please check`,
-              th: `กิจกรรมกำลังจะมาถึง กรุณาตรวจสอบ`,
+              en: `${activity.title} Activity is upcoming please check`,
+              th: `กิจกรรม ${activity.title} กำลังจะมาถึง กรุณาตรวจสอบ`,
             },
           },
           headers: {

@@ -42,8 +42,13 @@ class UserService extends AbstractService {
   }
 
   async create(data) {
+    const user = await this.models.User.findOne({ username: data.username });
+    if (user) {
+      return 'Username is used';
+    }
     data = await this._preProcessedUser(data);
-    return this.models.User.create(data);
+    await this.models.User.create(data);
+    return 'Successed';
   }
 
   async edit(id, data) {
