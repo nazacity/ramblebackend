@@ -24,7 +24,6 @@ const editActivity = standardize(async (req, res) => {
   let schema;
   const request = { ...req.body };
   delete request.type;
-  console.log(request);
   if (req.body.type === 'banner') {
     schema = Joi.object({
       activity_picture_url: Joi.string().required(),

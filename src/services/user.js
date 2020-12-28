@@ -52,11 +52,14 @@ class UserService extends AbstractService {
   }
 
   async edit(id, data) {
-    data = await this._preProcessedUser(data);
+    // data = await this._preProcessedUser(data);
     return this.models.User.findOneAndUpdate(
       { _id: id },
       {
-        ...data,
+        $set: data,
+      },
+      {
+        new: true,
       }
     );
   }
