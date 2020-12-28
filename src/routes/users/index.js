@@ -59,16 +59,19 @@ const createUser = standardize(async (req, res) => {
 });
 
 const editUser = standardize(async (req, res) => {
-  const schema = Joi.object({
-    permission: Joi.string(),
-  });
-  const paramSchema = Joi.object({
-    id: Joi.string().required(),
-  });
+  let schema;
+  const request = { ...req.body };
+  delete request.type;
 
-  const user = Joi.attempt(req.body, schema);
-  const { id } = Joi.attempt(req.params, paramSchema);
-  res.json(await UserService.edit(id, user));
+  if (req.body.type === 'editUserPictureProfile') {
+    schema = Joi.object({
+      user_picture_url: Joi.string().required(),
+    });
+  }
+
+  const user = Joi.attempt(request, schema);
+
+  res.json({ status: 200, data: await UserService.edit(req.user.id, user) });
 });
 
 const updateDeviceToken = async (req, res) => {
@@ -89,7 +92,7 @@ const updateDeviceToken = async (req, res) => {
 router.get('/getusers', listUsers);
 router.post('/createuser', createUser);
 router.post('/updatedevicetoken', updateDeviceToken);
-router.post('/edituser/:id', editUser);
+router.post('/edituser', editUser);
 
 // User Activity
 const createUserActivity = standardize(async (req, res) => {
