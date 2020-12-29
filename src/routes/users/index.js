@@ -67,6 +67,22 @@ const editUser = standardize(async (req, res) => {
     schema = Joi.object({
       user_picture_url: Joi.string().required(),
     });
+  } else if (req.body.type === 'editUserBackgroundPictureProfile') {
+    schema = Joi.object({
+      user_background_picture_url: Joi.string().required(),
+    });
+  } else if (req.body.type === 'first_name') {
+    schema = Joi.object({
+      first_name: Joi.string().required(),
+    });
+  } else if (req.body.type === 'last_name') {
+    schema = Joi.object({
+      last_name: Joi.string().required(),
+    });
+  } else if (req.body.type === 'display_name') {
+    schema = Joi.object({
+      display_name: Joi.string().required(),
+    });
   }
 
   const user = Joi.attempt(request, schema);
