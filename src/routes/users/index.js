@@ -83,6 +83,10 @@ const editUser = standardize(async (req, res) => {
     schema = Joi.object({
       display_name: Joi.string().required(),
     });
+  } else if (req.body.type === 'phone_number') {
+    schema = Joi.object({
+      phone_number: Joi.string().required(),
+    });
   }
 
   const user = Joi.attempt(request, schema);
@@ -105,10 +109,25 @@ const updateDeviceToken = async (req, res) => {
   res.status(200).json();
 };
 
+const changePassword = standardize(async (req, res) => {
+  const schema = Joi.object({
+    old_password: Joi.string().required(),
+    new_password: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.json({
+    status: 200,
+    data: await UserService.changePassword(req.user.id, data),
+  });
+});
+
 router.get('/getusers', listUsers);
 router.post('/createuser', createUser);
 router.post('/updatedevicetoken', updateDeviceToken);
 router.post('/edituser', editUser);
+router.post('/changepassworduser', changePassword);
 
 // User Activity
 const createUserActivity = standardize(async (req, res) => {

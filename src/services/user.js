@@ -64,6 +64,27 @@ class UserService extends AbstractService {
     );
   }
 
+  async changePassword(id, data) {
+    const new_password = await this.hashPassword(data.new_password);
+    const user = await this.models.User.findById(id);
+
+    if (await user.validatePassword(data.old_password)) {
+      return this.models.User.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            password: new_password,
+          },
+        },
+        {
+          new: true,
+        }
+      );
+    } else {
+      return 'Password is incorrect';
+    }
+  }
+
   async updateUserActivity(id, userActivityId) {
     const user = await this.models.User.findById(id);
     if (user.user_activities) {
