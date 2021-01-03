@@ -53,6 +53,13 @@ class ActivityService extends AbstractService {
     return this.models.Activity.findById(id);
   }
 
+  getUserActivities(id) {
+    return this.models.Activity.findById(id, { user_activities: 1 }).populate({
+      path: 'user_activities',
+      populate: ['user', 'address', 'emergency_contacts'],
+    });
+  }
+
   listPromoteActivity(activityIds, skip, limit) {
     return this.models.Activity.find(
       {
