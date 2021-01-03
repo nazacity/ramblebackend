@@ -105,24 +105,15 @@ const editActivity = standardize(async (req, res) => {
     });
   } else if (req.body.type === 'rules1') {
     schema = Joi.object({
-      rules1: Joi.array().items({
-        id: Joi.string().required(),
-        title: Joi.string().required(),
-      }),
+      rules1: Joi.string().required(),
     });
   } else if (req.body.type === 'more_detail') {
     schema = Joi.object({
-      more_detail: Joi.array().items({
-        id: Joi.string().required(),
-        description: Joi.string().required(),
-      }),
+      more_detail: Joi.string().required(),
     });
   } else if (req.body.type === 'condition') {
     schema = Joi.object({
-      condition: Joi.array().items({
-        id: Joi.string().required(),
-        description: Joi.string().required(),
-      }),
+      condition: Joi.string().required(),
     });
   } else if (req.body.type === 'coupons') {
     schema = Joi.object({
@@ -149,8 +140,19 @@ const getPartnerByJwt = standardize(async (req, res) => {
   return res.json(req.user);
 });
 
+const userActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.json({ status: 200, data: await ActivityService.getUserActivities(id) });
+});
+
 router.get('/getpartnerbyjwt', getPartnerByJwt);
 router.post('/editpartner/:id', editPartner);
 router.post('/editactivity/:id', editActivity);
+router.get('/useractivities/:id', userActivities);
 
 module.exports = router;
