@@ -11,6 +11,8 @@ const {
   UserPostService,
   EmergencyContactService,
   AddressService,
+  MainAdvertizeService,
+  OnboardingService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
@@ -125,5 +127,22 @@ const createUser = async (req, res) => {
 };
 
 router.post('/createuser', createUser);
+
+const getMainAdvertize = async (req, res) => {
+  res.status(201).send({
+    status: 200,
+    data: await MainAdvertizeService.getMainAdvertizes(),
+  });
+};
+
+const getOnboarding = async (req, res) => {
+  res.status(201).send({
+    status: 200,
+    data: await OnboardingService.getOnboarding(),
+  });
+};
+
+router.get('/mainadvertize', getMainAdvertize);
+router.get('/onboarding', getOnboarding);
 
 module.exports = router;

@@ -17,6 +17,8 @@ const {
   PartnerService,
   ActivityService,
   UserService,
+  MainAdvertizeService,
+  OnboardingService,
 } = require('../../services');
 
 const listEmployees = standardize(async (req, res) => {
@@ -411,5 +413,40 @@ router.get('/getactivities', listActivities);
 router.get('/getactivity/:id', getActivityById);
 router.post('/createactivity', createActivity);
 router.post('/editactivity/:id', editActivity);
+
+const createAdvertize = standardize(async (req, res) => {
+  const schema = Joi.object({
+    uri: Joi.string().required(),
+    advertize_picture_url: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.status(200).send({
+    status: 200,
+    data: await MainAdvertizeService.createAdvertize(data),
+  });
+}, permission.ADMIN);
+
+router.post('/mainadvertize', createAdvertize);
+
+const createOnboarding = standardize(async (req, res) => {
+  const schema = Joi.object({
+    title: Joi.string().required(),
+    subtitle: Joi.string().required(),
+    description: Joi.string().required(),
+    color: Joi.string().required(),
+    picture: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.status(200).send({
+    status: 200,
+    data: await OnboardingService.createOnboarding(data),
+  });
+}, permission.ADMIN);
+
+router.post('/onboarding', createOnboarding);
 
 module.exports = router;
