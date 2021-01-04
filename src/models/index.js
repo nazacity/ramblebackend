@@ -19,4 +19,6 @@ module.exports = {
   UserPost: require('./user_post'),
   UserYearRecord: require('./user_year_record'),
   Address: require('./address'),
+  MainAdvertize: require('./mainadvertize'),
+  Onboarding: require('./onboarding'),
 };
