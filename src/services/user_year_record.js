@@ -26,7 +26,6 @@ class UserYearRecordService extends AbstractService {
   }
 
   async updateUserYearRecord(userId, distance) {
-    console.log('test', distance);
     let userYearRecord;
     userYearRecord = await this.models.UserYearRecord.findOneAndUpdate(
       {
@@ -45,18 +44,29 @@ class UserYearRecordService extends AbstractService {
         time_min: 0,
         average: 0,
       });
+
+      const user = await this.models.User.find(userId);
+      const newUserRecords = [...user.user_records, userYearRecord._id];
+      await this.models.User.findByIdAndUpdate(userId, {
+        $set: {
+          user_records: newUserRecords,
+        },
+      });
       return userYearRecord;
     } else {
       const newDistance = userYearRecord.distance + distance;
       const newActivityNumber = userYearRecord.activity_number + 1;
 
-      return this.models.UserYearRecord.findByIdAndUpdate(userYearRecord._id, {
-        $set: {
-          activity_number: newActivityNumber,
-          distance: newDistance,
+      return this.models.UserYearRecord.findByIdAndUpdate(
+        userYearRecord._id,
+        {
+          $set: {
+            activity_number: newActivityNumber,
+            distance: newDistance,
+          },
         },
-        new: true,
-      });
+        { new: true }
+      );
     }
   }
 }

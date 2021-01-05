@@ -39,6 +39,7 @@ passport.use(
       })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_year_records' })
         .populate({
           path: 'user_posts',
           populate: {
