@@ -15,6 +15,7 @@ const services = {
   AddressService: require('./address'),
   MainAdvertizeService: require('./mainadvertize'),
   OnboardingService: require('./onboarding'),
+  UserYearRecordService: require('./user_year_record'),
 };
 
 _.forEach(services, (service, key) => {

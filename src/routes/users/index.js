@@ -14,6 +14,7 @@ const {
   UserPostService,
   EmergencyContactService,
   AddressService,
+  UserYearRecordService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
@@ -492,9 +493,16 @@ const checkoutActivity = standardize(async (req, res) => {
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
+  const updatedUserActivity = await UserActivityService.updateCheckedOut(id);
+
+  await UserYearRecordService.updateUserYearRecord(
+    req.user.id,
+    updatedUserActivity.activity.course.range
+  );
+
   res.status(200).send({
     status: 200,
-    data: await UserActivityService.updateCheckedOut(id),
+    data: updatedUserActivity,
   });
 });
 
@@ -519,7 +527,7 @@ const useCoupon = standardize(async (req, res) => {
 
 router.get('/getactivity/:id', getActivityById);
 router.get('/checkinactivity/:id', checkinActivity);
-router.get('/checkoutactivity/:id', checkoutActivity);
+router.post('/checkoutactivity/:id', checkoutActivity);
 router.post('/usecoupon/:id', useCoupon);
 router.get('/getpromoteactivities', listPromoteActivities);
 

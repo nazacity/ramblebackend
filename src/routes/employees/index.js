@@ -428,7 +428,19 @@ const createAdvertize = standardize(async (req, res) => {
   });
 }, permission.ADMIN);
 
-router.post('/mainadvertize', createAdvertize);
+const deleteAdvertizeById = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await ActivityService.deleteAdvertizeById(id) });
+}, permission.ADMIN);
+
+router.delete('/mainadvertize/:id', deleteAdvertizeById);
 
 const createOnboarding = standardize(async (req, res) => {
   const schema = Joi.object({
