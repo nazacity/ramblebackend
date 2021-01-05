@@ -36,7 +36,11 @@ class UserActivityService extends AbstractService {
       $set: {
         state: 'finished',
         coupons: coupons,
+        user_record: {
+          distance: user_activities.activity.course.range,
+        },
       },
+      new: true,
     });
   }
 

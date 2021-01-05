@@ -10,6 +10,10 @@ class MainAdvertizeService extends AbstractService {
   async getMainAdvertizes() {
     return this.models.MainAdvertize.find();
   }
+
+  async deleteAdvertizeById(id) {
+    return this.models.MainAdvertize.findByIdAndRemove(id);
+  }
 }
 
 module.exports = MainAdvertizeService;

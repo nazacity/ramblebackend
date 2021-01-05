@@ -1,6 +1,7 @@
 'use strict';
 
 const AbstractService = require('./abstract');
+const { times } = require('lodash');
 
 class UserYearRecordService extends AbstractService {
   listUserYearRecords(filter, skip, limit) {
@@ -22,6 +23,41 @@ class UserYearRecordService extends AbstractService {
         ...data,
       }
     );
+  }
+
+  async updateUserYearRecord(userId, distance) {
+    console.log('test', distance);
+    let userYearRecord;
+    userYearRecord = await this.models.UserYearRecord.findOneAndUpdate(
+      {
+        user: userId,
+        year: new Date().getFullYear(),
+      },
+      { upsert: true }
+    );
+
+    if (!userYearRecord) {
+      userYearRecord = await this.models.UserYearRecord.create({
+        user: userId,
+        activity_number: 1,
+        distance: distance,
+        time_hr: 0,
+        time_min: 0,
+        average: 0,
+      });
+      return userYearRecord;
+    } else {
+      const newDistance = userYearRecord.distance + distance;
+      const newActivityNumber = userYearRecord.activity_number + 1;
+
+      return this.models.UserYearRecord.findByIdAndUpdate(userYearRecord._id, {
+        $set: {
+          activity_number: newActivityNumber,
+          distance: newDistance,
+        },
+        new: true,
+      });
+    }
   }
 }
 
