@@ -45,7 +45,7 @@ class UserYearRecordService extends AbstractService {
         average: 0,
       });
 
-      const user = await this.models.User.find(userId);
+      const user = await this.models.User.findById(userId);
       const newUserRecords = [...user.user_records, userYearRecord._id];
       await this.models.User.findByIdAndUpdate(userId, {
         $set: {
