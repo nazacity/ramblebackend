@@ -32,16 +32,19 @@ class UserActivityService extends AbstractService {
 
     const { coupons } = user_activities.activity.id;
 
-    return this.models.UserActivity.findByIdAndUpdate(id, {
-      $set: {
-        state: 'finished',
-        coupons: coupons,
-        user_record: {
-          distance: user_activities.activity.course.range,
+    return this.models.UserActivity.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          state: 'finished',
+          coupons: coupons,
+          user_record: {
+            distance: user_activities.activity.course.range,
+          },
         },
       },
-      new: true,
-    });
+      { new: true }
+    );
   }
 
   async updateUserPost(id, newUserPostId) {
