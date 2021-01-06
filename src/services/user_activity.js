@@ -1,10 +1,22 @@
 'use strict';
-
 const AbstractService = require('./abstract');
 
 class UserActivityService extends AbstractService {
-  listUserActivities(filter, skip, limit) {
-    return this.models.UserActivity.find(filter).skip(skip).limit(limit);
+  filteredUserActivities(id, filter) {
+    return this.models.UserActivity.find({
+      'activity.id': id,
+      'activity.course._id': filter.course,
+      'size.size': filter.size,
+    })
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
   }
 
   findById(id) {
@@ -108,6 +120,30 @@ class UserActivityService extends AbstractService {
         }
       ).populate({ path: 'activity.id' });
     }
+  }
+
+  async updateContestNoUserActivities(id, data) {
+
+    return this.models.UserActivity.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          contest_no: data.contest_no,
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
   }
 }
 

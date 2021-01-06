@@ -5,7 +5,11 @@ const express = require('express');
 const router = express.Router();
 
 const { standardize } = require('../../utils/request');
-const { PartnerService, ActivityService } = require('../../services');
+const {
+  PartnerService,
+  ActivityService,
+  UserActivityService,
+} = require('../../services');
 
 const editPartner = standardize(async (req, res) => {
   const schema = Joi.object({
@@ -122,6 +126,16 @@ const editActivity = standardize(async (req, res) => {
         coupon_picture_url: Joi.string().required(),
       }),
     });
+  } else if (req.body.type === 'senderAddress') {
+    schema = Joi.object({
+      senderAddress: {
+        name: Joi.string().required(),
+        address: Joi.string().required(),
+        province: Joi.string().required(),
+        zip: Joi.string().required(),
+        phone_number: Joi.string().required(),
+      },
+    });
   }
 
   const paramSchema = Joi.object({
@@ -140,6 +154,10 @@ const getPartnerByJwt = standardize(async (req, res) => {
   return res.json(req.user);
 });
 
+router.get('/getpartnerbyjwt', getPartnerByJwt);
+router.post('/editpartner/:id', editPartner);
+router.post('/editactivity/:id', editActivity);
+
 const userActivities = standardize(async (req, res) => {
   const paramSchema = Joi.object({
     id: Joi.string().required(),
@@ -147,12 +165,53 @@ const userActivities = standardize(async (req, res) => {
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
-  res.json({ status: 200, data: await ActivityService.getUserActivities(id) });
+  res.json({
+    status: 200,
+    data: await ActivityService.getUserActivities(id),
+  });
 });
 
-router.get('/getpartnerbyjwt', getPartnerByJwt);
-router.post('/editpartner/:id', editPartner);
-router.post('/editactivity/:id', editActivity);
+const filteredUserActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    course: Joi.string().required(),
+    size: Joi.string().required(),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.filteredUserActivities(id, filter),
+  });
+});
+
+const updateContestNoUserActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    contest_no: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.updateContestNoUserActivities(id, data),
+  });
+});
+
 router.get('/useractivities/:id', userActivities);
+router.get('/filtereduseractivities/:id', filteredUserActivities);
+router.post('/updatconstestuseractivities/:id', updateContestNoUserActivities);
 
 module.exports = router;

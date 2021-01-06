@@ -383,6 +383,16 @@ const editActivity = standardize(async (req, res) => {
     schema = Joi.object({
       condition: Joi.string().required(),
     });
+  } else if (req.body.type === 'senderAddress') {
+    schema = Joi.object({
+      senderAddress: {
+        name: Joi.string().required(),
+        address: Joi.string().required(),
+        province: Joi.string().required(),
+        zip: Joi.string().required(),
+        phone_number: Joi.string().required(),
+      },
+    });
   }
 
   const paramSchema = Joi.object({
@@ -440,6 +450,7 @@ const deleteAdvertizeById = standardize(async (req, res) => {
     .send({ status: 200, data: await ActivityService.deleteAdvertizeById(id) });
 }, permission.ADMIN);
 
+router.post('/mainadvertize', createAdvertize);
 router.delete('/mainadvertize/:id', deleteAdvertizeById);
 
 const createOnboarding = standardize(async (req, res) => {

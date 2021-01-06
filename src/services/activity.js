@@ -25,7 +25,7 @@ class ActivityService extends AbstractService {
               $elemMatch: {
                 range: {
                   $gte: filter.range_min ? +filter.range_min : 0,
-                  $lte: filter.range_max ? +filter.range_max : 150,
+                  $lte: filter.range_max ? +filter.range_max : 100,
                 },
               },
             }
