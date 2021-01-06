@@ -47,7 +47,17 @@ class UserService extends AbstractService {
       return 'Username is used';
     }
     data = await this._preProcessedUser(data);
-    await this.models.User.create(data);
+    const newUser = await this.models.User.create(data);
+    const useryearrecord = await this.models.UserYearRecord.create({
+      $set: {
+        user: newUser._id,
+      },
+    });
+    await this.models.User.findByIdAndUpdate(newUser._id, {
+      $set: {
+        user_records: [useryearrecord._id],
+      },
+    });
     return 'Successed';
   }
 

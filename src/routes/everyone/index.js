@@ -4,6 +4,7 @@ const router = express.Router();
 const config = require('../../utils/config');
 const axios = require('axios');
 const model = require('../../models');
+const qs = require('qs');
 const {
   UserService,
   UserActivityService,
@@ -105,7 +106,7 @@ const createUser = async (req, res) => {
     username: Joi.string().required(),
     password: Joi.string().required(),
     display_name: Joi.string().required(),
-
+    idcard: Joi.string().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     phone_number: Joi.string().required(),
@@ -144,5 +145,35 @@ const getOnboarding = async (req, res) => {
 
 router.get('/mainadvertize', getMainAdvertize);
 router.get('/onboarding', getOnboarding);
+
+const checkCitizenIdNumber = async (req, res) => {
+  const body = {
+    Sex: req.params.id,
+    Button: 'ตรวจสอบข้อมูล',
+  };
+
+  const data = await axios({
+    method: 'post',
+    url:
+      'https://data.bopp-obec.info/emis/register.php?p=chk_digit&School_ID=1095440071&Area_CODE=9502',
+    data: qs.stringify(body),
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+  });
+  const checkRight = data.data.indexOf(
+    'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง'
+  );
+  if (checkRight > -1) {
+    res
+      .status(200)
+      .json({ status: 200, data: 'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง' });
+  } else {
+    res.status(200).json({
+      status: 200,
+      data: 'หมายเลขบัตรประจำตัวประชาชนของคุณไม่ถูกต้อง',
+    });
+  }
+};
+
+router.get('/checkcitizenidnumber/:id', checkCitizenIdNumber);
 
 module.exports = router;

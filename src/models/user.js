@@ -23,7 +23,7 @@ const user = new Schema({
   age: { type: Number, required: true },
   gender: { type: String, enum: user_gender, required: true },
   blood_type: { type: String, enum: blood_type, required: true },
-  // id_card_no: { type: String, required: true },
+  idcard: { type: String, required: true },
   user_picture_url: { type: String, required: true },
   user_background_picture_url: { type: String },
   device_token: { type: String },

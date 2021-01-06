@@ -119,6 +119,13 @@ const activity = new Schema({
       coupon_picture_url: { type: String },
     },
   ],
+  senderAddress: {
+    name: { type: String, require: true },
+    address: { type: String, require: true },
+    province: { type: String, require: true },
+    zip: { type: String, require: true },
+    phone_number: { type: String, require: true },
+  },
 });
 
 const Activity = mongoose.model('Activity', activity);
