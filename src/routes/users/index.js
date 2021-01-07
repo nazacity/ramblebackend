@@ -153,9 +153,21 @@ const createUserActivity = standardize(async (req, res) => {
     address: Joi.string().required(),
 
     emergency_contact: Joi.string().required(),
+    idcard: Joi.string().required(),
+    announcement: Joi.array().items({
+      _id: Joi.string().required(),
+      active: Joi.boolean().required(),
+      title: Joi.string().required(),
+      description: Joi.string().required(),
+      picture_url: Joi.string().required(),
+      createdAt: Joi.date().required(),
+    }),
   });
 
-  const userActivity = Joi.attempt({ user: req.user.id, ...req.body }, schema);
+  const userActivity = Joi.attempt(
+    { user: req.user.id, ...req.body, idcard: req.user.idcard },
+    schema
+  );
 
   const newUserActivity = await UserActivityService.createUserActivity(
     userActivity
@@ -525,10 +537,25 @@ const useCoupon = standardize(async (req, res) => {
   });
 });
 
+const updateReadState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    user_activity_id: Joi.string().required(),
+    item_id: Joi.string().required(),
+  });
+
+  const { user_activity_id, item_id } = Joi.attempt(req.params, paramSchema);
+
+  res.status(200).send({
+    status: 200,
+    data: await UserActivityService.updateReadState(user_activity_id, item_id),
+  });
+});
+
 router.get('/getactivity/:id', getActivityById);
 router.get('/checkinactivity/:id', checkinActivity);
 router.post('/checkoutactivity/:id', checkoutActivity);
 router.post('/usecoupon/:id', useCoupon);
 router.get('/getpromoteactivities', listPromoteActivities);
+router.get('/updatereadstate/:user_activity_id/:item_id', updateReadState);
 
 module.exports = router;

@@ -179,8 +179,9 @@ const filteredUserActivities = standardize(async (req, res) => {
   const { id } = Joi.attempt(req.params, paramSchema);
 
   const schema = Joi.object({
-    course: Joi.string().required(),
-    size: Joi.string().required(),
+    course: Joi.string(),
+    size: Joi.string(),
+    idcard: Joi.string(),
   });
 
   const filter = Joi.attempt(req.query, schema);
@@ -210,8 +211,81 @@ const updateContestNoUserActivities = standardize(async (req, res) => {
   });
 });
 
+const updatePrintedState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.updatePrintedState(id),
+  });
+});
+
 router.get('/useractivities/:id', userActivities);
 router.get('/filtereduseractivities/:id', filteredUserActivities);
 router.post('/updatconstestuseractivities/:id', updateContestNoUserActivities);
+router.get('/updateprintstate/:id', updatePrintedState);
+
+const createAnnouncement = standardize(async (req, res) => {
+  const schema = Joi.object({
+    activity_id: Joi.string().required(),
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    picture_url: Joi.string().allow(''),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.status(201).send({
+    status: 200,
+    data: await ActivityService.createAnnouncement(data),
+  });
+});
+
+const editAnnouncement = standardize(async (req, res) => {
+  const schema = Joi.object({
+    activity_id: Joi.string().required(),
+    _id: Joi.string().required(),
+    active: Joi.boolean().required(),
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    picture_url: Joi.string().allow(''),
+    createdAt: Joi.date().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.status(201).send({
+    status: 200,
+    data: await ActivityService.editAnnouncement(id, data),
+  });
+});
+
+const deleteAnnouncement = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    activity_id: Joi.string().required(),
+    id: Joi.string().required(),
+  });
+
+  const { activity_id, id } = Joi.attempt(req.params, paramSchema);
+
+  res.status(201).send({
+    status: 200,
+    data: await ActivityService.deleteAnnouncement(id, activity_id),
+  });
+});
+
+router.post('/announcement', createAnnouncement);
+router.post('/announcement/:id', editAnnouncement);
+router.delete('/announcement/:activity_id/:id', deleteAnnouncement);
 
 module.exports = router;

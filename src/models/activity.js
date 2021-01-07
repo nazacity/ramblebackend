@@ -126,6 +126,15 @@ const activity = new Schema({
     zip: { type: String, require: true },
     phone_number: { type: String, require: true },
   },
+  announcement: [
+    {
+      active: { type: Boolean, default: true },
+      title: { type: String, require: true },
+      description: { type: String, require: true },
+      picture_url: { type: String },
+      createdAt: { type: Date, require: true, default: new Date() },
+    },
+  ],
 });
 
 const Activity = mongoose.model('Activity', activity);

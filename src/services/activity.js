@@ -257,7 +257,161 @@ class ActivityService extends AbstractService {
     }
   }
 
-  async createCoupons(id, data) {}
+  async createAnnouncement(data) {
+    const activity = await this.models.Activity.findById(data.activity_id);
+    const newAnnouncement = {
+      active: true,
+      title: data.title,
+      description: data.description,
+      picture_url: data.picture_url,
+      createdAt: new Date(),
+    };
+    const announcement = [...activity.announcement, newAnnouncement];
+    const updatedActivity = await this.models.Activity.findByIdAndUpdate(
+      data.activity_id,
+      {
+        $set: {
+          announcement: announcement,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    await activity.user_activities.map(async (item) => {
+      const userActivity = await this.models.UserActivity.findById(item);
+
+      if (userActivity) {
+        const newUserActivityAnnouncement = [
+          ...userActivity.announcement,
+          updatedActivity.announcement[updatedActivity.announcement.length - 1],
+        ];
+        await this.models.UserActivity.findByIdAndUpdate(
+          item,
+          {
+            $set: {
+              announcement: newUserActivityAnnouncement,
+            },
+          },
+          {
+            new: true,
+          }
+        );
+      }
+      return;
+    });
+
+    return updatedActivity;
+  }
+
+  async editAnnouncement(id, data) {
+    const activity = await this.models.Activity.findById(data.activity_id);
+    const index = activity.announcement.findIndex(
+      (item) => item._id.toString() === id.toString()
+    );
+    const announcement = activity.announcement;
+    announcement[index] = {
+      _id: data._id,
+      active: data.active,
+      title: data.title,
+      description: data.description,
+      picture_url: data.picture_url,
+      createdAt: data.createdAt,
+    };
+    const updatedActivity = await this.models.Activity.findByIdAndUpdate(
+      data.activity_id,
+      {
+        $set: {
+          announcement: announcement,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    await activity.user_activities.map(async (item) => {
+      const userActivity = await this.models.UserActivity.findById(item);
+
+      if (userActivity) {
+        const index1 = userActivity.announcement.findIndex(
+          (item1) => item1._id.toString() === id.toString()
+        );
+        const newUserActivityAnnouncement = userActivity.announcement;
+
+        newUserActivityAnnouncement[index1] = {
+          _id: data._id,
+          active: data.active,
+          title: data.title,
+          description: data.description,
+          picture_url: data.picture_url,
+          createdAt: data.createdAt,
+          state: newUserActivityAnnouncement[index1].state,
+        };
+
+        await this.models.UserActivity.findByIdAndUpdate(
+          item,
+          {
+            $set: {
+              announcement: newUserActivityAnnouncement,
+            },
+          },
+          {
+            new: true,
+          }
+        );
+      }
+      return;
+    });
+
+    return updatedActivity;
+  }
+
+  async deleteAnnouncement(id, activity_id) {
+    const activity = await this.models.Activity.findById(activity_id);
+
+    const announcement = activity.announcement.filter(
+      (item) => item._id.toString() !== id.toString()
+    );
+
+    const updatedActivity = await this.models.Activity.findByIdAndUpdate(
+      activity_id,
+      {
+        $set: {
+          announcement: announcement,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    await activity.user_activities.map(async (item) => {
+      const userActivity = await this.models.UserActivity.findById(item);
+
+      if (userActivity) {
+        const newUserActivityAnnouncement = userActivity.announcement.filter(
+          (item1) => item1._id.toString() !== id.toString()
+        );
+
+        await this.models.UserActivity.findByIdAndUpdate(
+          item,
+          {
+            $set: {
+              announcement: newUserActivityAnnouncement,
+            },
+          },
+          {
+            new: true,
+          }
+        );
+      }
+      return;
+    });
+
+    return updatedActivity;
+  }
 }
 
 module.exports = ActivityService;
