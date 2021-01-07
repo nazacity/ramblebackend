@@ -5,8 +5,9 @@ class UserActivityService extends AbstractService {
   filteredUserActivities(id, filter) {
     return this.models.UserActivity.find({
       'activity.id': id,
-      'activity.course._id': filter.course,
-      'size.size': filter.size,
+      'activity.course._id': filter.course ? filter.course : { $ne: null },
+      'size.size': filter.size ? filter.size : { $ne: null },
+      idcard: filter.idcard ? filter.idcard : { $ne: null },
     })
       .populate({
         path: 'user',
@@ -44,19 +45,25 @@ class UserActivityService extends AbstractService {
 
     const { coupons } = user_activities.activity.id;
 
-    return this.models.UserActivity.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          state: 'finished',
-          coupons: coupons,
-          user_record: {
-            distance: user_activities.activity.course.range,
+    if (user_activities.state === 'checked_in') {
+      return this.models.UserActivity.findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            state: 'finished',
+            coupons: coupons,
+            user_record: {
+              distance: user_activities.activity.course.range,
+            },
           },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
+    } else if (user_activities.state === 'checked_out') {
+      return 'Already checked out';
+    } else {
+      return 'Not in the right state';
+    }
   }
 
   async updateUserPost(id, newUserPostId) {
@@ -123,7 +130,6 @@ class UserActivityService extends AbstractService {
   }
 
   async updateContestNoUserActivities(id, data) {
-
     return this.models.UserActivity.findByIdAndUpdate(
       id,
       {
@@ -144,6 +150,51 @@ class UserActivityService extends AbstractService {
       .populate({
         path: 'emergency_contacts',
       });
+  }
+  async updatePrintedState(id) {
+    return this.models.UserActivity.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          printed: true,
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
+  }
+  async updateReadState(user_activity_id, item_id) {
+    const user_activity = await this.models.UserActivity.findById(
+      user_activity_id
+    );
+    const index = user_activity.announcement.findIndex(
+      (item) => item._id.toString() === item_id
+    );
+
+    const newAnnounment = user_activity.announcement;
+    newAnnounment[index].state = 'read';
+
+    return this.models.UserActivity.findByIdAndUpdate(
+      user_activity_id,
+      {
+        $set: {
+          announcement: newAnnounment,
+        },
+      },
+      {
+        new: true,
+      }
+    );
   }
 }
 

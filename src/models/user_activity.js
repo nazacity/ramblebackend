@@ -6,6 +6,9 @@ const { Schema } = mongoose;
 const userActivityStateEnum = require('../utils/constants/activity')
   .user_activity_state;
 
+const announcementState = require('../utils/constants/activity')
+  .announcement_state;
+
 const user_activity = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -89,6 +92,22 @@ const user_activity = new Schema({
     type: Boolean,
     default: false,
   },
+  idcard: { type: String, required: true },
+  announcement: [
+    {
+      active: { type: Boolean, default: true },
+      title: { type: String, require: true },
+      description: { type: String, require: true },
+      picture_url: { type: String },
+      state: {
+        type: String,
+        enum: announcementState,
+        required: true,
+        default: 'not_read',
+      },
+      createdAt: { type: Date, require: true, default: new Date() },
+    },
+  ],
 });
 
 user_activity.index({
