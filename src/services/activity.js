@@ -2,6 +2,8 @@
 
 const bcrypt = require('bcrypt');
 const { provinceDict } = require('../utils/constants/provinces');
+const axios = require('axios');
+const config = require('../utils/config');
 
 const AbstractService = require('./abstract');
 
@@ -258,7 +260,9 @@ class ActivityService extends AbstractService {
   }
 
   async createAnnouncement(data) {
-    const activity = await this.models.Activity.findById(data.activity_id);
+    const activity = await this.models.Activity.findById(
+      data.activity_id
+    ).populate({ path: 'user_activities', populate: { path: 'user' } });
     const newAnnouncement = {
       active: true,
       title: data.title,
@@ -298,6 +302,38 @@ class ActivityService extends AbstractService {
             new: true,
           }
         );
+
+        let description;
+        if (data.description.length > 50) {
+          description = `${data.description.substring(0, 50)}...`;
+        } else {
+          description = data.description;
+        }
+
+        try {
+          const sendNotification = await axios({
+            method: 'post',
+            url: 'https://onesignal.com/api/v1/notifications',
+            data: {
+              app_id: config.onesignal.app_id,
+              include_player_ids: [item.user.device_token],
+              headings: {
+                en: `${activity.title} New announcement`,
+                th: `ประกาศใหม่จาก ${activity.title}`,
+              },
+              contents: {
+                en: `${data.title}\n${description}`,
+                th: `${data.title}\n${description}`,
+              },
+            },
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              Authorization: `Basic ${config.onesignal.rest_api_key}`,
+            },
+          });
+        } catch (error) {
+          console.log('err', error);
+        }
       }
       return;
     });
