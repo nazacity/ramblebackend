@@ -42,7 +42,9 @@ class UserService extends AbstractService {
   }
 
   async create(data) {
-    const user = await this.models.User.findOne({ username: data.username });
+    const user = await this.models.User.findOne({
+      $or: [{ username: data.username }, { idcard: data.idcard }],
+    });
     if (user) {
       return 'Username is used';
     }
@@ -245,6 +247,40 @@ class UserService extends AbstractService {
 
   checkPassword(password, hash) {
     return bcrypt.compare(password, hash);
+  }
+
+  async forgotPassword(user) {
+    const { idcard, phone_number } = user;
+    const getUser = await this.models.User.findOne(
+      {
+        idcard,
+        phone_number,
+      },
+      { phone_number: 1 }
+    );
+    if (getUser) {
+      return getUser._id;
+    } else {
+      return 'No user is found';
+    }
+  }
+
+  async resetPassword(id, password) {
+    const hasdPassword = await this.hashPassword(password);
+    const user = await this.models.User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          password: hasdPassword,
+        },
+      },
+      { new: true }
+    );
+    if (user) {
+      return 'Changed password successfully';
+    } else {
+      return 'No user is found';
+    }
   }
 }
 

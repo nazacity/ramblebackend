@@ -147,33 +147,70 @@ router.get('/mainadvertize', getMainAdvertize);
 router.get('/onboarding', getOnboarding);
 
 const checkCitizenIdNumber = async (req, res) => {
-  const body = {
-    Sex: req.params.id,
-    Button: 'ตรวจสอบข้อมูล',
-  };
-
-  const data = await axios({
-    method: 'post',
-    url:
-      'https://data.bopp-obec.info/emis/register.php?p=chk_digit&School_ID=1095440071&Area_CODE=9502',
-    data: qs.stringify(body),
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-  });
-  const checkRight = data.data.indexOf(
-    'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง'
-  );
-  if (checkRight > -1) {
-    res
-      .status(200)
-      .json({ status: 200, data: 'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง' });
-  } else {
+  const user = await model.User.findOne({ idcard: req.params.id });
+  if (user) {
     res.status(200).json({
       status: 200,
-      data: 'หมายเลขบัตรประจำตัวประชาชนของคุณไม่ถูกต้อง',
+      data: 'รหัสบัตรประชาชนถูกใช้งานแล้ว',
     });
+  } else {
+    const body = {
+      Sex: req.params.id,
+      Button: 'ตรวจสอบข้อมูล',
+    };
+
+    const data = await axios({
+      method: 'post',
+      url:
+        'https://data.bopp-obec.info/emis/register.php?p=chk_digit&School_ID=1095440071&Area_CODE=9502',
+      data: qs.stringify(body),
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    });
+    const checkRight = data.data.indexOf(
+      'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง'
+    );
+    if (checkRight > -1) {
+      res
+        .status(200)
+        .json({ status: 200, data: 'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง' });
+    } else {
+      res.status(200).json({
+        status: 200,
+        data: 'หมายเลขบัตรประจำตัวประชาชนของคุณไม่ถูกต้อง',
+      });
+    }
   }
 };
 
 router.get('/checkcitizenidnumber/:id', checkCitizenIdNumber);
+
+const forgotPassword = async (req, res) => {
+  const schema = Joi.object({
+    idcard: Joi.string().required(),
+    phone_number: Joi.string().required(),
+  });
+
+  const user = Joi.attempt(req.body, schema);
+  res
+    .status(201)
+    .send({ status: 200, data: await UserService.forgotPassword(user) });
+};
+
+const resetPassword = async (req, res) => {
+  const schema = Joi.object({
+    _id: Joi.string().required(),
+    password: Joi.string().required(),
+  });
+
+  const user = Joi.attempt(req.body, schema);
+
+  res.status(201).send({
+    status: 200,
+    data: await UserService.resetPassword(user._id, user.password),
+  });
+};
+
+router.post('/forgotpassword', forgotPassword);
+router.post('/resetpassword', resetPassword);
 
 module.exports = router;
