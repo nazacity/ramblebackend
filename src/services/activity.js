@@ -167,8 +167,18 @@ class ActivityService extends AbstractService {
     }
   }
 
-  async updateUserActivity(id, userActivityId, user) {
+  async updateUserActivity(
+    id,
+    userActivityId,
+    user,
+    sizeId,
+    courseId,
+    addressId
+  ) {
     const activity = await this.models.Activity.findById(id);
+
+    const sizeIndex = activity.size.findIndex((item) => item.id === sizeId);
+    let newSize = activity.size;
 
     let newParticipantBygender;
     if (user.gender === 'male') {
@@ -178,13 +188,30 @@ class ActivityService extends AbstractService {
         participant_female_number:
           activity.report_infomation.participant_female_number,
       };
-    } else if (user.gender === 'male') {
+      newSize[sizeIndex].male_quality += 1;
+    } else if (user.gender === 'female') {
       newParticipantBygender = {
         participant_male_number:
           activity.report_infomation.participant_male_number,
         participant_female_number:
           activity.report_infomation.participant_female_number + 1,
       };
+      newSize[sizeIndex].female_quality += 1;
+    }
+
+    // update courses register no
+    let newCourses = activity.courses;
+    const courseIndex = activity.courses.findIndex(
+      (item) => item._id.toString() === courseId
+    );
+    newCourses[courseIndex].register_no += 1;
+
+    // update reception
+    let newReception = activity.reception;
+    if (addressId === '5ff6600d20ed83388ab4ccbd') {
+      newReception.atevent = activity.reception.atevent + 1;
+    } else {
+      newReception.sendAddress = activity.reception.sendAddress + 1;
     }
 
     let newAgeGroup;
@@ -243,7 +270,13 @@ class ActivityService extends AbstractService {
           $set: {
             user_activities: [...activity.user_activities, userActivityId],
             report_infomation: { ...new_report_infomation },
+            size: newSize,
+            reception: newReception,
+            courses: newCourses,
           },
+        },
+        {
+          new: true,
         }
       );
     } else {
@@ -253,7 +286,13 @@ class ActivityService extends AbstractService {
           $set: {
             user_activities: [userActivityId],
             report_infomation: { ...new_report_infomation },
+            size: newSize,
+            reception: newReception,
+            courses: newCourses,
           },
+        },
+        {
+          new: true,
         }
       );
     }
