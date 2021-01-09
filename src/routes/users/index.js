@@ -180,7 +180,10 @@ const createUserActivity = standardize(async (req, res) => {
   await ActivityService.updateUserActivity(
     req.body.activity.id,
     newUserActivity.id,
-    user
+    user,
+    userActivity.size.id,
+    userActivity.activity.course._id,
+    userActivity.address
   );
   res.status(201).send({ id: newUserActivity.id });
 });

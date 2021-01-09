@@ -74,8 +74,15 @@ const activity = new Schema({
       id: { type: String, required: true },
       size: { type: String, required: true },
       description: { type: String, required: true },
+      male_quality: { type: Number, required: true, default: 0 },
+      female_quality: { type: Number, required: true, default: 0 },
     },
   ],
+
+  reception: {
+    atevent: { type: Number, required: true, default: 0 },
+    sendAddress: { type: Number, required: true, default: 0 },
+  },
 
   report_infomation: {
     participant_number: { type: Number, required: true, default: 0 },
