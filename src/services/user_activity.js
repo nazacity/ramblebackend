@@ -35,7 +35,16 @@ class UserActivityService extends AbstractService {
       {
         new: true,
       }
-    );
+    )
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
   }
 
   async updateCheckedOut(id) {
@@ -58,7 +67,16 @@ class UserActivityService extends AbstractService {
           },
         },
         { new: true }
-      );
+      )
+        .populate({
+          path: 'user',
+        })
+        .populate({
+          path: 'address',
+        })
+        .populate({
+          path: 'emergency_contacts',
+        });
     } else if (user_activities.state === 'checked_out') {
       return 'Already checked out';
     } else {
