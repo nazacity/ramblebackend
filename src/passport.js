@@ -10,6 +10,13 @@ const config = require('./utils/config');
 const { User, Employee } = require('./models');
 const Partner = require('./models/partner');
 
+function _calculateAge(birthday) {
+  // birthday is a date
+  var ageDifMs = Date.now() - birthday.getTime();
+  var ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
@@ -157,7 +164,7 @@ passport.use(
       if (jwt_payload.type !== 'user') {
         done(null, false);
       }
-      const user = await User.findOne({ _id: jwt_payload.sub }, { password: 0 })
+      let user = await User.findOne({ _id: jwt_payload.sub }, { password: 0 })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
         .populate({ path: 'user_records' })
@@ -186,7 +193,49 @@ passport.use(
           },
         });
 
+      const age = _calculateAge(user.birthday);
       user.type = 'user';
+      if (age !== user.age) {
+        user = await User.findByIdAndUpdate(
+          user._id,
+          {
+            $set: {
+              age: age,
+            },
+          },
+          {
+            password: 0,
+            new: true,
+          }
+        )
+          .populate({ path: 'addresses' })
+          .populate({ path: 'emergency_contacts' })
+          .populate({ path: 'user_records' })
+          .populate({
+            path: 'user_posts',
+            populate: {
+              path: 'activity',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
+            },
+          })
+          .populate({
+            path: 'user_activities',
+            populate: {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
+            },
+          });
+      }
       if (user) {
         done(null, user);
       } else {
