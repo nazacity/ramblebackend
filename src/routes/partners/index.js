@@ -9,6 +9,7 @@ const {
   PartnerService,
   ActivityService,
   UserActivityService,
+  UserYearRecordService,
 } = require('../../services');
 
 const editPartner = standardize(async (req, res) => {
@@ -224,10 +225,44 @@ const updatePrintedState = standardize(async (req, res) => {
   });
 });
 
+const checkinActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await UserActivityService.updateCheckedin(id) });
+});
+
+const checkoutActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const updatedUserActivity = await UserActivityService.updateCheckedOut(id);
+
+  await UserYearRecordService.updateUserYearRecord(
+    req.user.id,
+    updatedUserActivity.activity.course.range
+  );
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUserActivity,
+  });
+});
+
 router.get('/useractivities/:id', userActivities);
 router.get('/filtereduseractivities/:id', filteredUserActivities);
 router.post('/updatconstestuseractivities/:id', updateContestNoUserActivities);
 router.get('/updateprintstate/:id', updatePrintedState);
+router.get('/checkinactivity/:id', checkinActivity);
+router.post('/checkoutactivity/:id', checkoutActivity);
 
 const createAnnouncement = standardize(async (req, res) => {
   const schema = Joi.object({
