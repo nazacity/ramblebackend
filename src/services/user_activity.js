@@ -199,20 +199,24 @@ class UserActivityService extends AbstractService {
       (item) => item._id.toString() === item_id
     );
 
-    const newAnnounment = user_activity.announcement;
-    newAnnounment[index].state = 'read';
+    if (index > -1) {
+      const newAnnounment = user_activity.announcement;
+      newAnnounment[index].state = 'read';
 
-    return this.models.UserActivity.findByIdAndUpdate(
-      user_activity_id,
-      {
-        $set: {
-          announcement: newAnnounment,
+      return this.models.UserActivity.findByIdAndUpdate(
+        user_activity_id,
+        {
+          $set: {
+            announcement: newAnnounment,
+          },
         },
-      },
-      {
-        new: true,
-      }
-    );
+        {
+          new: true,
+        }
+      );
+    } else {
+      return 'Error';
+    }
   }
 }
 

@@ -135,7 +135,17 @@ class ActivityService extends AbstractService {
       ...data.location,
       region: region,
     };
-    return this.models.Activity.create(data);
+
+    const shirt_report = data.courses.map((item) => {
+      const size = data.size.map((item) => {
+        return { size: item.size };
+      });
+      return { course: item.title, size: size };
+    });
+
+    // console.log(test);
+
+    return this.models.Activity.create({ ...data, shirt_report: shirt_report });
   }
 
   async editActivity(id, data) {
@@ -167,17 +177,18 @@ class ActivityService extends AbstractService {
     }
   }
 
-  async updateUserActivity(
-    id,
-    userActivityId,
-    user,
-    sizeId,
-    courseId,
-    addressId
-  ) {
+  async updateUserActivity(id, userActivityId, user, size, course, addressId) {
     const activity = await this.models.Activity.findById(id);
 
-    const sizeIndex = activity.size.findIndex((item) => item.id === sizeId);
+    const shirtCousreIndex = activity.shirt_report.findIndex(
+      (item) => item.course === course.title
+    );
+    const newShirt_report = activity.shirt_report;
+    const sizeShirtIndex = newShirt_report[shirtCousreIndex].size.findIndex(
+      (item) => item.size === size.size
+    );
+
+    const sizeIndex = activity.size.findIndex((item) => item.id === size.id);
     let newSize = activity.size;
 
     let newParticipantBygender;
@@ -188,7 +199,14 @@ class ActivityService extends AbstractService {
         participant_female_number:
           activity.report_infomation.participant_female_number,
       };
-      newSize[sizeIndex].male_quality += 1;
+      if (sizeIndex > -1) {
+        newSize[sizeIndex].male_quality += 1;
+      }
+      if (sizeShirtIndex > -1) {
+        newShirt_report[shirtCousreIndex].size[
+          sizeShirtIndex
+        ].male_quality += 1;
+      }
     } else if (user.gender === 'female') {
       newParticipantBygender = {
         participant_male_number:
@@ -196,15 +214,24 @@ class ActivityService extends AbstractService {
         participant_female_number:
           activity.report_infomation.participant_female_number + 1,
       };
-      newSize[sizeIndex].female_quality += 1;
+      if (sizeIndex > -1) {
+        newSize[sizeIndex].female_quality += 1;
+      }
+      if (sizeShirtIndex > -1) {
+        newShirt_report[shirtCousreIndex].size[
+          sizeShirtIndex
+        ].female_quality += 1;
+      }
     }
 
     // update courses register no
     let newCourses = activity.courses;
     const courseIndex = activity.courses.findIndex(
-      (item) => item._id.toString() === courseId
+      (item) => item._id.toString() === course._id
     );
-    newCourses[courseIndex].register_no += 1;
+    if (courseIndex > -1) {
+      newCourses[courseIndex].register_no += 1;
+    }
 
     // update reception
     let newReception = activity.reception;
@@ -273,6 +300,7 @@ class ActivityService extends AbstractService {
             size: newSize,
             reception: newReception,
             courses: newCourses,
+            shirt_report: newShirt_report,
           },
         },
         {
@@ -289,6 +317,7 @@ class ActivityService extends AbstractService {
             size: newSize,
             reception: newReception,
             courses: newCourses,
+            shirt_report: newShirt_report,
           },
         },
         {
@@ -386,14 +415,16 @@ class ActivityService extends AbstractService {
       (item) => item._id.toString() === id.toString()
     );
     const announcement = activity.announcement;
-    announcement[index] = {
-      _id: data._id,
-      active: data.active,
-      title: data.title,
-      description: data.description,
-      picture_url: data.picture_url,
-      createdAt: data.createdAt,
-    };
+    if (index > -1) {
+      announcement[index] = {
+        _id: data._id,
+        active: data.active,
+        title: data.title,
+        description: data.description,
+        picture_url: data.picture_url,
+        createdAt: data.createdAt,
+      };
+    }
     const updatedActivity = await this.models.Activity.findByIdAndUpdate(
       data.activity_id,
       {
@@ -413,29 +444,29 @@ class ActivityService extends AbstractService {
         const index1 = userActivity.announcement.findIndex(
           (item1) => item1._id.toString() === id.toString()
         );
-        const newUserActivityAnnouncement = userActivity.announcement;
-
-        newUserActivityAnnouncement[index1] = {
-          _id: data._id,
-          active: data.active,
-          title: data.title,
-          description: data.description,
-          picture_url: data.picture_url,
-          createdAt: data.createdAt,
-          state: newUserActivityAnnouncement[index1].state,
-        };
-
-        await this.models.UserActivity.findByIdAndUpdate(
-          item,
-          {
-            $set: {
-              announcement: newUserActivityAnnouncement,
+        if (index1 > -1) {
+          const newUserActivityAnnouncement = userActivity.announcement;
+          newUserActivityAnnouncement[index1] = {
+            _id: data._id,
+            active: data.active,
+            title: data.title,
+            description: data.description,
+            picture_url: data.picture_url,
+            createdAt: data.createdAt,
+            state: newUserActivityAnnouncement[index1].state,
+          };
+          await this.models.UserActivity.findByIdAndUpdate(
+            item,
+            {
+              $set: {
+                announcement: newUserActivityAnnouncement,
+              },
             },
-          },
-          {
-            new: true,
-          }
-        );
+            {
+              new: true,
+            }
+          );
+        }
       }
       return;
     });

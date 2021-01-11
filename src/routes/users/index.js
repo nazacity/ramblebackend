@@ -106,8 +106,15 @@ const updateDeviceToken = async (req, res) => {
     { user: req.user.id, ...req.body },
     schema
   );
-  await UserService.updateDeviceToken(user, device_token);
-  res.status(200).json();
+
+  if (req.user.device_token !== device_token) {
+    await UserService.updateDeviceToken(user, device_token);
+    res.status(200).json({ stats: 200, data: 'Updated Device Token' });
+  } else {
+    res
+      .status(200)
+      .json({ stats: 200, data: 'Device Token has not been changed' });
+  }
 };
 
 const changePassword = standardize(async (req, res) => {
@@ -120,7 +127,11 @@ const changePassword = standardize(async (req, res) => {
 
   res.json({
     status: 200,
-    data: await UserService.changePassword(req.user.id, data),
+    data: await UserService.changePassword(
+      req.user.id,
+      data,
+      req.user.birthday
+    ),
   });
 });
 
@@ -181,8 +192,8 @@ const createUserActivity = standardize(async (req, res) => {
     req.body.activity.id,
     newUserActivity.id,
     user,
-    userActivity.size.id,
-    userActivity.activity.course._id,
+    userActivity.size,
+    userActivity.activity.course,
     userActivity.address
   );
   res.status(201).send({ id: newUserActivity.id });

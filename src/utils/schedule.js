@@ -12,6 +12,7 @@ module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
   await sendNotification7DaysBefore();
 });
 
+// Not Test yet
 const updateOpenRegister = async () => {
   const preRegisterActivities = await models.Activity.find({
     state: 'pre_register',
@@ -35,6 +36,7 @@ const updateOpenRegister = async () => {
   });
 };
 
+// Not Test yet
 const updateEndRegister = async () => {
   const preRegisterActivities = await models.Activity.find({
     state: 'registering',
