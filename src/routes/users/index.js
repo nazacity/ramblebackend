@@ -192,8 +192,8 @@ const createUserActivity = standardize(async (req, res) => {
     req.body.activity.id,
     newUserActivity.id,
     user,
-    userActivity.size.id,
-    userActivity.activity.course._id,
+    userActivity.size,
+    userActivity.activity.course,
     userActivity.address
   );
   res.status(201).send({ id: newUserActivity.id });

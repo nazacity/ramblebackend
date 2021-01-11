@@ -79,6 +79,19 @@ const activity = new Schema({
     },
   ],
 
+  shirt_report: [
+    {
+      course: { type: String, required: true },
+      size: [
+        {
+          size: { type: String, required: true },
+          male_quality: { type: Number, required: true, default: 0 },
+          female_quality: { type: Number, required: true, default: 0 },
+        },
+      ],
+    },
+  ],
+
   reception: {
     atevent: { type: Number, required: true, default: 0 },
     sendAddress: { type: Number, required: true, default: 0 },

@@ -135,7 +135,17 @@ class ActivityService extends AbstractService {
       ...data.location,
       region: region,
     };
-    return this.models.Activity.create(data);
+
+    const shirt_report = data.courses.map((item) => {
+      const size = data.size.map((item) => {
+        return { size: item.size };
+      });
+      return { course: item.title, size: size };
+    });
+
+    // console.log(test);
+
+    return this.models.Activity.create({ ...data, shirt_report: shirt_report });
   }
 
   async editActivity(id, data) {
@@ -167,17 +177,18 @@ class ActivityService extends AbstractService {
     }
   }
 
-  async updateUserActivity(
-    id,
-    userActivityId,
-    user,
-    sizeId,
-    courseId,
-    addressId
-  ) {
+  async updateUserActivity(id, userActivityId, user, size, course, addressId) {
     const activity = await this.models.Activity.findById(id);
 
-    const sizeIndex = activity.size.findIndex((item) => item.id === sizeId);
+    const shirtCousreIndex = activity.shirt_report.findIndex(
+      (item) => item.course === course.title
+    );
+    const newShirt_report = activity.shirt_report;
+    const sizeShirtIndex = newShirt_report[shirtCousreIndex].size.findIndex(
+      (item) => item.size === size.size
+    );
+
+    const sizeIndex = activity.size.findIndex((item) => item.id === size.id);
     let newSize = activity.size;
 
     let newParticipantBygender;
@@ -191,6 +202,11 @@ class ActivityService extends AbstractService {
       if (sizeIndex > -1) {
         newSize[sizeIndex].male_quality += 1;
       }
+      if (sizeShirtIndex > -1) {
+        newShirt_report[shirtCousreIndex].size[
+          sizeShirtIndex
+        ].male_quality += 1;
+      }
     } else if (user.gender === 'female') {
       newParticipantBygender = {
         participant_male_number:
@@ -201,12 +217,17 @@ class ActivityService extends AbstractService {
       if (sizeIndex > -1) {
         newSize[sizeIndex].female_quality += 1;
       }
+      if (sizeShirtIndex > -1) {
+        newShirt_report[shirtCousreIndex].size[
+          sizeShirtIndex
+        ].female_quality += 1;
+      }
     }
 
     // update courses register no
     let newCourses = activity.courses;
     const courseIndex = activity.courses.findIndex(
-      (item) => item._id.toString() === courseId
+      (item) => item._id.toString() === course._id
     );
     if (courseIndex > -1) {
       newCourses[courseIndex].register_no += 1;
@@ -279,6 +300,7 @@ class ActivityService extends AbstractService {
             size: newSize,
             reception: newReception,
             courses: newCourses,
+            shirt_report: newShirt_report,
           },
         },
         {
@@ -295,6 +317,7 @@ class ActivityService extends AbstractService {
             size: newSize,
             reception: newReception,
             courses: newCourses,
+            shirt_report: newShirt_report,
           },
         },
         {

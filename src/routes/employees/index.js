@@ -276,6 +276,13 @@ const createActivity = standardize(async (req, res) => {
       description: Joi.string().allow(''),
       gift_picture_url: Joi.string().allow(''),
     }),
+    senderAddress: {
+      name: Joi.string().required(),
+      address: Joi.string().required(),
+      province: Joi.string().required(),
+      zip: Joi.string().required(),
+      phone_number: Joi.string().required(),
+    },
   });
 
   const data = Joi.attempt(req.body, schema);

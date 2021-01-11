@@ -3,9 +3,9 @@ const { PartnerService } = require('../services');
 const generatePartner = async (id) => {
   try {
     await PartnerService.createPartner({
-      username: id,
+      username: 'partner',
       password: 'password',
-      display_name: id,
+      display_name: 'toyota',
       activities: [],
     });
   } catch (error) {
@@ -14,7 +14,7 @@ const generatePartner = async (id) => {
   }
 };
 
-// generatePartner();
+generatePartner();
 
 const createManyPartners = async () => {
   for (let index = 1; index < 100; index++) {
@@ -23,4 +23,4 @@ const createManyPartners = async () => {
   process.exit(0);
 };
 
-createManyPartners();
+// createManyPartners();
