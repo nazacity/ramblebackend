@@ -218,6 +218,89 @@ class UserActivityService extends AbstractService {
       return 'Error';
     }
   }
+  async editUserActivity(id, data) {
+    const activity = await this.models.Activity.findById(data.activity.id);
+
+    const sizeIndex = activity.size.findIndex(
+      (item) => item.size === data.size.size
+    );
+    const size = activity.size[sizeIndex];
+
+    const courseIndex = activity.courses.findIndex(
+      (item) => item._id.toString() === data.activity.course._id
+    );
+    const course = activity.courses[courseIndex];
+
+    const oldUserActivity = await this.models.UserActivity.findById(id);
+
+    const oldShirtReportIndex = activity.shirt_report.findIndex(
+      (item) => item.course === oldUserActivity.activity.course.title
+    );
+    const shirt_report = activity.shirt_report;
+    const oldSizeIndex = activity.shirt_report[
+      oldShirtReportIndex
+    ].size.findIndex((item) => item.size === oldUserActivity.size.size);
+
+    const newShirtReportIndex = activity.shirt_report.findIndex(
+      (item) => item.course === course.title
+    );
+    const newSizeIndex = activity.shirt_report[
+      newShirtReportIndex
+    ].size.findIndex((item) => item.size === data.size.size);
+
+    if (data.user.gender === 'male') {
+      shirt_report[oldShirtReportIndex].size[oldSizeIndex].male_quality -= 1;
+      shirt_report[newShirtReportIndex].size[newSizeIndex].male_quality += 1;
+    } else if (data.user.gender === 'female') {
+      shirt_report[oldShirtReportIndex].size[oldSizeIndex].female_quality -= 1;
+      shirt_report[newShirtReportIndex].size[newSizeIndex].female_quality += 1;
+    }
+
+    const courses = activity.courses;
+    const oldCourseIndex = activity.courses.findIndex(
+      (item) =>
+        item._id.toString() === oldUserActivity.activity.course._id.toString()
+    );
+    courses[oldCourseIndex].register_no -= 1;
+    const newCourseIndex = activity.courses.findIndex(
+      (item) => item._id.toString() === data.activity.course._id.toString()
+    );
+    courses[newCourseIndex].register_no += 1;
+
+    await this.models.Activity.findByIdAndUpdate(data.activity.id, {
+      $set: {
+        shirt_report: shirt_report,
+        courses: courses,
+      },
+    });
+
+    const newUserActivity = this.models.UserActivity.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          size: size,
+          activity: {
+            id: activity._id,
+            course: course,
+          },
+          state: data.state,
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
+    return newUserActivity;
+  }
 }
 
 module.exports = UserActivityService;

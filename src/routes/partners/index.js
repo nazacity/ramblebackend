@@ -257,10 +257,29 @@ const checkoutActivity = standardize(async (req, res) => {
   });
 });
 
+const editUserActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const updatedUserActivity = await UserActivityService.editUserActivity(
+    id,
+    req.body
+  );
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUserActivity,
+  });
+});
+
 router.get('/useractivities/:id', userActivities);
 router.get('/filtereduseractivities/:id', filteredUserActivities);
 router.post('/updatconstestuseractivities/:id', updateContestNoUserActivities);
 router.get('/updateprintstate/:id', updatePrintedState);
+router.post('/edituseractivity/:id', editUserActivity);
 router.get('/checkinactivity/:id', checkinActivity);
 router.post('/checkoutactivity/:id', checkoutActivity);
 
