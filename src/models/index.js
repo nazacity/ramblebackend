@@ -21,4 +21,5 @@ module.exports = {
   Address: require('./address'),
   MainAdvertize: require('./mainadvertize'),
   Onboarding: require('./onboarding'),
+  PartnerRegisterForm: require('./partner_register_form'),
 };

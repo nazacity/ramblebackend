@@ -65,6 +65,10 @@ class PartnerService extends AbstractService {
   checkPassword(password, hash) {
     return bcrypt.compare(password, hash);
   }
+
+  async partnerRegisterForm(data) {
+    return this.models.PartnerRegisterForm.create(data);
+  }
 }
 
 module.exports = PartnerService;

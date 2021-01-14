@@ -14,6 +14,7 @@ const {
   AddressService,
   MainAdvertizeService,
   OnboardingService,
+  PartnerService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
@@ -212,5 +213,23 @@ const resetPassword = async (req, res) => {
 
 router.post('/forgotpassword', forgotPassword);
 router.post('/resetpassword', resetPassword);
+
+const partnerRegisterForm = async (req, res) => {
+  const schema = Joi.object({
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    company_name: Joi.string().required(),
+    phone_number: Joi.string().required(),
+    line_id: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.status(201).send({
+    status: 200,
+    data: await PartnerService.partnerRegisterForm(data),
+  });
+};
+router.post('/partnerregister', partnerRegisterForm);
 
 module.exports = router;
