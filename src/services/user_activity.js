@@ -165,6 +165,7 @@ class UserActivityService extends AbstractService {
       .populate({
         path: 'address',
       })
+      .populate({ path: 'activity.id' })
       .populate({
         path: 'emergency_contacts',
       });
@@ -187,6 +188,7 @@ class UserActivityService extends AbstractService {
       .populate({
         path: 'address',
       })
+      .populate({ path: 'activity.id' })
       .populate({
         path: 'emergency_contacts',
       });
@@ -213,7 +215,17 @@ class UserActivityService extends AbstractService {
         {
           new: true,
         }
-      );
+      )
+        .populate({
+          path: 'user',
+        })
+        .populate({
+          path: 'address',
+        })
+        .populate({ path: 'activity.id' })
+        .populate({
+          path: 'emergency_contacts',
+        });
     } else {
       return 'Error';
     }

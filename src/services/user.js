@@ -31,7 +31,6 @@ class UserService extends AbstractService {
     return this.models.User.findByIdAndUpdate(id, {
       $set: {
         device_token: device_token,
-        age: age,
       },
     });
   }
