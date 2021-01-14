@@ -4,6 +4,7 @@ const models = require('../models');
 const config = require('./config');
 
 module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
+  // module.exports = job = schedule.scheduleJob('1 * 12 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -17,9 +18,12 @@ const updateOpenRegister = async () => {
   const preRegisterActivities = await models.Activity.find({
     state: 'pre_register',
     register_start_date: {
-      $lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now()),
     },
   });
+
+  console.log(preRegisterActivities);
 
   preRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
@@ -41,9 +45,12 @@ const updateEndRegister = async () => {
   const preRegisterActivities = await models.Activity.find({
     state: 'registering',
     register_end_date: {
-      $lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now()),
     },
   });
+
+  console.log(preRegisterActivities);
 
   preRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
