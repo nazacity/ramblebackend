@@ -250,7 +250,7 @@ const requestPayment = standardize(async (req, res) => {
         amount: `${amount.toFixed(2)}`,
         ref1: id.substring(0, 10).toUpperCase(),
         ref2: id.substring(10).toUpperCase(),
-        ref3: mailfee ? 'mailfee' : 'nomailfee',
+        ref3: mailfee ? 'MAILFEE' : 'MOMAILFEE',
       },
     });
 
