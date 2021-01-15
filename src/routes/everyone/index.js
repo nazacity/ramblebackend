@@ -44,8 +44,8 @@ const confirmPayment = async (req, res) => {
     .populate({ path: 'user', select: { device_token: 1 } })
     .populate({ path: 'activity.id', select: { title: 1, location: 1 } });
 
-  const activity = userActivity.activity.id;
-  const user_device_token = userActivity.user.device_token;
+  const activity = updatedUserActivity.activity.id;
+  const user_device_token = updatedUserActivity.user.device_token;
 
   const courses = activity.courses;
   const courseIndex = activity.courses.findIndex(
