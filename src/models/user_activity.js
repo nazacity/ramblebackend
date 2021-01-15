@@ -83,12 +83,14 @@ const user_activity = new Schema({
       state: { type: Boolean, default: false },
     },
   ],
-  transaction: {
-    id: { type: String },
-    sendingBank: { type: String },
-    payDate: { type: Date },
-    amount: { type: Number, default: 0 },
-  },
+  transaction: [
+    {
+      id: { type: String },
+      sendingBank: { type: String },
+      payDate: { type: Date },
+      amount: { type: Number, default: 0 },
+    },
+  ],
   printed: {
     type: Boolean,
     default: false,
