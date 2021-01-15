@@ -87,6 +87,7 @@ const user_activity = new Schema({
     id: { type: String },
     sendingBank: { type: String },
     payDate: { type: Date },
+    amount: { type: Number, default: 0 },
   },
   printed: {
     type: Boolean,

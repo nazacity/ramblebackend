@@ -10,6 +10,7 @@ module.exports = {
     'cancel',
   ],
   user_activity_state: [
+    'change_course_waiting_payment',
     'waiting_payment',
     'upcoming',
     'actual_date',
