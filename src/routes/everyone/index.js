@@ -44,7 +44,7 @@ const confirmPayment = async (req, res) => {
     .populate({ path: 'user', select: { device_token: 1 } })
     .populate({
       path: 'activity.id',
-      select: { title: 1, location: 1, courses: 1 },
+      select: { title: 1, location: 1, courses: 1, report_infomation: 1 },
     });
 
   const activity = updatedUserActivity.activity.id;
@@ -56,7 +56,11 @@ const confirmPayment = async (req, res) => {
   );
   courses[courseIndex].revenue += updatedUserActivity.activity.course.price;
 
-  let mailfee = activity.report_infomation.mailfee;
+  let mailfee = activity.report_infomation.mailfee
+    ? activity.report_infomation.mailfee
+    : 0;
+
+  console.log(req.body.billPaymentRef3);
   if (req.body.billPaymentRef3 === 'MAILFEE') {
     mailfee += 80;
   }
