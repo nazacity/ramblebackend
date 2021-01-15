@@ -29,6 +29,7 @@ const confirmPayment = async (req, res) => {
           id: req.body.transactionId,
           sendingBank: req.body.sendingBankCode,
           payDate: req.body.transactionDateandTime,
+          amount: req.body.amount,
         },
       },
     }
