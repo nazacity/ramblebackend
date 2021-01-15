@@ -42,7 +42,10 @@ const confirmPayment = async (req, res) => {
     }
   )
     .populate({ path: 'user', select: { device_token: 1 } })
-    .populate({ path: 'activity.id', select: { title: 1, location: 1 } });
+    .populate({
+      path: 'activity.id',
+      select: { title: 1, location: 1, courses: 1 },
+    });
 
   const activity = updatedUserActivity.activity.id;
   const user_device_token = updatedUserActivity.user.device_token;
