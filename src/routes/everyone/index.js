@@ -54,7 +54,7 @@ const confirmPayment = async (req, res) => {
   courses[courseIndex] += updatedUserActivity.activity.course.price;
 
   let mailfee = activity.report_infomation.mailfee;
-  if (req.body.billPaymentRef3 === 'mailfee') {
+  if (req.body.billPaymentRef3 === 'MAILFEE') {
     mailfee += 80;
   }
 
