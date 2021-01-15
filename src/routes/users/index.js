@@ -199,43 +199,6 @@ const createUserActivity = standardize(async (req, res) => {
   res.status(201).send({ id: newUserActivity.id });
 });
 
-const editUserActivity = standardize(async (req, res) => {
-  const schema = Joi.object({
-    activity: {
-      id: Joi.string().required(), // activity id
-      course: {
-        _id: Joi.string().required(),
-        title: Joi.string().required(),
-        range: Joi.number().required(),
-        price: Joi.number().required(),
-        course_picture_url: Joi.string().required(),
-      },
-    },
-
-    address: Joi.string().required(),
-    emergency_contact: Joi.string().required(),
-  });
-
-  const userActivity = Joi.attempt(req.body, schema);
-
-  const { id } = Joi.attempt(req.params, paramSchema);
-
-  const newUserActivity = await UserActivityService.editUserActivity(
-    id,
-    userActivity
-  );
-
-  await ActivityService.updateUserActivity(
-    req.body.activity.id,
-    newUserActivity.id,
-    user,
-    userActivity.size,
-    userActivity.activity.course,
-    userActivity.address
-  );
-  res.status(201).send({ id: newUserActivity.id });
-});
-
 const getUserByJwt = standardize(async (req, res) => {
   return res.json(req.user);
 });
@@ -244,12 +207,13 @@ const requestPayment = standardize(async (req, res) => {
   const schema = Joi.object({
     amount: Joi.number().required(),
     activity_title: Joi.string().required(),
+    mailfee: Joi.boolean().required(),
   });
   const paramSchema = Joi.object({
     id: Joi.string().required(),
   });
 
-  const { amount, activity_title } = Joi.attempt(req.body, schema);
+  const { amount, activity_title, mailfee } = Joi.attempt(req.body, schema);
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
@@ -286,7 +250,7 @@ const requestPayment = standardize(async (req, res) => {
         amount: `${amount.toFixed(2)}`,
         ref1: id.substring(0, 10).toUpperCase(),
         ref2: id.substring(10).toUpperCase(),
-        ref3: 'RAMBLEPAYMENT',
+        ref3: mailfee ? 'mailfee' : 'nomailfee',
       },
     });
 
@@ -298,7 +262,6 @@ const requestPayment = standardize(async (req, res) => {
 
 router.get('/getuserbyjwt', getUserByJwt);
 router.post('/createuseractivity', createUserActivity);
-router.post('/edituseractivity/:id', editUserActivity);
 router.post('/requestpayment/:id', requestPayment);
 
 // User Post
