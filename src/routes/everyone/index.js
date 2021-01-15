@@ -19,18 +19,25 @@ const {
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
 const confirmPayment = async (req, res) => {
-  const userActivity = await model.UserActivity.findByIdAndUpdate(
+  const oldUserActivity = await model.UserActivity.findById(
+    req.body.billPaymentRef1.toLowerCase() +
+      req.body.billPaymentRef2.toLowerCase()
+  );
+  const updatedUserActivity = await model.UserActivity.findByIdAndUpdate(
     req.body.billPaymentRef1.toLowerCase() +
       req.body.billPaymentRef2.toLowerCase(),
     {
       $set: {
         state: 'upcoming',
-        transaction: {
-          id: req.body.transactionId,
-          sendingBank: req.body.sendingBankCode,
-          payDate: req.body.transactionDateandTime,
-          amount: req.body.amount,
-        },
+        transaction: [
+          ...oldUserActivity.transaction,
+          {
+            id: req.body.transactionId,
+            sendingBank: req.body.sendingBankCode,
+            payDate: req.body.transactionDateandTime,
+            amount: req.body.amount,
+          },
+        ],
       },
     }
   )
