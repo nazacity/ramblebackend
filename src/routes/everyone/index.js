@@ -54,7 +54,9 @@ const confirmPayment = async (req, res) => {
   const courseIndex = activity.courses.findIndex(
     (item) => item._id.toString() === updatedUserActivity.activity.course._id
   );
-  courses[courseIndex].revenue += updatedUserActivity.activity.course.price;
+  courses[courseIndex].revenue = courses[courseIndex].revenue
+    ? courses[courseIndex].revenue + updatedUserActivity.activity.course.price
+    : updatedUserActivity.activity.course.price;
 
   let mailfee = activity.report_infomation.mailfee
     ? activity.report_infomation.mailfee
