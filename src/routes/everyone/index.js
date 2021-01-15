@@ -47,6 +47,27 @@ const confirmPayment = async (req, res) => {
   const activity = userActivity.activity.id;
   const user_device_token = userActivity.user.device_token;
 
+  const courses = activity.courses;
+  const courseIndex = activity.courses.findIndex(
+    (item) => item._id.toString() === updatedUserActivity.activity.course._id
+  );
+  courses[courseIndex] += updatedUserActivity.activity.course.price;
+
+  let mailfee = activity.report_infomation.mailfee;
+  if (req.body.billPaymentRef3 === 'mailfee') {
+    mailfee += 80;
+  }
+
+  await model.Activity.findByIdAndUpdate(activity._id, {
+    $set: {
+      report_infomation: {
+        ...activity.report_infomation,
+        mailfee: mailfee,
+      },
+      courses: courses,
+    },
+  });
+
   try {
     const sendNotification = await axios({
       method: 'post',

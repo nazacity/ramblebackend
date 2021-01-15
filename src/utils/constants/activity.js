@@ -11,6 +11,7 @@ module.exports = {
   ],
   user_activity_state: [
     'change_course_waiting_payment',
+    'refund',
     'waiting_payment',
     'upcoming',
     'actual_date',

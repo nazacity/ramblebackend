@@ -36,6 +36,7 @@ const activity = new Schema({
       price: { type: Number, required: true },
       course_picture_url: { type: String, required: true },
       register_no: { type: Number, required: true, default: 0 },
+      revenue: { type: Number, required: true, default: 0 },
     },
   ],
 
@@ -103,6 +104,7 @@ const activity = new Schema({
     participant_female_number: { type: Number, required: true, default: 0 },
     revenue: { type: Number, required: true, default: 0 },
     revenue_after_cutting: { type: Number, required: true, default: 0 },
+    mailfee: { type: Number, required: true, default: 0 },
     age_20: { type: Number, required: true, default: 0 },
     age_20_30: { type: Number, required: true, default: 0 },
     age_30_40: { type: Number, required: true, default: 0 },
