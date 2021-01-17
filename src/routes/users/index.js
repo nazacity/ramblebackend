@@ -166,12 +166,12 @@ const createUserActivity = standardize(async (req, res) => {
     emergency_contact: Joi.string().required(),
     idcard: Joi.string().required(),
     announcement: Joi.array().items({
-      _id: Joi.string().required(),
-      active: Joi.boolean().required(),
-      title: Joi.string().required(),
-      description: Joi.string().required(),
-      picture_url: Joi.string().required(),
-      createdAt: Joi.date().required(),
+      _id: Joi.string().allow(null).allow(''),
+      active: Joi.boolean().allow(null).allow(''),
+      title: Joi.string().allow(null).allow(''),
+      description: Joi.string().allow(null).allow(''),
+      picture_url: Joi.string().allow(null).allow(''),
+      createdAt: Joi.date().allow(null).allow(''),
     }),
   });
 
