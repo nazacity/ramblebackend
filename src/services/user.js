@@ -23,6 +23,19 @@ class UserService extends AbstractService {
       .limit(+limit);
   }
 
+  findAllUser(filter) {
+    return this.models.User.find(
+      {
+        gender: filter.gender ? filter.gender : { $ne: null },
+        age: {
+          $gte: filter.min_age ? filter.min_age : 0,
+          $lte: filter.max_age ? filter.max_age : 100,
+        },
+      },
+      { password: 0 }
+    ).count();
+  }
+
   findById(id) {
     return this.models.User.findById(id, { password: 0 });
   }

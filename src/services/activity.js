@@ -51,6 +51,33 @@ class ActivityService extends AbstractService {
       .limit(+limit);
   }
 
+  findAllActivity(filter) {
+    return this.models.Activity.find({
+      title: filter.title ? filter.title : { $ne: null },
+      'location.region': filter.region ? filter.region : { $ne: null },
+      'location.province': filter.province ? filter.province : { $ne: null },
+
+      register_end_date: filter.from
+        ? { $gte: filter.from, $lte: filter.to }
+        : { $ne: null },
+      actual_date: filter.from
+        ? { $gte: filter.from, $lte: filter.to }
+        : { $ne: null },
+
+      courses: filter.range_min
+        ? {
+            $elemMatch: {
+              range: {
+                $gte: filter.range_min ? +filter.range_min : 0,
+                $lte: filter.range_max ? +filter.range_max : 100,
+              },
+            },
+          }
+        : { $ne: null },
+      state: filter.state ? filter.state : { $ne: null },
+    }).count();
+  }
+
   findById(id) {
     return this.models.Activity.findById(id);
   }

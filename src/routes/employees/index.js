@@ -479,4 +479,92 @@ const createOnboarding = standardize(async (req, res) => {
 
 router.post('/onboarding', createOnboarding);
 
+const getReportData = standardize(async (req, res) => {
+  const allUsers = await UserService.findAllUser({});
+  const maleUsers = await UserService.findAllUser({ gender: 'male' });
+  const femaleUsers = await UserService.findAllUser({ gender: 'female' });
+  const Users20 = await UserService.findAllUser({ max_age: 20 });
+  const Users20_30 = await UserService.findAllUser({
+    min_age: 21,
+    max_age: 30,
+  });
+  const Users30_40 = await UserService.findAllUser({
+    min_age: 31,
+    max_age: 40,
+  });
+  const Users40_50 = await UserService.findAllUser({
+    min_age: 41,
+    max_age: 50,
+  });
+  const Users50 = await UserService.findAllUser({ min_age: 51 });
+
+  const allActivities = await ActivityService.findAllActivity({});
+  const pre_registerActivities = await ActivityService.findAllActivity({
+    state: 'pre_register',
+  });
+  const registeringActivities = await ActivityService.findAllActivity({
+    state: 'registering',
+  });
+  const end_registerActivities = await ActivityService.findAllActivity({
+    state: 'end_register',
+  });
+  const actual_dateActivities = await ActivityService.findAllActivity({
+    state: 'actual_date',
+  });
+  const finishedActivities = await ActivityService.findAllActivity({
+    state: 'finished',
+  });
+  const cancelActivities = await ActivityService.findAllActivity({
+    state: 'cancel',
+  });
+  const northActivities = await ActivityService.findAllActivity({
+    region: 'ภาคเหนือ',
+  });
+  const centralActivities = await ActivityService.findAllActivity({
+    region: 'ภาคกลาง',
+  });
+  const southActivities = await ActivityService.findAllActivity({
+    region: 'ภาคใต้',
+  });
+  const easternActivities = await ActivityService.findAllActivity({
+    region: 'ภาคตะวันออก',
+  });
+  const northeastActivities = await ActivityService.findAllActivity({
+    region: 'ภาคตะวันออกเฉียงเหนือ',
+  });
+
+  const westernActivities = await ActivityService.findAllActivity({
+    region: 'ภาคตะวันตก',
+  });
+
+  res.status(200).send({
+    status: 200,
+    data: {
+      allUsers,
+      maleUsers,
+      femaleUsers,
+      Users20,
+      Users20_30,
+      Users30_40,
+      Users40_50,
+      Users50,
+      allActivities,
+      pre_registerActivities,
+      registeringActivities,
+      end_registerActivities,
+      actual_dateActivities,
+      finishedActivities,
+      cancelActivities,
+      northActivities,
+      centralActivities,
+      southActivities,
+      easternActivities,
+      northeastActivities,
+      westernActivities,
+    },
+  });
+}, permission.ADMIN);
+
+router.get('/getreportdata', getReportData);
+
 module.exports = router;
