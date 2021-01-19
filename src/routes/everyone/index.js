@@ -270,4 +270,43 @@ const partnerRegisterForm = async (req, res) => {
 };
 router.post('/partnerregister', partnerRegisterForm);
 
+// Line Processing
+const getUserFromLineToken = async (req, res) => {
+  const { accessToken } = req.body;
+  let line;
+  await axios
+    .get('https://api.line.me/v2/profile', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    .then((res) => {
+      line = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  const user = await UserService.findByLineId(line.userId, line.pictureUrl);
+
+  res.status(200).send({
+    status: 200,
+    data: user,
+  });
+};
+
+const getActivityById = async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+  const { id } = Joi.attempt(req.params, paramSchema);
+  const activity = await ActivityService.findById(id);
+
+  res.status(200).send({
+    status: 200,
+    data: activity,
+  });
+};
+
+router.post('/getuserfromlinetoken', getUserFromLineToken);
+router.get('/getactivitybyid/:id', getActivityById);
+
 module.exports = router;

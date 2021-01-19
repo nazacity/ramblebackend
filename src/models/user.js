@@ -27,6 +27,7 @@ const user = new Schema({
   user_picture_url: { type: String, required: true },
   user_background_picture_url: { type: String },
   device_token: { type: String },
+  lineId: { type: String },
 
   state: { type: String, enum: user_state, required: true, default: 'active' },
 

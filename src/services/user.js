@@ -23,6 +23,22 @@ class UserService extends AbstractService {
       .limit(+limit);
   }
 
+  async findByLineId(lineId, pictureUrl) {
+    const user = await this.models.User.findOneAndUpdate(
+      { lineId: lineId },
+      {
+        $set: {
+          user_picture_url: pictureUrl,
+        },
+      }
+    );
+    if (user) {
+      return user;
+    } else {
+      return 'No user is found';
+    }
+  }
+
   findAllUser(filter) {
     return this.models.User.find(
       {
