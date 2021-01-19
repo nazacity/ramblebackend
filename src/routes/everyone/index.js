@@ -284,9 +284,29 @@ const getUserFromLineToken = async (req, res) => {
     .catch((err) => {
       console.log(err);
     });
-  console.log(line);
+
+  const user = await UserService.findByLineId(line.userId, line.pictureUrl);
+
+  res.status(200).send({
+    status: 200,
+    data: user,
+  });
+};
+
+const getActivityById = async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+  const { id } = Joi.attempt(req.params, paramSchema);
+  const activity = await ActivityService.findById(id);
+
+  res.status(200).send({
+    status: 200,
+    data: activity,
+  });
 };
 
 router.post('/getuserfromlinetoken', getUserFromLineToken);
+router.get('/getactivitybyid/:id', getActivityById);
 
 module.exports = router;
