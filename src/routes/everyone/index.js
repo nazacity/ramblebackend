@@ -299,6 +299,7 @@ const getActivityById = async (req, res) => {
     id: Joi.string().required(),
   });
   const { id } = Joi.attempt(req.params, paramSchema);
+
   const activity = await ActivityService.findById(id);
 
   res.status(200).send({

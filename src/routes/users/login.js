@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 const config = require('../../utils/config');
+const user = require('../../utils/constants/user');
 
 const loginHandler = (req, res) => {
   const token = jwt.sign(
@@ -17,7 +18,11 @@ const loginHandler = (req, res) => {
       issuer: config.jwt.issuer,
     }
   );
-  res.json({ token, user: req.user });
+  if (req.user.message === 'No user is found') {
+    res.json({ message: req.user.message });
+  } else {
+    res.json({ token, user: req.user });
+  }
 };
 
 router.post('/', loginHandler);
