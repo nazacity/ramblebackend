@@ -36,14 +36,22 @@ passport.deserializeUser(async function (_id, done) {
 passport.use(
   'user',
   new CustomStrategy(async function (req, done) {
-    const { username, password } = req.body;
+    const { username, password, lineId, user_picture_url } = req.body;
     if (!username || !password) {
       return done(null, false, { message: 'missing username & password' });
     }
     try {
-      const user = await User.findOne({
-        username: username.toLowerCase(),
-      })
+      const user = await User.findOneAndUpdate(
+        {
+          username: username.toLowerCase(),
+        },
+        {
+          $set: {
+            lineId: lineId ? lineId : undefined,
+            user_picture_url: user_picture_url ? user_picture_url : undefined,
+          },
+        }
+      )
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
         .populate({ path: 'user_records' })
