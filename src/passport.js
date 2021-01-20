@@ -133,7 +133,7 @@ passport.use(
   'userLineId',
   new CustomStrategy(async function (req, done) {
     const { lineId, user_picture_url } = req.body;
-    console.log(lineId);
+
     if (!lineId) {
       return done(null, false, { message: 'missing line id' });
     }
