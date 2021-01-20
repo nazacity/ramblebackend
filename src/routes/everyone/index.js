@@ -157,6 +157,7 @@ const createUser = async (req, res) => {
       .valid(...blood_type)
       .required(),
     user_picture_url: Joi.string().required(),
+    lineId: Joi.string(),
   });
 
   const user = Joi.attempt(req.body, schema);
@@ -306,7 +307,97 @@ const getActivityById = async (req, res) => {
   });
 };
 
+const createUserAdressEmergencyActivity = async (req, res) => {
+  const schema = Joi.object({
+    user: Joi.string().required(), // user id
+    activity: {
+      id: Joi.string().required(), // activity id
+      course: {
+        _id: Joi.string().required(),
+        title: Joi.string().required(),
+        range: Joi.number().required(),
+        price: Joi.number().required(),
+        course_picture_url: Joi.string().required(),
+      },
+    },
+    size: {
+      id: Joi.string().required(),
+      size: Joi.string().required(),
+      description: Joi.string().required(),
+    },
+    idcard: Joi.string().required(),
+    address: {
+      _id: Joi.string().required(),
+      address: Joi.string().allow(null).allow(''),
+      province: Joi.string().allow(null).allow(''),
+      zip: Joi.string().allow(null).allow(''),
+      phone_number: Joi.string().allow(null).allow(''),
+    },
+    emergency: {
+      name: Joi.string().required(),
+      relationship: Joi.string().required(),
+      phone_number: Joi.string().required(),
+    },
+    announcement: Joi.array().items({
+      _id: Joi.string().allow(null).allow(''),
+      active: Joi.boolean().allow(null).allow(''),
+      title: Joi.string().allow(null).allow(''),
+      description: Joi.string().allow(null).allow(''),
+      picture_url: Joi.string().allow(null).allow(''),
+      createdAt: Joi.date().allow(null).allow(''),
+    }),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  let newAddress;
+  if (data.address._id === 'new') {
+    newAddress = await AddressService.createAddress({
+      address: data.address.address,
+      province: data.address.province,
+      zip: data.address.zip,
+      phone_number: data.address.phone_number,
+    });
+  } else {
+    newAddress = { _id: data.address._id };
+  }
+  await UserService.updateAddress(data.user, newAddress._id);
+  let newEmergencyContact = await EmergencyContactService.createEmergencyContact(
+    data.emergency
+  );
+  await UserService.updateEmergencyContact(data.user, newEmergencyContact._id);
+
+  const userActivity = {
+    ...data,
+    address: newAddress._id,
+    emergency_contact: newEmergencyContact._id,
+  };
+
+  const newUserActivity = await UserActivityService.createUserActivity(
+    userActivity
+  );
+  const user = await UserService.updateUserActivity(
+    data.user,
+    newUserActivity.id
+  );
+
+  await ActivityService.updateUserActivity(
+    req.body.activity.id,
+    newUserActivity.id,
+    user,
+    userActivity.size,
+    userActivity.activity.course,
+    userActivity.address
+  );
+
+  res.status(200).json({ status: 200, data: newUserActivity });
+};
+
 router.post('/getuserfromlinetoken', getUserFromLineToken);
 router.get('/getactivitybyid/:id', getActivityById);
+router.post(
+  '/createuseradressemergencyactivity',
+  createUserAdressEmergencyActivity
+);
 
 module.exports = router;

@@ -84,7 +84,6 @@ class ActivityService extends AbstractService {
       reception: 0,
       shirt_report: 0,
       user_activities: 0,
-      announcement: 0,
       coupons: 0,
       senderAddress: 0,
       partner: 0,

@@ -23,8 +23,6 @@ const updateOpenRegister = async () => {
     },
   });
 
-  console.log(preRegisterActivities);
-
   preRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
       item._id,
@@ -42,7 +40,7 @@ const updateOpenRegister = async () => {
 
 // Not Test yet
 const updateEndRegister = async () => {
-  const preRegisterActivities = await models.Activity.find({
+  const registerActivities = await models.Activity.find({
     state: 'registering',
     register_end_date: {
       $gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
@@ -50,9 +48,7 @@ const updateEndRegister = async () => {
     },
   });
 
-  console.log(preRegisterActivities);
-
-  preRegisterActivities.map(async (item) => {
+  registerActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
       item._id,
       {
@@ -64,6 +60,7 @@ const updateEndRegister = async () => {
         new: true,
       }
     );
+    await deleteNonPaidUserActivities(item.user_activities);
   });
 };
 
@@ -71,7 +68,8 @@ const updateActivitiesState = async () => {
   const actualDateActivities = await models.Activity.find({
     state: 'actual_date',
     actual_date: {
-      $lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -93,6 +91,7 @@ const updateActivitiesState = async () => {
   const endRegisterActivities = await models.Activity.find({
     state: 'end_register',
     actual_date: {
+      $gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
       $lt: new Date(Date.now()),
     },
   });
@@ -292,4 +291,15 @@ const sendNotification7DaysBefore = async () => {
       console.log(error.response);
     }
   });
+};
+
+const deleteNonPaidUserActivities = async (userActivities) => {
+  return Promise.all(
+    userActivities.map(async (item) => {
+      await models.UserActivity.findOneAndDelete({
+        _id: item,
+        state: 'waiting_payment',
+      });
+    })
+  );
 };
