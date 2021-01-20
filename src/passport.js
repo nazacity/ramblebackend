@@ -36,41 +36,83 @@ passport.deserializeUser(async function (_id, done) {
 passport.use(
   'user',
   new CustomStrategy(async function (req, done) {
-    const { username, password } = req.body;
+    const { username, password, lineId, user_picture_url } = req.body;
     if (!username || !password) {
       return done(null, false, { message: 'missing username & password' });
     }
     try {
-      const user = await User.findOne({
-        username: username.toLowerCase(),
-      })
-        .populate({ path: 'addresses' })
-        .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_records' })
-        .populate({
-          path: 'user_posts',
-          populate: {
-            path: 'activity',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
-            },
+      let user;
+      if (lineId && user_picture_url) {
+        user = await User.findOneAndUpdate(
+          {
+            username: username.toLowerCase(),
           },
+          {
+            $set: {
+              lineId: lineId,
+              user_picture_url: user_picture_url,
+            },
+          }
+        )
+          .populate({ path: 'addresses' })
+          .populate({ path: 'emergency_contacts' })
+          .populate({ path: 'user_records' })
+          .populate({
+            path: 'user_posts',
+            populate: {
+              path: 'activity',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
+            },
+          })
+          .populate({
+            path: 'user_activities',
+            populate: {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
+            },
+          });
+      } else {
+        user = await User.findOne({
+          username: username.toLowerCase(),
         })
-        .populate({
-          path: 'user_activities',
-          populate: {
-            path: 'activity.id',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
+          .populate({ path: 'addresses' })
+          .populate({ path: 'emergency_contacts' })
+          .populate({ path: 'user_records' })
+          .populate({
+            path: 'user_posts',
+            populate: {
+              path: 'activity',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
             },
-          },
-        });
+          })
+          .populate({
+            path: 'user_activities',
+            populate: {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
+            },
+          });
+      }
 
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
