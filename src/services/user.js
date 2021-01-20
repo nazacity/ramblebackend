@@ -31,7 +31,7 @@ class UserService extends AbstractService {
           user_picture_url: pictureUrl,
         },
       }
-    );
+    ).populate({ path: 'user_activities' });
     if (user) {
       return user;
     } else {

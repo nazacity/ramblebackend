@@ -39,6 +39,11 @@ const createServer = async () => {
     require('./routes/users/login')
   );
   app.use(
+    '/users/lineId',
+    passport.authenticate('userLineId'),
+    require('./routes/users/login')
+  );
+  app.use(
     '/api/users',
     passport.authenticate('userJwt'),
     require('./routes/users')
