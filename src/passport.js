@@ -43,6 +43,7 @@ passport.use(
     try {
       let user;
       if (lineId && user_picture_url) {
+        console.log('test', lineId);
         user = await User.findOneAndUpdate(
           {
             username: username.toLowerCase(),
