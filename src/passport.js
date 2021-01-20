@@ -139,52 +139,51 @@ passport.use(
     }
     try {
       let user;
-      if (lineId && user_picture_url) {
-        user = await User.findOneAndUpdate(
-          {
-            lineId: lineId,
+      user = await User.findOneAndUpdate(
+        {
+          lineId: lineId,
+        },
+        {
+          $set: {
+            user_picture_url: user_picture_url,
           },
-          {
-            $set: {
-              user_picture_url: user_picture_url,
+        }
+      )
+        .populate({ path: 'addresses' })
+        .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_records' })
+        .populate({
+          path: 'user_posts',
+          populate: {
+            path: 'activity',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
             },
-          }
-        )
-          .populate({ path: 'addresses' })
-          .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
-          .populate({
-            path: 'user_posts',
-            populate: {
-              path: 'activity',
-              select: {
-                activity_picture_url: 1,
-                title: 1,
-                actual_date: 1,
-                state: 1,
-              },
+          },
+        })
+        .populate({
+          path: 'user_activities',
+          populate: {
+            path: 'activity.id',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
             },
-          })
-          .populate({
-            path: 'user_activities',
-            populate: {
-              path: 'activity.id',
-              select: {
-                activity_picture_url: 1,
-                title: 1,
-                actual_date: 1,
-                state: 1,
-              },
-            },
-          });
-      }
+          },
+        });
 
       if (!user) {
-        return done(null, false, { message: 'No user is found' });
+        return done(null, { message: 'No user is found' });
       } else {
         return done(null, _.omit(user.toObject(), 'password'));
       }
     } catch (err) {
+      console.log(err);
       done(err);
     }
   })
