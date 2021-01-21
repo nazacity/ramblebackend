@@ -178,7 +178,7 @@ passport.use(
         });
 
       if (!user) {
-        return done(null, { message: 'No user is found' });
+        return done(null, true, { message: 'No user is found' });
       } else {
         return done(null, _.omit(user.toObject(), 'password'));
       }
