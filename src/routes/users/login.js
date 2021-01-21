@@ -18,11 +18,11 @@ const loginHandler = (req, res) => {
       issuer: config.jwt.issuer,
     }
   );
-  if (req.user.message === 'No user is found') {
-    res.json({ message: req.user.message });
-  } else {
-    res.json({ token, user: req.user });
+
+  if (req.authInfo.message === 'No user is found') {
+    return res.json({ message: 'No user is found' });
   }
+  res.json({ token, user: req.user });
 };
 
 router.post('/', loginHandler);
