@@ -29,6 +29,9 @@ const createServer = async () => {
   await waitForDBConnection;
   console.info('Server Initialized!');
 
+  // Line
+  app.use('/api/line', require('./routes/linebot'));
+
   // Everyone
   app.use('/api/everyone', require('./routes/everyone'));
 

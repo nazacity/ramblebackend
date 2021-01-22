@@ -394,6 +394,49 @@ const createUserAdressEmergencyActivity = async (req, res) => {
   res.status(200).json({ status: 200, data: newUserActivity });
 };
 
+// Activity
+const userListActivities = async (req, res) => {
+  const schema = Joi.object({
+    title: Joi.string(),
+
+    region: Joi.string(),
+    province: Joi.string(),
+
+    from: Joi.date(),
+    to: Joi.date().greater(Joi.ref('from')),
+
+    range_min: Joi.number(),
+    range_max: Joi.number().greater(Joi.ref('range_min')),
+
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(25),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  const user = await UserService.findById(req.user.id).populate({
+    path: 'user_activities',
+  });
+
+  const activityIds = user.user_activities.map((item) => item.activity.id);
+
+  res.json({
+    status: 200,
+    data: await ActivityService.userListActivities(
+      activityIds,
+      filter,
+      skip,
+      limit
+    ),
+  });
+};
+
+router.get('/getactivities', userListActivities);
 router.post('/getuserfromlinetoken', getUserFromLineToken);
 router.get('/getactivitybyid/:id', getActivityById);
 router.post(
