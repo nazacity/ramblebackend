@@ -4,7 +4,6 @@
 // Mo
 
 const express = require('express');
-const mongoose = require('mongoose');
 const helmet = require('helmet');
 const xssFilter = require('x-xss-protection');
 const cors = require('cors');
