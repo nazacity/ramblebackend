@@ -4,7 +4,7 @@ const models = require('../models');
 const config = require('./config');
 
 module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
-  // module.exports = job = schedule.scheduleJob('1 * 12 * * 0-6', async () => {
+  // module.exports = job = schedule.scheduleJob('10 * 11 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -49,18 +49,26 @@ const updateEndRegister = async () => {
   });
 
   registerActivities.map(async (item) => {
+    const new_user_activities = await deleteNonPaidUserActivities(
+      item.user_activities
+    );
+
+    var filteredNull = new_user_activities.filter(function (el) {
+      return el != null;
+    });
+
     await models.Activity.findByIdAndUpdate(
       item._id,
       {
         $set: {
           state: 'end_register',
+          user_activities: filteredNull,
         },
       },
       {
         new: true,
       }
     );
-    await deleteNonPaidUserActivities(item.user_activities);
   });
 };
 
@@ -296,10 +304,33 @@ const sendNotification7DaysBefore = async () => {
 const deleteNonPaidUserActivities = async (userActivities) => {
   return Promise.all(
     userActivities.map(async (item) => {
-      await models.UserActivity.findOneAndDelete({
+      const userActivity = await models.UserActivity.findOneAndRemove({
         _id: item,
         state: 'waiting_payment',
       });
+
+      if (userActivity) {
+        const user = await models.User.findById(userActivity.user);
+
+        const user_activities = user.user_activities.filter(
+          (item) => item._id.toString() !== userActivity._id.toString()
+        );
+
+        const newUser = await models.User.findByIdAndUpdate(
+          user._id,
+          {
+            $set: {
+              user_activities: user_activities,
+            },
+          },
+          {
+            new: true,
+          }
+        );
+        return;
+      } else {
+        return item;
+      }
     })
   );
 };

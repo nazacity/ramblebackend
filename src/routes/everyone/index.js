@@ -384,7 +384,7 @@ const createUserAdressEmergencyActivity = async (req, res) => {
 
   await ActivityService.updateUserActivity(
     req.body.activity.id,
-    newUserActivity.id,
+    newUserActivity._id,
     user,
     userActivity.size,
     userActivity.activity.course,
