@@ -161,6 +161,7 @@ passport.use(
               title: 1,
               actual_date: 1,
               state: 1,
+              location: 1,
             },
           },
         })
@@ -173,6 +174,7 @@ passport.use(
               title: 1,
               actual_date: 1,
               state: 1,
+              location: 1,
             },
           },
         });

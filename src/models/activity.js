@@ -157,6 +157,8 @@ const activity = new Schema({
       createdAt: { type: Date, require: true, default: new Date() },
     },
   ],
+
+  createdAt: { type: Date, require: true, default: new Date() },
 });
 
 const Activity = mongoose.model('Activity', activity);
