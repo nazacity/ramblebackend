@@ -7,30 +7,33 @@ const { Schema } = mongoose;
 const permissionEnum = require('../utils/constants/employee').enum;
 const employee_state = require('../utils/constants/employee').state;
 
-const employee = new Schema({
-  username: { type: String, required: true, unqiue: true },
-  password: { type: String, required: true },
+const employee = new Schema(
+  {
+    username: { type: String, required: true, unqiue: true },
+    password: { type: String, required: true },
 
-  // personal information
-  first_name: { type: String, required: true },
-  last_name: { type: String, required: true },
-  phone_number: { type: String },
-  picture_url: { type: String },
+    // personal information
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    phone_number: { type: String },
+    picture_url: { type: String },
 
-  permission: {
-    type: String,
-    enum: permissionEnum,
-    required: true,
-    default: 'admin',
+    permission: {
+      type: String,
+      enum: permissionEnum,
+      required: true,
+      default: 'admin',
+    },
+
+    state: {
+      type: String,
+      enum: employee_state,
+      required: true,
+      default: 'active',
+    },
   },
-
-  state: {
-    type: String,
-    enum: employee_state,
-    required: true,
-    default: 'active',
-  },
-});
+  { timestamps: true }
+);
 
 employee.methods.validatePassword = function (password) {
   return bcrypt.compare(password, this.password);

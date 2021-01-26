@@ -3,18 +3,21 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const user_year_record = new Schema({
-  year: { type: String, required: true, default: new Date().getFullYear() },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+const user_year_record = new Schema(
+  {
+    year: { type: String, required: true, default: new Date().getFullYear() },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    activity_number: { type: Number, required: true, default: 0 },
+    distance: { type: Number, required: true, default: 0 },
+    time_hr: { type: Number, required: true, default: 0 },
+    time_min: { type: Number, required: true, default: 0 },
+    average: { type: Number, required: true, default: 0 },
   },
-  activity_number: { type: Number, required: true, default: 0 },
-  distance: { type: Number, required: true, default: 0 },
-  time_hr: { type: Number, required: true, default: 0 },
-  time_min: { type: Number, required: true, default: 0 },
-  average: { type: Number, required: true, default: 0 },
-});
+  { timestamps: true }
+);
 
 user_year_record.index({ user: 1, year: 1 });
 
