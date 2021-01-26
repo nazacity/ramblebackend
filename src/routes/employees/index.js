@@ -121,15 +121,18 @@ const createPartner = standardize(async (req, res) => {
 
 const editPartner = standardize(async (req, res) => {
   const schema = Joi.object({
-    permission: Joi.string(),
+    state: Joi.string().required(),
   });
   const paramSchema = Joi.object({
-    id: Joi.string().required(),
+    id: Joi.string(),
   });
 
-  const user = Joi.attempt(req.body, schema);
+  const data = Joi.attempt(req.body, schema);
   const { id } = Joi.attempt(req.params, paramSchema);
-  res.json(await PartnerService.editPartner(id, user));
+
+  res
+    .status(200)
+    .json({ status: 200, data: await PartnerService.editPartner(id, data) });
 }, permission.ADMIN);
 
 const getPartnerById = standardize(async (req, res) => {

@@ -19,13 +19,23 @@ class PartnerService extends AbstractService {
 
   async _preProcessedUser(data) {
     data.username = data.username.toLowerCase();
+
     data.password = await this.hashPassword(data.password);
     return data;
   }
 
   async createPartner(data) {
     data = await this._preProcessedUser(data);
-    return this.models.Partner.create(data);
+    const exitedUsername = await this.models.Partner.findOne({
+      username: data.username,
+    });
+
+    if (exitedUsername) {
+      return 'Username is existed';
+    } else {
+      await this.models.Partner.create(data);
+      return 'Register successfully';
+    }
   }
 
   async editPartner(id, data) {
@@ -33,6 +43,9 @@ class PartnerService extends AbstractService {
       { _id: id },
       {
         $set: data,
+      },
+      {
+        new: true,
       }
     );
   }
