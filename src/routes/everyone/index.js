@@ -253,23 +253,23 @@ const resetPassword = async (req, res) => {
 router.post('/forgotpassword', forgotPassword);
 router.post('/resetpassword', resetPassword);
 
-const partnerRegisterForm = async (req, res) => {
-  const schema = Joi.object({
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
-    company_name: Joi.string().required(),
-    phone_number: Joi.string().required(),
-    line_id: Joi.string().required(),
-  });
+// const partnerRegisterForm = async (req, res) => {
+//   const schema = Joi.object({
+//     first_name: Joi.string().required(),
+//     last_name: Joi.string().required(),
+//     company_name: Joi.string().required(),
+//     phone_number: Joi.string().required(),
+//     line_id: Joi.string().required(),
+//   });
 
-  const data = Joi.attempt(req.body, schema);
+//   const data = Joi.attempt(req.body, schema);
 
-  res.status(201).send({
-    status: 200,
-    data: await PartnerService.partnerRegisterForm(data),
-  });
-};
-router.post('/partnerregister', partnerRegisterForm);
+//   res.status(201).send({
+//     status: 200,
+//     data: await PartnerService.partnerRegisterForm(data),
+//   });
+// };
+// router.post('/partnerregister', partnerRegisterForm);
 
 // Line Processing
 const getUserFromLineToken = async (req, res) => {
@@ -443,5 +443,25 @@ router.post(
   '/createuseradressemergencyactivity',
   createUserAdressEmergencyActivity
 );
+
+const partnerRegister = async (req, res) => {
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    display_name: Joi.string().required(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    company_name: Joi.string(),
+    phone_number: Joi.string(),
+  });
+
+  const partner = Joi.attempt(req.body, schema);
+
+  res
+    .status(201)
+    .send({ status: 200, data: await PartnerService.createPartner(partner) });
+};
+
+router.post('/partnerregister', partnerRegister);
 
 module.exports = router;

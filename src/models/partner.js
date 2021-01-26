@@ -14,12 +14,16 @@ const partner = new Schema({
   display_name: { type: String, required: true },
 
   picture_url: { type: String },
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  company_name: { type: String },
+  phone_number: { type: String, required: true },
 
   state: {
     type: String,
     enum: partnerState,
     required: true,
-    default: 'active',
+    default: 'deactive',
   },
 
   activities: [
