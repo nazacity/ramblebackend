@@ -158,6 +158,10 @@ const activity = new Schema(
         createdAt: { type: Date, require: true, default: new Date() },
       },
     ],
+    contact: {
+      phone_number: { type: String },
+      line: { type: String },
+    },
   },
   { timestamps: true }
 );

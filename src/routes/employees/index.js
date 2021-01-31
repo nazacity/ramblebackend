@@ -286,6 +286,10 @@ const createActivity = standardize(async (req, res) => {
       zip: Joi.string().required(),
       phone_number: Joi.string().required(),
     },
+    contact: {
+      phone_number: Joi.string().required(),
+      line: Joi.string().required(),
+    },
   });
 
   const data = Joi.attempt(req.body, schema);
@@ -401,6 +405,13 @@ const editActivity = standardize(async (req, res) => {
         province: Joi.string().required(),
         zip: Joi.string().required(),
         phone_number: Joi.string().required(),
+      },
+    });
+  } else if (req.body.type === 'contact') {
+    schema = Joi.object({
+      contact: {
+        phone_number: Joi.string().required(),
+        line: Joi.string().required(),
       },
     });
   }
