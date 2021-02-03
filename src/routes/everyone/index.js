@@ -464,4 +464,39 @@ const partnerRegister = async (req, res) => {
 
 router.post('/partnerregister', partnerRegister);
 
+const lineConnect = async (req, res) => {
+  const schema = Joi.object({
+    accessToken: Joi.string().required(),
+    user_id: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  let line;
+  await axios
+    .get('https://api.line.me/v2/profile', {
+      headers: { Authorization: `Bearer ${data.accessToken}` },
+    })
+    .then((res) => {
+      line = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  if (line.userId) {
+    res.status(201).send({
+      status: 200,
+      data: await UserService.lineConnect(data.user_id, line.userId),
+    });
+  } else {
+    res.status(401).send({
+      status: 401,
+      data: 'Line User is not found',
+    });
+  }
+};
+
+router.post('/lineconnect', lineConnect);
+
 module.exports = router;
