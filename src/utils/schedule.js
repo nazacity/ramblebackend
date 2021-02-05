@@ -3,8 +3,8 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
-  // module.exports = job = schedule.scheduleJob('10 * 11 * * 0-6', async () => {
+// module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
+module.exports = job = schedule.scheduleJob('* * 18 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -310,7 +310,9 @@ const deleteNonPaidUserActivities = async (userActivities) => {
       });
 
       if (userActivity) {
-        const user = await models.User.findById(userActivity.user);
+        const user = await models.User.findById(userActivity.user).populate({
+          path: 'user',
+        });
 
         const user_activities = user.user_activities.filter(
           (item) => item._id.toString() !== userActivity._id.toString()
@@ -327,6 +329,145 @@ const deleteNonPaidUserActivities = async (userActivities) => {
             new: true,
           }
         );
+
+        const activity = await models.Activity.findById(
+          userActivity.activity.id
+        );
+
+        const sizeIndex = activity.size.findIndex(
+          (item) => item.size === userActivity.size.size
+        );
+        const size = activity.size[sizeIndex];
+
+        const courseIndex = activity.courses.findIndex(
+          (item) => item._id.toString() === userActivity.activity.course._id
+        );
+        const course = activity.courses[courseIndex];
+
+        const oldShirtReportIndex = activity.shirt_report.findIndex(
+          (item) => item.course === userActivity.activity.course.title
+        );
+        const shirt_report = activity.shirt_report;
+        const oldSizeIndex = activity.shirt_report[
+          oldShirtReportIndex
+        ].size.findIndex((item) => item.size === userActivity.size.size);
+
+        // const newShirtReportIndex = activity.shirt_report.findIndex(
+        //   (item) => item.course === course.title
+        // );
+        // const newSizeIndex = activity.shirt_report[
+        //   newShirtReportIndex
+        // ].size.findIndex((item) => item.size === userActivity.size.size);
+
+        let newParticipantBygender;
+        if (user.gender === 'male') {
+          shirt_report[oldShirtReportIndex].size[
+            oldSizeIndex
+          ].male_quality -= 1;
+          newParticipantBygender = {
+            participant_male_number:
+              activity.report_infomation.participant_male_number - 1,
+            participant_female_number:
+              activity.report_infomation.participant_female_number,
+          };
+
+          // shirt_report[newShirtReportIndex].size[
+          //   newSizeIndex
+          // ].male_quality += 1;
+        } else if (user.gender === 'female') {
+          shirt_report[oldShirtReportIndex].size[
+            oldSizeIndex
+          ].female_quality -= 1;
+          newParticipantBygender = {
+            participant_male_number:
+              activity.report_infomation.participant_male_number,
+            participant_female_number:
+              activity.report_infomation.participant_female_number - 1,
+          };
+
+          // shirt_report[newShirtReportIndex].size[
+          //   newSizeIndex
+          // ].female_quality += 1;
+        }
+
+        const courses = activity.courses;
+        const oldCourseIndex = activity.courses.findIndex(
+          (item) =>
+            item._id.toString() === userActivity.activity.course._id.toString()
+        );
+        courses[oldCourseIndex].register_no -= 1;
+        // const newCourseIndex = activity.courses.findIndex(
+        //   (item) =>
+        //     item._id.toString() === userActivity.activity.course._id.toString()
+        // );
+        // courses[newCourseIndex].register_no += 1;
+
+        let newAgeGroup;
+        if (user.age <= 20) {
+          newAgeGroup = {
+            age_20: activity.report_infomation.age_20 - 1,
+            age_20_30: activity.report_infomation.age_20_30,
+            age_30_40: activity.report_infomation.age_30_40,
+            age_40_50: activity.report_infomation.age_40_50,
+            age_50: activity.report_infomation.age_50,
+          };
+        } else if (user.age > 20 && user.age <= 30) {
+          newAgeGroup = {
+            age_20: activity.report_infomation.age_20,
+            age_20_30: activity.report_infomation.age_20_30 - 1,
+            age_30_40: activity.report_infomation.age_30_40,
+            age_40_50: activity.report_infomation.age_40_50,
+            age_50: activity.report_infomation.age_50,
+          };
+        } else if (user.age > 30 && user.age <= 40) {
+          newAgeGroup = {
+            age_20: activity.report_infomation.age_20,
+            age_20_30: activity.report_infomation.age_20_30,
+            age_30_40: activity.report_infomation.age_30_40 - 1,
+            age_40_50: activity.report_infomation.age_40_50,
+            age_50: activity.report_infomation.age_50,
+          };
+        } else if (user.age > 40 && user.age <= 50) {
+          newAgeGroup = {
+            age_20: activity.report_infomation.age_20,
+            age_20_30: activity.report_infomation.age_20_30,
+            age_30_40: activity.report_infomation.age_30_40,
+            age_40_50: activity.report_infomation.age_40_50 - 1,
+            age_50: activity.report_infomation.age_50,
+          };
+        } else if (user.age > 50) {
+          newAgeGroup = {
+            age_20: activity.report_infomation.age_20,
+            age_20_30: activity.report_infomation.age_20_30,
+            age_30_40: activity.report_infomation.age_30_40,
+            age_40_50: activity.report_infomation.age_40_50,
+            age_50: activity.report_infomation.age_50 - 1,
+          };
+        }
+
+        const new_report_infomation = {
+          participant_number: activity.report_infomation.participant_number - 1,
+          ...newParticipantBygender,
+          ...newAgeGroup,
+        };
+
+        // update reception
+        let newReception = activity.reception;
+        if (userActivity.address === '5ff6600d20ed83388ab4ccbd') {
+          newReception.atevent = activity.reception.atevent - 1;
+        } else {
+          newReception.sendAddress = activity.reception.sendAddress - 1;
+        }
+
+        await models.Activity.findByIdAndUpdate(userActivity.activity.id, {
+          $set: {
+            shirt_report: shirt_report,
+            courses: courses,
+            report_infomation: { ...new_report_infomation },
+            reception: newReception,
+          },
+        });
+
         return;
       } else {
         return item;
