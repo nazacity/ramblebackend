@@ -3,8 +3,8 @@ const axios = require('axios');
 const models = require('../models');
 const config = require('./config');
 
-// module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
-module.exports = job = schedule.scheduleJob('* * 18 * * 0-6', async () => {
+module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
+  // module.exports = job = schedule.scheduleJob('* * 10 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -467,6 +467,33 @@ const deleteNonPaidUserActivities = async (userActivities) => {
             reception: newReception,
           },
         });
+
+        const user_device_token = user.device_token;
+
+        try {
+          const sendNotification = await axios({
+            method: 'post',
+            url: 'https://onesignal.com/api/v1/notifications',
+            data: {
+              app_id: config.onesignal.app_id,
+              include_player_ids: [user_device_token],
+              headings: {
+                en: 'Cancel Confirm',
+                th: 'ยืนยันการยกเลิก',
+              },
+              contents: {
+                en: `${activity.title} was canceled due to no payment`,
+                th: `${activity.title}ถูกยกเลิกเนื่องจากไม่มีการชำระ`,
+              },
+            },
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              Authorization: `Basic ${config.onesignal.rest_api_key}`,
+            },
+          });
+        } catch (error) {
+          console.log(error.response);
+        }
 
         return;
       } else {
