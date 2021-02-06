@@ -91,7 +91,7 @@ class UserService extends AbstractService {
 
   async create(data) {
     const user = await this.models.User.findOne({
-      $or: [{ username: data.username }, { idcard: data.idcard }],
+      $or: [{ username: data.username }],
     });
     if (user) {
       return 'Username is used';
