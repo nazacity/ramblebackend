@@ -574,4 +574,21 @@ router.post('/usecoupon/:id', useCoupon);
 router.get('/getpromoteactivities', listPromoteActivities);
 router.get('/updatereadstate/:user_activity_id/:item_id', updateReadState);
 
+const lineConnect = async (req, res) => {
+  const schema = Joi.object({
+    lineId: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  // console.log(req.user._id);
+
+  res.status(201).send({
+    status: 200,
+    data: await UserService.lineConnect(req.user._id, data.lineId),
+  });
+};
+
+router.post('/lineconnect', lineConnect);
+
 module.exports = router;

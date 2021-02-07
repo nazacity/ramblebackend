@@ -31,7 +31,34 @@ class UserService extends AbstractService {
           user_picture_url: pictureUrl,
         },
       }
-    ).populate({ path: 'user_activities' });
+    )
+      .populate({ path: 'addresses' })
+      .populate({ path: 'emergency_contacts' })
+      .populate({ path: 'user_records' })
+      .populate({
+        path: 'user_posts',
+        populate: {
+          path: 'activity',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      })
+      .populate({
+        path: 'user_activities',
+        populate: {
+          path: 'activity.id',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      });
     if (user) {
       return user;
     } else {
@@ -40,21 +67,55 @@ class UserService extends AbstractService {
   }
 
   async lineConnect(user_id, lineId) {
-    const user = await this.models.User.findByIdAndUpdate(
-      user_id,
-      {
-        $set: {
-          lineId: lineId,
-        },
-      },
-      {
-        new: true,
-      }
-    );
-    if (user) {
-      return user;
+    const checkUser = await this.models.User.findOne({
+      lineId: lineId,
+    });
+    if (checkUser) {
+      return 'This line account was used';
     } else {
-      return 'User is not found';
+      const user = await this.models.User.findByIdAndUpdate(
+        user_id,
+        {
+          $set: {
+            lineId: lineId,
+          },
+        },
+        {
+          new: true,
+        }
+      )
+        .populate({ path: 'addresses' })
+        .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_records' })
+        .populate({
+          path: 'user_posts',
+          populate: {
+            path: 'activity',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
+          },
+        })
+        .populate({
+          path: 'user_activities',
+          populate: {
+            path: 'activity.id',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+            },
+          },
+        });
+      if (user) {
+        return user;
+      } else {
+        return 'User is not found';
+      }
     }
   }
 

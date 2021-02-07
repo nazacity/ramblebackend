@@ -19,6 +19,13 @@ const config = {
     app_id: 'a7cc39f9-5233-46a8-9bec-cb87d2c34b5d',
     rest_api_key: 'MWY4OTM0ZmEtMTE2NS00YWNhLWJiN2UtMmUwNmQzZmEyODFm',
   },
+  line: {
+    message_api: 'https://api.line.me/v2/bot/message',
+    line_header: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer hT3PdJDVY/oOycNSdzNGbQMHRtLyfTpw/E9G/66wgmMJhNlfBaqNM1HH2EgXz/ErH/NbNo3vxM0SH+AjUFFM7yCE5FA7g3Evr4sxy/sSPzqNPnWftduPoIxl0gMVSbTQ/KKz2IdZnZNlhBnJWtABYQdB04t89/1O/w1cDnyilFU=`,
+    },
+  },
 };
 
 module.exports = config;
