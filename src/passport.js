@@ -139,16 +139,22 @@ passport.use(
     }
     try {
       let user;
-      user = await User.findOneAndUpdate(
-        {
-          lineId: lineId,
-        },
-        {
-          $set: {
-            user_picture_url: user_picture_url,
-          },
-        }
-      )
+      // user = await User.findOneAndUpdate(
+      //   {
+      //     lineId: lineId,
+      //   },
+      //   {
+      //     $set: {
+      //       user_picture_url: user_picture_url?,
+      //     },
+      //   },
+      //   {
+      //     new: true,
+      //   }
+      // )
+      user = await User.findOne({
+        lineId: lineId,
+      })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
         .populate({ path: 'user_records' })
