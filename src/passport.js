@@ -139,52 +139,83 @@ passport.use(
     }
     try {
       let user;
-      // user = await User.findOneAndUpdate(
-      //   {
-      //     lineId: lineId,
-      //   },
-      //   {
-      //     $set: {
-      //       user_picture_url: user_picture_url?,
-      //     },
-      //   },
-      //   {
-      //     new: true,
-      //   }
-      // )
-      user = await User.findOne({
-        lineId: lineId,
-      })
-        .populate({ path: 'addresses' })
-        .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_records' })
-        .populate({
-          path: 'user_posts',
-          populate: {
-            path: 'activity',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
-              location: 1,
+      if (user_picture_url) {
+        user = await User.findOneAndUpdate(
+          {
+            lineId: lineId,
+          },
+          {
+            $set: {
+              user_picture_url: user_picture_url,
             },
           },
+          {
+            new: true,
+          }
+        )
+          .populate({ path: 'addresses' })
+          .populate({ path: 'emergency_contacts' })
+          .populate({ path: 'user_records' })
+          .populate({
+            path: 'user_posts',
+            populate: {
+              path: 'activity',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+                location: 1,
+              },
+            },
+          })
+          .populate({
+            path: 'user_activities',
+            populate: {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+                location: 1,
+              },
+            },
+          });
+      } else {
+        user = await User.findOne({
+          lineId: lineId,
         })
-        .populate({
-          path: 'user_activities',
-          populate: {
-            path: 'activity.id',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
-              location: 1,
+          .populate({ path: 'addresses' })
+          .populate({ path: 'emergency_contacts' })
+          .populate({ path: 'user_records' })
+          .populate({
+            path: 'user_posts',
+            populate: {
+              path: 'activity',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+                location: 1,
+              },
             },
-          },
-        });
-
+          })
+          .populate({
+            path: 'user_activities',
+            populate: {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+                location: 1,
+              },
+            },
+          });
+      }
       if (!user) {
         return done(null, true, { message: 'No user is found' });
       } else {
