@@ -581,4 +581,128 @@ const getReportData = standardize(async (req, res) => {
 
 router.get('/getreportdata', getReportData);
 
+const userActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.json({
+    status: 200,
+    data: await ActivityService.getUserActivities(id),
+  });
+});
+
+const filteredUserActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    course: Joi.string(),
+    size: Joi.string(),
+    idcard: Joi.string(),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.filteredUserActivities(id, filter),
+  });
+});
+
+const updateContestNoUserActivities = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    contest_no: Joi.string().required(),
+  });
+
+  const data = Joi.attempt(req.body, schema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.updateContestNoUserActivities(id, data),
+  });
+});
+
+const updatePrintedState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res.json({
+    status: 200,
+    data: await UserActivityService.updatePrintedState(id),
+  });
+});
+
+const checkinActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  res
+    .status(200)
+    .send({ status: 200, data: await UserActivityService.updateCheckedin(id) });
+});
+
+const checkoutActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const updatedUserActivity = await UserActivityService.updateCheckedOut(id);
+
+  await UserYearRecordService.updateUserYearRecord(
+    req.user.id,
+    updatedUserActivity.activity.course.range
+  );
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUserActivity,
+  });
+});
+
+const editUserActivity = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const updatedUserActivity = await UserActivityService.editUserActivity(
+    id,
+    req.body
+  );
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUserActivity,
+  });
+});
+
+router.get('/useractivities/:id', userActivities);
+router.get('/filtereduseractivities/:id', filteredUserActivities);
+router.post('/updatconstestuseractivities/:id', updateContestNoUserActivities);
+router.get('/updateprintstate/:id', updatePrintedState);
+router.post('/edituseractivity/:id', editUserActivity);
+router.get('/checkinactivity/:id', checkinActivity);
+router.post('/checkoutactivity/:id', checkoutActivity);
+
 module.exports = router;

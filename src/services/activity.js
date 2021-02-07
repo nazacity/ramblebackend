@@ -79,15 +79,7 @@ class ActivityService extends AbstractService {
   }
 
   async findById(id) {
-    const activity = await this.models.Activity.findById(id, {
-      report_infomation: 0,
-      reception: 0,
-      shirt_report: 0,
-      user_activities: 0,
-      coupons: 0,
-      senderAddress: 0,
-      partner: 0,
-    });
+    const activity = await this.models.Activity.findById(id);
     if (activity) {
       return activity;
     } else {
