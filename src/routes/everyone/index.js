@@ -157,7 +157,7 @@ const createUser = async (req, res) => {
       .valid(...blood_type)
       .required(),
     user_picture_url: Joi.string().required(),
-    lineId: Joi.string(),
+    lineId: Joi.string().allow(''),
   });
 
   const user = Joi.attempt(req.body, schema);
@@ -226,7 +226,7 @@ router.get('/checkcitizenidnumber/:id', checkCitizenIdNumber);
 
 const forgotPassword = async (req, res) => {
   const schema = Joi.object({
-    idcard: Joi.string().required(),
+    username: Joi.string().required(),
     phone_number: Joi.string().required(),
   });
 
