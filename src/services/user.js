@@ -359,10 +359,11 @@ class UserService extends AbstractService {
   }
 
   async forgotPassword(user) {
-    const { idcard, phone_number } = user;
+    const { username, phone_number } = user;
+
     const getUser = await this.models.User.findOne(
       {
-        idcard,
+        username,
         phone_number,
       },
       { phone_number: 1 }
