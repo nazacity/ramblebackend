@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../../utils/config');
 const axios = require('axios');
+const { deleteFile } = require('../../utils/spacesutil');
 
 const { standardize } = require('../../utils/request');
 const {
@@ -590,5 +591,13 @@ const lineConnect = async (req, res) => {
 };
 
 router.post('/lineconnect', lineConnect);
+
+const deleteImage = standardize(async (req, res) => {
+  const { fileName } = req.body;
+
+  deleteFile(fileName, res);
+});
+
+router.post('/deleteimage', deleteImage);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 'use strict';
 
 require('dotenv').config();
+const AWS = require('aws-sdk');
 
 const config = {
   port: process.env.SERVER_PORT || '5000',
@@ -26,6 +27,13 @@ const config = {
       Authorization: `Bearer hT3PdJDVY/oOycNSdzNGbQMHRtLyfTpw/E9G/66wgmMJhNlfBaqNM1HH2EgXz/ErH/NbNo3vxM0SH+AjUFFM7yCE5FA7g3Evr4sxy/sSPzqNPnWftduPoIxl0gMVSbTQ/KKz2IdZnZNlhBnJWtABYQdB04t89/1O/w1cDnyilFU=`,
     },
   },
+  S3: new AWS.S3({
+    accessKeyId: 'PU4JXRL3KG6ABV3CHQNS',
+    secretAccessKey: 'x6oK8C50E97X5BImp5KkHzww/c9f8xFE+1jQr4r6NS4',
+    region: 'nyc3',
+    endpoint: `nyc3.digitaloceanspaces.com`,
+    signatureVersion: 'v4',
+  }),
 };
 
 module.exports = config;

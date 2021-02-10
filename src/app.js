@@ -12,6 +12,7 @@ const passport = require('./passport');
 const config = require('./utils/config');
 const { waitForDBConnection } = require('./utils/mongo');
 require('./utils/schedule');
+const { upload } = require('./utils/spacesutil');
 
 require('./models');
 const app = express();
@@ -74,6 +75,34 @@ const createServer = async () => {
     passport.authenticate('partnerJwt'),
     require('./routes/partners')
   );
+
+  const extractToken = (headers) => {
+    if (/Bearer\s.+/.test(headers.secretkey)) {
+      return headers.secretkey.substring(7);
+    } else {
+      return null;
+    }
+  };
+
+  app.post('/upload', function (req, res, next) {
+    const secrekey = extractToken(req.headers);
+
+    if (
+      secrekey !==
+      '13da72fc78074341e307064b6f68c951d0a2ffadb8c0f4a91575dfc73ea49e11'
+    ) {
+      return res.status(400).json({ data: 'Something went wrong' });
+    } else {
+      upload(req, res, function (error) {
+        if (error) {
+          console.log(error);
+          return res.status(400).json({ data: 'Something went wrong' });
+        } else {
+          return res.status(200).json({ data: 'File uploaded successfully' });
+        }
+      });
+    }
+  });
 
   app.listen(config.port);
   console.info(`Server is listening on port ${config.port}`);

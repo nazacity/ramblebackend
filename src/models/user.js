@@ -8,6 +8,8 @@ const {
   user_state,
   user_gender,
   blood_type,
+  vaccine_state,
+  identity_state,
 } = require('../utils/constants/user');
 
 const user = new Schema(
@@ -29,6 +31,25 @@ const user = new Schema(
     user_background_picture_url: { type: String },
     device_token: { type: String },
     lineId: { type: String },
+    vefiry_information: {
+      id_card_piture_url: { type: String },
+      id_card_with_person_piture_url: { type: String },
+      state: {
+        type: String,
+        enum: identity_state,
+        required: true,
+        default: 'not_verify',
+      },
+    },
+    vefiry_vaccine: {
+      vaccine_confirm_piture_url: { type: String },
+      state: {
+        type: String,
+        enum: vaccine_state,
+        required: true,
+        default: 'not_verify',
+      },
+    },
 
     state: {
       type: String,
