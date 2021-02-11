@@ -198,7 +198,7 @@ const checkCitizenIdNumber = async (req, res) => {
     let iPID;
     let chk;
     let Validchk;
-    // iPID = req.params.id.replace(/-/g, '');
+    iPID = req.params.id.replace(/-/g, '');
     Validchk = req.params.id.substr(12, 1);
     let j = 0;
     let pidcut;
