@@ -6,13 +6,28 @@ const upload = multer({
   storage: multerS3({
     s3: config.S3,
     bucket: 'ramble',
-    acl: 'public-read-write',
+    acl: 'public-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (request, file, cb) {
       cb(null, 'user_profile/' + file.originalname);
     },
   }),
 }).single('upload');
+
+const uploadIdCard = multer({
+  storage: multerS3({
+    s3: config.S3,
+    bucket: 'ramble',
+    acl: 'public-read',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: function (request, file, cb) {
+      cb(null, 'idcard/' + file.originalname);
+    },
+  }),
+}).fields([
+  { name: 'idcard', maxCount: 1 },
+  { name: 'idcardwithperson', maxCount: 1 },
+]);
 
 const deleteFile = (fileName, res) => {
   const delParams = {
@@ -29,4 +44,4 @@ const deleteFile = (fileName, res) => {
   });
 };
 
-module.exports = { upload, deleteFile };
+module.exports = { upload, deleteFile, uploadIdCard };
