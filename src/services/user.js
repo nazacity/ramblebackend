@@ -16,11 +16,44 @@ class UserService extends AbstractService {
           $gte: filter.min_age ? filter.min_age : 0,
           $lte: filter.max_age ? filter.max_age : 100,
         },
+        'vefiry_information.state': filter.identity_state
+          ? filter.identity_state
+          : { $ne: '' },
+        'vefiry_vaccine.state': filter.vaccine_state
+          ? filter.vaccine_state
+          : { $ne: '' },
       },
       { password: 0 }
     )
       .skip(+skip)
-      .limit(+limit);
+      .limit(+limit)
+      .populate({ path: 'addresses' })
+      .populate({ path: 'emergency_contacts' })
+      .populate({ path: 'user_records' })
+      .populate({
+        path: 'user_posts',
+        populate: {
+          path: 'activity',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      })
+      .populate({
+        path: 'user_activities',
+        populate: {
+          path: 'activity.id',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      });
   }
 
   async findByLineId(lineId, pictureUrl) {
@@ -182,7 +215,34 @@ class UserService extends AbstractService {
       {
         new: true,
       }
-    );
+    )
+      .populate({ path: 'addresses' })
+      .populate({ path: 'emergency_contacts' })
+      .populate({ path: 'user_records' })
+      .populate({
+        path: 'user_posts',
+        populate: {
+          path: 'activity',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      })
+      .populate({
+        path: 'user_activities',
+        populate: {
+          path: 'activity.id',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      });
   }
 
   async changePassword(id, data) {
@@ -391,6 +451,96 @@ class UserService extends AbstractService {
     } else {
       return 'No user is found';
     }
+  }
+
+  async updateIdentityState(id, data) {
+    return this.models.User.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          idcard: 'not provided yet',
+          vefiry_information: {
+            id_card_piture_url: data.id_card_piture_url,
+            id_card_with_person_piture_url: data.id_card_with_person_piture_url,
+            state: data.state,
+          },
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate({ path: 'addresses' })
+      .populate({ path: 'emergency_contacts' })
+      .populate({ path: 'user_records' })
+      .populate({
+        path: 'user_posts',
+        populate: {
+          path: 'activity',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      })
+      .populate({
+        path: 'user_activities',
+        populate: {
+          path: 'activity.id',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      });
+  }
+
+  async updateVaccineState(id, data) {
+    return this.models.User.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          vefiry_vaccine: {
+            vaccine_confirm_piture_url: data.vaccine_confirm_piture_url,
+            state: data.state,
+          },
+        },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate({ path: 'addresses' })
+      .populate({ path: 'emergency_contacts' })
+      .populate({ path: 'user_records' })
+      .populate({
+        path: 'user_posts',
+        populate: {
+          path: 'activity',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      })
+      .populate({
+        path: 'user_activities',
+        populate: {
+          path: 'activity.id',
+          select: {
+            activity_picture_url: 1,
+            title: 1,
+            actual_date: 1,
+            state: 1,
+          },
+        },
+      });
   }
 }
 

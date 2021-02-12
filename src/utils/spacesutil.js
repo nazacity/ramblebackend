@@ -29,6 +29,18 @@ const uploadIdCard = multer({
   { name: 'idcardwithperson', maxCount: 1 },
 ]);
 
+const uploadCovid = multer({
+  storage: multerS3({
+    s3: config.S3,
+    bucket: 'ramble',
+    acl: 'public-read',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: function (request, file, cb) {
+      cb(null, 'covidresult/' + file.originalname);
+    },
+  }),
+}).fields([{ name: 'covid', maxCount: 1 }]);
+
 const deleteFile = (fileName, res) => {
   const delParams = {
     Bucket: 'ramble',
@@ -44,4 +56,4 @@ const deleteFile = (fileName, res) => {
   });
 };
 
-module.exports = { upload, deleteFile, uploadIdCard };
+module.exports = { upload, deleteFile, uploadIdCard, uploadCovid };
