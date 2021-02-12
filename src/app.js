@@ -47,6 +47,11 @@ const createServer = async () => {
     require('./routes/users/login')
   );
   app.use(
+    '/users/appleId',
+    passport.authenticate('userAppleId'),
+    require('./routes/users/login')
+  );
+  app.use(
     '/api/users',
     passport.authenticate('userJwt'),
     require('./routes/users')

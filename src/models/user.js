@@ -31,6 +31,7 @@ const user = new Schema(
     user_background_picture_url: { type: String },
     device_token: { type: String },
     lineId: { type: String },
+    appleId: { type: String },
     vefiry_information: {
       id_card_piture_url: { type: String },
       id_card_with_person_piture_url: { type: String },
