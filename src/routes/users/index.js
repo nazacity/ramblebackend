@@ -5,6 +5,12 @@ const express = require('express');
 const router = express.Router();
 const config = require('../../utils/config');
 const axios = require('axios');
+const {
+  deleteFile,
+  uploadIdCard,
+  uploadIdCardWithPerson,
+  uploadCovid,
+} = require('../../utils/spacesutil');
 
 const { standardize } = require('../../utils/request');
 const {
@@ -590,5 +596,56 @@ const lineConnect = async (req, res) => {
 };
 
 router.post('/lineconnect', lineConnect);
+
+const deleteImage = standardize(async (req, res) => {
+  const { fileName } = req.body;
+
+  deleteFile(fileName, res);
+});
+
+router.post('/deleteimage', deleteImage);
+
+const sendIdentityInfo = standardize(async (req, res) => {
+  uploadIdCard(req, res, async function (error) {
+    if (error) {
+      console.log(error);
+      return res.status(400).json({ data: 'Something went wrong' });
+    } else {
+      const user = await UserService.edit(req.user._id, {
+        idcard: req.body.number,
+        vefiry_information: {
+          id_card_piture_url: req.files.idcard[0].location,
+          id_card_with_person_piture_url:
+            req.files.idcardwithperson[0].location,
+          state: 'verifying',
+        },
+      });
+
+      return res.status(200).json({ status: 200, data: user });
+    }
+  });
+});
+
+router.post('/sendidentityinfo', sendIdentityInfo);
+
+const sendCovidResult = standardize(async (req, res) => {
+  uploadCovid(req, res, async function (error) {
+    if (error) {
+      console.log(error);
+      return res.status(400).json({ data: 'Something went wrong' });
+    } else {
+      const user = await UserService.edit(req.user._id, {
+        vefiry_vaccine: {
+          vaccine_confirm_piture_url: req.files.covid[0].location,
+          state: 'verifying',
+        },
+      });
+
+      return res.status(200).json({ status: 200, data: user });
+    }
+  });
+});
+
+router.post('/sendcovidresult', sendCovidResult);
 
 module.exports = router;

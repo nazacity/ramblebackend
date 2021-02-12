@@ -191,34 +191,63 @@ const checkCitizenIdNumber = async (req, res) => {
   if (user) {
     res.status(200).json({
       status: 200,
-      data: 'รหัสบัตรประชาชนถูกใช้งานแล้ว',
+      data: 'idcardno is used',
     });
   } else {
-    const body = {
-      Sex: req.params.id,
-      Button: 'ตรวจสอบข้อมูล',
-    };
+    let total = 0;
+    let iPID;
+    let chk;
+    let Validchk;
+    iPID = req.params.id.replace(/-/g, '');
+    Validchk = req.params.id.substr(12, 1);
+    let j = 0;
+    let pidcut;
+    for (let n = 0; n < 12; n++) {
+      pidcut = parseInt(iPID.substr(j, 1));
+      total = total + pidcut * (13 - n);
+      j++;
+    }
 
-    const data = await axios({
-      method: 'post',
-      url:
-        'https://data.bopp-obec.info/emis/register.php?p=chk_digit&School_ID=1095440071&Area_CODE=9502',
-      data: qs.stringify(body),
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    });
-    const checkRight = data.data.indexOf(
-      'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง'
-    );
-    if (checkRight > -1) {
-      res
-        .status(200)
-        .json({ status: 200, data: 'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง' });
+    chk = 11 - (total % 11);
+
+    if (chk == 10) {
+      chk = 0;
+    } else if (chk == 11) {
+      chk = 1;
+    }
+    if (chk == Validchk) {
+      return res.status(200).json({ status: 200, data: 'idcardno is correct' });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         status: 200,
-        data: 'หมายเลขบัตรประจำตัวประชาชนของคุณไม่ถูกต้อง',
+        data: 'idcardno is incorrect',
       });
     }
+    // const body = {
+    //   Sex: req.params.id,
+    //   Button: 'ตรวจสอบข้อมูล',
+    // };
+
+    // const data = await axios({
+    //   method: 'post',
+    //   url:
+    //     'https://data.bopp-obec.info/emis/register.php?p=chk_digit&School_ID=1095440071&Area_CODE=9502',
+    //   data: qs.stringify(body),
+    //   headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    // });
+    // const checkRight = data.data.indexOf(
+    //   'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง'
+    // );
+    // if (checkRight > -1) {
+    // res
+    //   .status(200)
+    //   .json({ status: 200, data: 'หมายเลขบัตรประจำตัวประชาชนของคุณถูกต้อง' });
+    // } else {
+    // res.status(200).json({
+    //   status: 200,
+    //   data: 'หมายเลขบัตรประจำตัวประชาชนของคุณไม่ถูกต้อง',
+    // });
+    // }
   }
 };
 

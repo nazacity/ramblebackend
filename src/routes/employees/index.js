@@ -163,7 +163,8 @@ const listUsers = standardize(async (req, res) => {
     gender: Joi.string(),
     min_age: Joi.string(),
     max_age: Joi.string(),
-
+    identity_state: Joi.string(),
+    vaccine_state: Joi.string(),
     skip: Joi.string().default(0),
     limit: Joi.string().default(25),
   });
@@ -704,5 +705,52 @@ router.get('/updateprintstate/:id', updatePrintedState);
 router.post('/edituseractivity/:id', editUserActivity);
 router.get('/checkinactivity/:id', checkinActivity);
 router.post('/checkoutactivity/:id', checkoutActivity);
+
+const updateIdentityState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const schema = Joi.object({
+    id_card_piture_url: Joi.string().required(),
+    id_card_with_person_piture_url: Joi.string().required(),
+    state: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+  const data = Joi.attempt(req.body, schema);
+
+  const updatedUser = await UserService.updateIdentityState(id, data);
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUser,
+  });
+});
+
+router.post('/updateidentitystate/:id', updateIdentityState);
+
+const updateVaccineState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const schema = Joi.object({
+    vaccine_confirm_piture_url: Joi.string().required(),
+    state: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+  const data = Joi.attempt(req.body, schema);
+
+  const updatedUser = await UserService.updateVaccineState(id, data);
+
+  res.status(200).send({
+    status: 200,
+    data: updatedUser,
+  });
+});
+
+router.post('/updatevaccinestate/:id', updateVaccineState);
 
 module.exports = router;
