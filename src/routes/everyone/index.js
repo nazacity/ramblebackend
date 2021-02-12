@@ -158,6 +158,7 @@ const createUser = async (req, res) => {
       .required(),
     user_picture_url: Joi.string().required(),
     lineId: Joi.string().allow(''),
+    appleId: Joi.string().allow(''),
   });
 
   const user = Joi.attempt(req.body, schema);

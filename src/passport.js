@@ -229,6 +229,62 @@ passport.use(
 );
 
 passport.use(
+  'userAppleId',
+  new CustomStrategy(async function (req, done) {
+    const { appleId } = req.body;
+
+    if (!appleId) {
+      return done(null, false, { message: 'missing line id' });
+    }
+    try {
+      let user;
+
+      user = await User.findOne({
+        appleId: appleId,
+      })
+        .populate({ path: 'addresses' })
+        .populate({ path: 'emergency_contacts' })
+        .populate({ path: 'user_records' })
+        .populate({
+          path: 'user_posts',
+          populate: {
+            path: 'activity',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+              location: 1,
+            },
+          },
+        })
+        .populate({
+          path: 'user_activities',
+          populate: {
+            path: 'activity.id',
+            select: {
+              activity_picture_url: 1,
+              title: 1,
+              actual_date: 1,
+              state: 1,
+              location: 1,
+            },
+          },
+        });
+
+      if (!user) {
+        return done(null, true, { message: 'No user is found' });
+      } else {
+        return done(null, _.omit(user.toObject(), 'password'));
+      }
+    } catch (err) {
+      console.log(err);
+      done(err);
+    }
+  })
+);
+
+passport.use(
   'employee',
   new CustomStrategy(async function (req, done) {
     const { username, password } = req.body;
