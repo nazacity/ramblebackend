@@ -358,6 +358,7 @@ passport.use(
     try {
       await jwt.verify(token, config.jwt.secret, { issuer: config.jwt.issuer });
       const jwt_payload = jwt.decode(token);
+
       if (jwt_payload.type !== 'user') {
         done(null, false);
       }
@@ -390,7 +391,10 @@ passport.use(
           },
         });
 
-      const age = _calculateAge(user.birthday);
+      let age = 0;
+      if (user.birthday) {
+        age = _calculateAge(user.birthday);
+      }
       user.type = 'user';
       if (age !== user.age) {
         user = await User.findByIdAndUpdate(
@@ -433,6 +437,7 @@ passport.use(
             },
           });
       }
+
       if (user) {
         done(null, user);
       } else {
