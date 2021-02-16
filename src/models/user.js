@@ -14,20 +14,20 @@ const {
 
 const user = new Schema(
   {
-    username: { type: String, required: true, unqiue: true },
-    password: { type: String, required: true },
+    username: { type: String, unqiue: true },
+    password: { type: String },
 
     // personal information
-    display_name: { type: String, required: true },
-    first_name: { type: String, required: true },
-    last_name: { type: String, required: true },
-    phone_number: { type: String, required: true },
-    birthday: { type: Date, required: true },
-    age: { type: Number, required: true },
-    gender: { type: String, enum: user_gender, required: true },
-    blood_type: { type: String, enum: blood_type, required: true },
-    idcard: { type: String, required: true },
-    user_picture_url: { type: String, required: true },
+    display_name: { type: String },
+    first_name: { type: String },
+    last_name: { type: String },
+    phone_number: { type: String },
+    birthday: { type: Date },
+    age: { type: Number },
+    gender: { type: String, enum: user_gender },
+    blood_type: { type: String, enum: blood_type },
+    idcard: { type: String },
+    user_picture_url: { type: String },
     user_background_picture_url: { type: String },
     device_token: { type: String },
     lineId: { type: String },

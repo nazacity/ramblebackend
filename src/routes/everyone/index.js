@@ -170,6 +170,23 @@ const createUser = async (req, res) => {
 
 router.post('/createuser', createUser);
 
+const createUserWithApple = async (req, res) => {
+  console.log('test');
+  const schema = Joi.object({
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    appleId: Joi.string().required(),
+  });
+
+  const user = Joi.attempt(req.body, schema);
+
+  res
+    .status(201)
+    .send({ status: 200, data: await UserService.createUserWithApple(user) });
+};
+
+router.post('/createuserwithapple', createUserWithApple);
+
 const getMainAdvertize = async (req, res) => {
   res.status(201).send({
     status: 200,
