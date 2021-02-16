@@ -24,6 +24,13 @@ const {
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
+function _calculateAge(birthday) {
+  // birthday is a date
+  var ageDifMs = Date.now() - birthday.getTime();
+  var ageDate = new Date(ageDifMs); // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 const listUsers = standardize(async (req, res) => {
   const schema = Joi.object({
     firstname: Joi.string(),
@@ -93,6 +100,26 @@ const editUser = standardize(async (req, res) => {
   } else if (req.body.type === 'phone_number') {
     schema = Joi.object({
       phone_number: Joi.string().required(),
+    });
+  } else if (req.body.type === 'new_register') {
+    schema = Joi.object({
+      phone_number: Joi.string().required(),
+      first_name: Joi.string().required(),
+      last_name: Joi.string().required(),
+      birthday: Joi.date().required(),
+      gender: Joi.string()
+        .valid(...user_gender)
+        .required(),
+      blood_type: Joi.string()
+        .valid(...blood_type)
+        .required(),
+    });
+
+    const user = Joi.attempt(request, schema);
+    user.age = _calculateAge(user.birthday);
+    return res.json({
+      status: 200,
+      data: await UserService.edit(req.user.id, user),
     });
   }
 
