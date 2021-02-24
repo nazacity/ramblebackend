@@ -175,8 +175,6 @@ class ActivityService extends AbstractService {
       return { course: item.title, size: size };
     });
 
-    // console.log(test);
-
     return this.models.Activity.create({ ...data, shirt_report: shirt_report });
   }
 

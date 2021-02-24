@@ -8,10 +8,7 @@ const {
   constant: permission,
   enum: permissionEnum,
 } = require('../../utils/constants/employee');
-const { standardize } = require('../../utils/request');
-const partnerState = require('../../utils/constants/partner').partner_state;
-const activityStateEnum = require('../../utils/constants/activity')
-  .activity_state;
+const { standardize, postSocial } = require('../../utils/request');
 const {
   EmployeeService,
   PartnerService,
@@ -300,6 +297,16 @@ const createActivity = standardize(async (req, res) => {
   const resData = await ActivityService.createActivity(data);
   await PartnerService.updatePartnerActivity(data.partner, resData.id);
   res.status(201).send({ status: 201, data: resData });
+
+  const createdSocialActivity = await postSocial(
+    '/api/employees/createactivity',
+    {
+      _id: resData._id,
+      activity_picture_url: resData.activity_picture_url,
+      title: resData.title,
+    },
+    req.headers
+  );
 }, permission.ADMIN);
 
 const editActivity = standardize(async (req, res) => {
@@ -469,7 +476,10 @@ const deleteAdvertizeById = standardize(async (req, res) => {
 
   res
     .status(200)
-    .send({ status: 200, data: await ActivityService.deleteAdvertizeById(id) });
+    .send({
+      status: 200,
+      data: await MainAdvertizeService.deleteAdvertizeById(id),
+    });
 }, permission.ADMIN);
 
 router.post('/mainadvertize', createAdvertize);

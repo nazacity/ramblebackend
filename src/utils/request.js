@@ -1,6 +1,8 @@
 'use strict';
 
 const { EmployeeService } = require('../services');
+const config = require('./config');
+const axios = require('axios');
 
 const withPermission = (fn, permissionLevel) => (req, res) => {
   if (!EmployeeService.checkPermission(req.user, permissionLevel)) {
@@ -28,7 +30,21 @@ const standardize = (fn, permissionLevel) => async (req, res) => {
   }
 };
 
+const getSocial = async (path, headers) => {
+  const res = await axios.get(`${config.social.URL}${path}`, { headers });
+  return res.data;
+};
+
+const postSocial = async (path, body, headers) => {
+  const res = await axios.post(`${config.social.URL}${path}`, body, {
+    headers,
+  });
+  return res.data;
+};
+
 module.exports = {
   withPermission,
   standardize,
+  getSocial,
+  postSocial,
 };
