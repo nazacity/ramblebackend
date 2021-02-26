@@ -209,7 +209,11 @@ const createUserActivity = standardize(async (req, res) => {
   });
 
   const userActivity = Joi.attempt(
-    { user: req.user.id, ...req.body, idcard: req.user.idcard },
+    {
+      user: req.user.id,
+      ...req.body,
+      idcard: req.user.idcard ? req.user.idcard : '',
+    },
     schema
   );
 
