@@ -197,7 +197,7 @@ const createUserActivity = standardize(async (req, res) => {
     address: Joi.string().required(),
 
     emergency_contact: Joi.string().required(),
-    idcard: Joi.string().required(),
+    idcard: Joi.string().allow(null).allow(''),
     announcement: Joi.array().items({
       _id: Joi.string().allow(null).allow(''),
       active: Joi.boolean().allow(null).allow(''),
@@ -334,7 +334,6 @@ const listFilteredUserPosts = standardize(async (req, res) => {
     male: Joi.boolean().required(),
     female: Joi.boolean().required(),
     activity: Joi.string().required(),
-
     skip: Joi.string().default(0),
     limit: Joi.string().default(100),
   });
