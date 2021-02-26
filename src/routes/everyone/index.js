@@ -4,7 +4,6 @@ const router = express.Router();
 const config = require('../../utils/config');
 const axios = require('axios');
 const model = require('../../models');
-const qs = require('qs');
 const {
   UserService,
   UserActivityService,
@@ -148,7 +147,7 @@ const createUser = async (req, res) => {
     idcard: Joi.string().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
-    phone_number: Joi.string().required(),
+    phone_number: Joi.string(),
     birthday: Joi.date().required(),
     gender: Joi.string()
       .valid(...user_gender)
@@ -165,7 +164,18 @@ const createUser = async (req, res) => {
 
   user.age = _calculateAge(user.birthday);
 
-  res.status(201).send({ status: 200, data: await UserService.create(user) });
+  const createdUser = await UserService.create(user);
+
+  res.status(201).send({ status: 200, data: 'Successed' });
+
+  const socialUserCreate = await axios.post(
+    `${config.social.URL}/api/everyone/createuser`,
+    {
+      _id: createdUser._id,
+      display_name: user.display_name,
+      user_picture_url: user.user_picture_url,
+    }
+  );
 };
 
 router.post('/createuser', createUser);
@@ -179,9 +189,17 @@ const createUserWithApple = async (req, res) => {
 
   const user = Joi.attempt(req.body, schema);
 
-  res
-    .status(201)
-    .send({ status: 200, data: await UserService.createUserWithApple(user) });
+  const createdUser = await UserService.createUserWithApple(user);
+
+  res.status(201).send({ status: 200, data: 'Successed' });
+
+  const socialUserCreate = await axios.post(
+    `${config.social.URL}/api/everyone/createuser`,
+    {
+      _id: createdUser._id,
+      display_name: user.display_name,
+    }
+  );
 };
 
 router.post('/createuserwithapple', createUserWithApple);

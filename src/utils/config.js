@@ -8,6 +8,9 @@ const config = {
   mongo: {
     URL: process.env.MONGO_URL || 'mongodb://localhost:27017',
   },
+  social: {
+    URL: process.env.SOCIAL_URL || 'http://localhost:5100',
+  },
   jwt: {
     issuer: process.env.JWT_ISSUER || 'ramble',
     secret: process.env.JWT_SECRET || 'ramblemarathon',

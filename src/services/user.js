@@ -202,29 +202,7 @@ class UserService extends AbstractService {
         user_records: [useryearrecord._id],
       },
     });
-    return 'Successed';
-  }
-
-  async create(data) {
-    const user = await this.models.User.findOne({
-      $or: [{ username: data.username }],
-    });
-    if (user) {
-      return 'Username is used';
-    }
-    data = await this._preProcessedUser(data);
-    const newUser = await this.models.User.create(data);
-    const useryearrecord = await this.models.UserYearRecord.create({
-      $set: {
-        user: newUser._id,
-      },
-    });
-    await this.models.User.findByIdAndUpdate(newUser._id, {
-      $set: {
-        user_records: [useryearrecord._id],
-      },
-    });
-    return 'Successed';
+    return newUser;
   }
 
   async createUserWithApple(data) {
@@ -239,7 +217,7 @@ class UserService extends AbstractService {
         user_records: [useryearrecord._id],
       },
     });
-    return 'Successed';
+    return newUser;
   }
 
   async edit(id, data) {
