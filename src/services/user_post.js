@@ -15,6 +15,13 @@ class UserPostService extends AbstractService {
       activity: filter.activity ? filter.activity : { $ne: null },
       state: 'finding',
     })
+      .populate({
+        path: 'user',
+        select: {
+          display_name: 1,
+          user_picture_url: 1,
+        },
+      })
       .skip(skip)
       .limit(limit);
   }
@@ -25,6 +32,13 @@ class UserPostService extends AbstractService {
       state: 'finding',
       activity: filter.activity,
     })
+      .populate({
+        path: 'user',
+        select: {
+          display_name: 1,
+          user_picture_url: 1,
+        },
+      })
       .skip(skip)
       .limit(limit);
   }
@@ -35,6 +49,26 @@ class UserPostService extends AbstractService {
 
   async createUserPost(data) {
     return this.models.UserPost.create(data);
+  }
+
+  async editUserPost(id, data) {
+    return this.models.UserPost.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true }
+    );
+  }
+
+  async changeUserPostState(id, data) {
+    return this.models.UserPost.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          state: data.state,
+        },
+      },
+      { new: true }
+    );
   }
 
   async editUserPost(id, data) {

@@ -21,6 +21,6 @@ module.exports = {
     'not_finished',
     'history',
   ],
-  user_post: ['finding', 'closing'],
+  user_post: ['finding', 'closed'],
   announcement_state: ['not_read', 'read'],
 };
