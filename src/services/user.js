@@ -206,7 +206,10 @@ class UserService extends AbstractService {
   }
 
   async createUserWithApple(data) {
-    const newUser = await this.models.User.create(data);
+    const newUser = await this.models.User.create({
+      ...data,
+      display_name: data.first_name + ' ' + data.last_name,
+    });
     const useryearrecord = await this.models.UserYearRecord.create({
       $set: {
         user: newUser._id,

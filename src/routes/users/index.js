@@ -309,7 +309,7 @@ const createUserPost = standardize(async (req, res) => {
     activity: Joi.string().required(),
     user: Joi.string().required(),
     description: Joi.string().required(),
-    province: Joi.string(),
+    province: Joi.string().allow(''),
     user_activity_id: Joi.string().required(),
   });
 
