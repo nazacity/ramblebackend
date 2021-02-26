@@ -96,7 +96,7 @@ const user_activity = new Schema(
       type: Boolean,
       default: false,
     },
-    idcard: { type: String, required: true },
+    idcard: { type: String },
     announcement: [
       {
         active: { type: Boolean, default: true },
