@@ -197,9 +197,11 @@ const createUserWithApple = async (req, res) => {
     `${config.social.URL}/api/everyone/createuser`,
     {
       _id: createdUser._id,
-      display_name: user.display_name,
+      display_name: createdUser.display_name,
     }
   );
+
+  console.log(socialUserCreate);
 };
 
 router.post('/createuserwithapple', createUserWithApple);
@@ -563,7 +565,7 @@ const lineConnect = async (req, res) => {
 };
 
 const test = async (req, res) => {
-  res.status(200).json({ data: config.social.URL });
+  res.status(200).json({ social: config.social.URL });
 };
 
 router.get('/test', test);
