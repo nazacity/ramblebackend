@@ -383,8 +383,10 @@ const listFilteredUserPosts = standardize(async (req, res) => {
     limit: Joi.string().default(100),
   });
 
-  const filter = Joi.attempt(req.query, schema);
+  const filter = Joi.attempt(req.body, schema);
   const { skip, limit } = filter;
+
+  // console.log(filter);
 
   delete filter.skip;
   delete filter.limit;
@@ -435,7 +437,7 @@ const listUserPostsByActivity = standardize(async (req, res) => {
 });
 
 router.get('/userpostsbyactivity', listUserPostsByActivity);
-router.get('/filtereduserposts', listFilteredUserPosts);
+router.post('/filtereduserposts', listFilteredUserPosts);
 router.post('/createuserpost', createUserPost);
 router.post('/edituserpost/:id', editUserPost);
 router.post('/changeuserpoststate/:id', changeUserPostState);
