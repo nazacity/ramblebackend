@@ -562,6 +562,12 @@ const lineConnect = async (req, res) => {
   }
 };
 
+const test = async (req, res) => {
+  res.status(200).json({ data: config.social.URL });
+};
+
+router.get('/test', test);
+
 router.post('/lineconnect', lineConnect);
 
 module.exports = router;
