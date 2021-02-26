@@ -329,6 +329,47 @@ const createUserPost = standardize(async (req, res) => {
   res.status(201).send();
 });
 
+const editUserPost = standardize(async (req, res) => {
+  const schema = Joi.object({
+    form_team: Joi.boolean().required(),
+    share_accommodation: Joi.boolean().required(),
+    share_transportation: Joi.boolean().required(),
+    share_trip: Joi.boolean().required(),
+    male: Joi.boolean().required(),
+    female: Joi.boolean().required(),
+    user: Joi.string().required(),
+    description: Joi.string().required(),
+    province: Joi.string().allow(''),
+  });
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const userPost = Joi.attempt({ user: req.user.id, ...req.body }, schema);
+
+  const newUserPost = await UserPostService.editUserPost(id, userPost);
+
+  res.status(201).send();
+});
+
+const changeUserPostState = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+  const schema = Joi.object({
+    state: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+  const data = Joi.attempt(req.body, schema);
+
+  const newUserPost = await UserPostService.changeUserPostState(id, data);
+
+  res.status(201).send();
+});
+
 const listFilteredUserPosts = standardize(async (req, res) => {
   const schema = Joi.object({
     form_team: Joi.boolean().required(),
@@ -366,7 +407,6 @@ const listFilteredUserPosts = standardize(async (req, res) => {
 const listUserPostsByActivity = standardize(async (req, res) => {
   const schema = Joi.object({
     activity: Joi.string().required(),
-
     skip: Joi.string().default(0),
     limit: Joi.string().default(10),
   });
@@ -381,20 +421,24 @@ const listUserPostsByActivity = standardize(async (req, res) => {
     return item._id;
   });
 
+  const data = await UserPostService.listUserPostsByActivity(
+    filter,
+    skip,
+    limit,
+    user_post_ids
+  );
+
   res.json({
     status: 200,
-    data: await UserPostService.listUserPostsByActivity(
-      filter,
-      skip,
-      limit,
-      user_post_ids
-    ),
+    data: data,
   });
 });
 
 router.get('/userpostsbyactivity', listUserPostsByActivity);
 router.get('/filtereduserposts', listFilteredUserPosts);
 router.post('/createuserpost', createUserPost);
+router.post('/edituserpost/:id', editUserPost);
+router.post('/changeuserpoststate/:id', changeUserPostState);
 
 // Emergency Contact
 const createEmergencyContact = standardize(async (req, res) => {
