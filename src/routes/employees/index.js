@@ -304,8 +304,10 @@ const createActivity = standardize(async (req, res) => {
       _id: resData._id,
       activity_picture_url: resData.activity_picture_url,
       title: resData.title,
-    },
-    req.headers
+    }
+    {
+      headers: { Authorization: req.headers.authorization },
+    }
   );
 
   console.log(createdSocialActivity);
