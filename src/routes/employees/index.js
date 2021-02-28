@@ -307,6 +307,8 @@ const createActivity = standardize(async (req, res) => {
     },
     req.headers
   );
+
+  console.log(createdSocialActivity);
 }, permission.ADMIN);
 
 const editActivity = standardize(async (req, res) => {
@@ -474,12 +476,10 @@ const deleteAdvertizeById = standardize(async (req, res) => {
 
   const { id } = Joi.attempt(req.params, paramSchema);
 
-  res
-    .status(200)
-    .send({
-      status: 200,
-      data: await MainAdvertizeService.deleteAdvertizeById(id),
-    });
+  res.status(200).send({
+    status: 200,
+    data: await MainAdvertizeService.deleteAdvertizeById(id),
+  });
 }, permission.ADMIN);
 
 router.post('/mainadvertize', createAdvertize);
