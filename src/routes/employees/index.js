@@ -296,21 +296,19 @@ const createActivity = standardize(async (req, res) => {
   }
   const resData = await ActivityService.createActivity(data);
   await PartnerService.updatePartnerActivity(data.partner, resData.id);
+
+  // const createdSocialActivity = await postSocial(
+  //   '/api/employees/createactivity',
+  //   {
+  //     _id: resData._id,
+  //     activity_picture_url: resData.activity_picture_url,
+  //     title: resData.title,
+  //   },
+  //   {
+  //     headers: { authorization: req.headers.authorization },
+  //   }
+  // );
   res.status(201).send({ status: 201, data: resData });
-
-  const createdSocialActivity = await postSocial(
-    '/api/employees/createactivity',
-    {
-      _id: resData._id,
-      activity_picture_url: resData.activity_picture_url,
-      title: resData.title,
-    },
-    {
-      headers: { Authorization: req.headers.authorization },
-    }
-  );
-
-  console.log(createdSocialActivity);
 }, permission.ADMIN);
 
 const editActivity = standardize(async (req, res) => {
