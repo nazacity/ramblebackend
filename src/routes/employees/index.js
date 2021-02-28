@@ -304,7 +304,7 @@ const createActivity = standardize(async (req, res) => {
       _id: resData._id,
       activity_picture_url: resData.activity_picture_url,
       title: resData.title,
-    }
+    },
     {
       headers: { Authorization: req.headers.authorization },
     }
