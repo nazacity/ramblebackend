@@ -287,8 +287,7 @@ const requestPayment = standardize(async (req, res) => {
       data: {
         qrType: 'PP',
         ppType: 'BILLERID',
-        ppId: '041031474109502', //sandbox
-        // ppId: '311040039475180',
+        ppId: config.scb.billerId,
         amount: `${amount.toFixed(2)}`,
         ref1: id.substring(0, 10).toUpperCase(),
         ref2: id.substring(10).toUpperCase(),

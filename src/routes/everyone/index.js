@@ -96,9 +96,14 @@ const confirmPayment = async (req, res) => {
     });
   } catch (error) {
     console.log(error.response);
+    res.status(400).send(error);
   }
 
-  res.status(200).send('thank you SCB');
+  res.status(200).send({
+    resCode: '00',
+    resDesc: 'success',
+    transactionId: req.body.transactionId,
+  });
 };
 
 router.post('/confirmpayment', confirmPayment);
