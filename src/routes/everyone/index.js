@@ -60,9 +60,11 @@ const confirmPayment = async (req, res) => {
   let mailfee = activity.report_infomation.mailfee
     ? activity.report_infomation.mailfee
     : 0;
+  console.log('test', mailfee);
 
   if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
     mailfee += 80;
+    console.log('test1', mailfee);
   }
 
   await model.Activity.findByIdAndUpdate(activity._id, {
