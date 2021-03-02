@@ -61,8 +61,7 @@ const confirmPayment = async (req, res) => {
     ? activity.report_infomation.mailfee
     : 0;
 
-  console.log(req.body.billPaymentRef3);
-  if (req.body.billPaymentRef3 === 'MAILFEE') {
+  if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
     mailfee += 80;
   }
 

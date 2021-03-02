@@ -253,11 +253,14 @@ const requestPayment = standardize(async (req, res) => {
   const { amount, activity_title, mailfee } = Joi.attempt(req.body, schema);
 
   const { id } = Joi.attempt(req.params, paramSchema);
+  console.log(mailfee);
 
   try {
     const scbRes = await axios({
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      // url: `
+      // https://api-uat.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -274,6 +277,7 @@ const requestPayment = standardize(async (req, res) => {
     const qrcodeRes = await axios({
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
+      // url: `https://api-uat.partners.scb/partners/v1/payment/qrcode/create`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -287,7 +291,7 @@ const requestPayment = standardize(async (req, res) => {
         amount: `${amount.toFixed(2)}`,
         ref1: id.substring(0, 10).toUpperCase(),
         ref2: id.substring(10).toUpperCase(),
-        ref3: mailfee ? 'MAILFEE' : 'NOMAILFEE',
+        ref3: 'NAZ',
       },
     });
 
