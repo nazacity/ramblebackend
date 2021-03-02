@@ -18,6 +18,7 @@ const {
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
 const confirmPayment = async (req, res) => {
+  console.log(req.body);
   const oldUserActivity = await model.UserActivity.findById(
     req.body.billPaymentRef1.toLowerCase() +
       req.body.billPaymentRef2.toLowerCase()
@@ -60,11 +61,9 @@ const confirmPayment = async (req, res) => {
   let mailfee = activity.report_infomation.mailfee
     ? activity.report_infomation.mailfee
     : 0;
-  console.log('test', mailfee);
 
   if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
     mailfee += 80;
-    console.log('test1', mailfee);
   }
 
   await model.Activity.findByIdAndUpdate(activity._id, {

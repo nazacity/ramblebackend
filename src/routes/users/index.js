@@ -11,6 +11,7 @@ const {
   uploadIdCardWithPerson,
   uploadCovid,
 } = require('../../utils/spacesutil');
+const moment = require('moment');
 
 const { standardize } = require('../../utils/request');
 const {
@@ -250,17 +251,16 @@ const requestPayment = standardize(async (req, res) => {
     id: Joi.string().required(),
   });
 
-  const { amount, activity_title, mailfee } = Joi.attempt(req.body, schema);
+  const { amount } = Joi.attempt(req.body, schema);
 
   const { id } = Joi.attempt(req.params, paramSchema);
-  console.log(mailfee);
 
   try {
     const scbRes = await axios({
       method: 'post',
-      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
-      // url: `
-      // https://api-uat.partners.scb/partners/v1/oauth/token`,
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      url: `
+      https://api-uat.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -276,8 +276,8 @@ const requestPayment = standardize(async (req, res) => {
 
     const qrcodeRes = await axios({
       method: 'post',
-      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
-      // url: `https://api-uat.partners.scb/partners/v1/payment/qrcode/create`,
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
+      url: `https://api-uat.partners.scb/partners/v1/payment/qrcode/create`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -287,7 +287,8 @@ const requestPayment = standardize(async (req, res) => {
       data: {
         qrType: 'PP',
         ppType: 'BILLERID',
-        ppId: '041031474109502',
+        ppId: '041031474109502', //sandbox
+        // ppId: '311040039475180',
         amount: `${amount.toFixed(2)}`,
         ref1: id.substring(0, 10).toUpperCase(),
         ref2: id.substring(10).toUpperCase(),
@@ -301,9 +302,141 @@ const requestPayment = standardize(async (req, res) => {
   }
 });
 
+const requestBillpaymentByTransactions = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+    trans_id: Joi.string().required(),
+  });
+
+  const { id, trans_id } = Joi.attempt(req.params, paramSchema);
+
+  const userActivity = await UserActivityService.findById(id);
+
+  const transRef = userActivity.transaction.find(
+    (item) => item._id.toString() === trans_id.toString()
+  );
+
+  try {
+    const scbRes = await axios({
+      method: 'post',
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      url: `
+      https://api-uat.partners.scb/partners/v1/oauth/token`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: 'testestes',
+      },
+      data: {
+        applicationKey: config.scb.key,
+        applicationSecret: config.scb.secret,
+      },
+    });
+
+    const accessToken = scbRes.data.data.accessToken;
+
+    const transactionRes = await axios({
+      method: 'get',
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
+      url: `https://api-uat.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: 'testestes',
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res.status(200).send(transactionRes.data);
+  } catch (error) {
+    console.log('error: ', error);
+    return res.status(200).send('error');
+  }
+});
+
+const requestBillpaymentByInquiry = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+    trans_id: Joi.string().required(),
+  });
+
+  const { id, trans_id } = Joi.attempt(req.params, paramSchema);
+
+  const userActivity = await UserActivityService.findById(id);
+
+  const transRef = userActivity.transaction.find(
+    (item) => item._id.toString() === trans_id.toString()
+  );
+
+  try {
+    const scbRes = await axios({
+      method: 'post',
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      url: `
+      https://api-uat.partners.scb/partners/v1/oauth/token`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: 'testestes',
+      },
+      data: {
+        applicationKey: config.scb.key,
+        applicationSecret: config.scb.secret,
+      },
+    });
+
+    const accessToken = scbRes.data.data.accessToken;
+
+    console.log('accessToken', accessToken);
+
+    const inquryRes = await axios({
+      method: 'get',
+      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/inquiry?billerId=${
+      //   config.scb.billerId
+      // }&reference1=${id
+      //   .substring(0, 10)
+      //   .toUpperCase()}&reference2=${id
+      //   .substring(10)
+      //   .toUpperCase()}&transactionDate=${moment(transRef).format(
+      //   'YYYY-MM-DD'
+      // )}&eventCode=00300100`,
+      url: `https://api-uat.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=${
+        config.scb.billerId
+      }&reference1=${id
+        .substring(0, 10)
+        .toUpperCase()}&reference2=${id
+        .substring(10)
+        .toUpperCase()}&transactionDate=${moment(transRef).format(
+        'YYYY-MM-DD'
+      )}&eventCode=00300100`,
+      headers: {
+        'Content-Type': 'application/json',
+        resourceOwnerId: config.scb.key,
+        requestUId: 'testestes',
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log(inquryRes.data);
+
+    return res.status(200).send(inquryRes.data);
+  } catch (error) {
+    console.log('error: ', error);
+    return res.status(200).send('error');
+  }
+});
+
 router.get('/getuserbyjwt', getUserByJwt);
 router.post('/createuseractivity', createUserActivity);
 router.post('/requestpayment/:id', requestPayment);
+router.get(
+  '/requestbillpaymentbytransactions/:id/:trans_id',
+  requestBillpaymentByTransactions
+);
+router.get(
+  '/requestbillpaymentbyinquiry/:id/:trans_id',
+  requestBillpaymentByInquiry
+);
 
 // User Post
 const createUserPost = standardize(async (req, res) => {

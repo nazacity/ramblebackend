@@ -16,8 +16,12 @@ const config = {
     secret: process.env.JWT_SECRET || 'ramblemarathon',
   },
   scb: {
-    key: 'l7d1103e09fe5e49b2b0fc22b42f604fdf',
-    secret: '96d19247927c4b1d804b8c2d0d09b003',
+    // billerId: '041031474109502',
+    // key: 'l7d1103e09fe5e49b2b0fc22b42f604fdf',
+    // secret: '96d19247927c4b1d804b8c2d0d09b003', // sandbox
+    billerId: '311040039475180',
+    key: 'l73fe780a65b8747e3bb3865c559d20564',
+    secret: '0fda3ada921845cd9d1635adde8e58ee',
   },
   onesignal: {
     app_id: 'a7cc39f9-5233-46a8-9bec-cb87d2c34b5d',
