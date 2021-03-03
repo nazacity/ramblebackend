@@ -315,6 +315,8 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
     (item) => item._id.toString() === trans_id.toString()
   );
 
+  console.log(transRef);
+
   try {
     const scbRes = await axios({
       method: 'post',
@@ -337,7 +339,7 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
     const transactionRes = await axios({
       method: 'get',
       // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
-      url: `https://api-uat.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
+      url: `https://api-uat.partners.scb/partners/v1/payment/billpayment/transactions/202103035xMiPW0ThLNKoTDMA?sendingBank=014`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -346,9 +348,11 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
       },
     });
 
+    console.log(transactionRes.data);
+
     return res.status(200).send(transactionRes.data);
   } catch (error) {
-    console.log('error: ', error);
+    console.log('error: ', error.response.data.status.details);
     return res.status(200).send('error');
   }
 });
