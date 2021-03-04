@@ -4,7 +4,7 @@ const models = require('../models');
 const config = require('./config');
 
 module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
-  // module.exports = job = schedule.scheduleJob('* * 10 * * 0-6', async () => {
+  // module.exports = job = schedule.scheduleJob('* * 17 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -76,10 +76,12 @@ const updateActivitiesState = async () => {
   const actualDateActivities = await models.Activity.find({
     state: 'actual_date',
     actual_date: {
-      $gt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      $lt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      $gt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      $lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
     },
   });
+
+  console.log(actualDateActivities);
 
   actualDateActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
