@@ -260,7 +260,7 @@ const requestPayment = standardize(async (req, res) => {
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
       // url: `
-      // https://api-uat.partners.scb/partners/v1/oauth/token`,
+      // https://api.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -277,7 +277,7 @@ const requestPayment = standardize(async (req, res) => {
     const qrcodeRes = await axios({
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
-      // url: `https://api-uat.partners.scb/partners/v1/payment/qrcode/create`,
+      // url: `https://api.partners.scb/partners/v1/payment/qrcode/create`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -315,14 +315,12 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
     (item) => item._id.toString() === trans_id.toString()
   );
 
-  console.log(transRef);
-
   try {
     const scbRes = await axios({
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
       // url: `
-      // https://api-uat.partners.scb/partners/v1/oauth/token`,
+      // https://api.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -339,7 +337,7 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
     const transactionRes = await axios({
       method: 'get',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
-      // url: `https://api-uat.partners.scb/partners/v1/payment/billpayment/transactions/202103035xMiPW0ThLNKoTDMA?sendingBank=014`,
+      // url: `https://api.partners.scb/partners/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -347,8 +345,6 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
         authorization: `Bearer ${accessToken}`,
       },
     });
-
-    console.log(transactionRes.data);
 
     return res.status(200).send(transactionRes.data);
   } catch (error) {
@@ -376,7 +372,7 @@ const requestBillpaymentByInquiry = standardize(async (req, res) => {
       method: 'post',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
       // url: `
-      // https://api-uat.partners.scb/partners/v1/oauth/token`,
+      // https://api.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -390,8 +386,6 @@ const requestBillpaymentByInquiry = standardize(async (req, res) => {
 
     const accessToken = scbRes.data.data.accessToken;
 
-    console.log('accessToken', accessToken);
-
     const inquryRes = await axios({
       method: 'get',
       url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/inquiry?billerId=${
@@ -403,7 +397,7 @@ const requestBillpaymentByInquiry = standardize(async (req, res) => {
         .toUpperCase()}&transactionDate=${moment(transRef).format(
         'YYYY-MM-DD'
       )}&eventCode=00300100`,
-      // url: `https://api-uat.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=${
+      // url: `https://api.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=${
       //   config.scb.billerId
       // }&reference1=${id
       //   .substring(0, 10)
@@ -610,8 +604,29 @@ const deleteEmergencyContact = standardize(async (req, res) => {
   await UserService.deleteEmergencyContact(req.user.id, id);
   res.json(await EmergencyContactService.deleteEmergencyContact(id));
 });
+
+const editEmergencyContact = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    phone_number: Joi.string().required(),
+    relationship: Joi.string().required(),
+  });
+
+  const emergencyContact = Joi.attempt({ ...req.body }, schema);
+
+  res.json(
+    await EmergencyContactService.editEmergencyContact(id, emergencyContact)
+  );
+});
 router.post('/createemergencycontact', createEmergencyContact);
 router.delete('/deleteemergencycontact/:id', deleteEmergencyContact);
+router.post('/editemergencycontact/:id', editEmergencyContact);
 
 const createAddress = standardize(async (req, res) => {
   const schema = Joi.object({
@@ -641,8 +656,28 @@ const deleteAddress = standardize(async (req, res) => {
   await UserService.deleteAddress(req.user.id, id);
   res.json(await AddressService.deleteAddress(id));
 });
+
+const editAddress = standardize(async (req, res) => {
+  const paramSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  const { id } = Joi.attempt(req.params, paramSchema);
+
+  const schema = Joi.object({
+    address: Joi.string().required(),
+    province: Joi.string().required(),
+    zip: Joi.string().required(),
+    phone_number: Joi.string().required(),
+  });
+
+  const address = Joi.attempt(req.body, schema);
+
+  res.json(await AddressService.editAddress(id, address));
+});
 router.post('/createaddress', createAddress);
 router.delete('/deleteaddress/:id', deleteAddress);
+router.post('/editaddress/:id', editAddress);
 
 // Activity
 const userListActivities = standardize(async (req, res) => {

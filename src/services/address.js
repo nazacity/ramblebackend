@@ -15,7 +15,7 @@ class AddressService extends AbstractService {
     return this.models.Address.create(data);
   }
 
-  async editUserAddress(id, data) {
+  async editAddress(id, data) {
     return this.models.Address.findOneAndUpdate(
       { _id: id },
       {
