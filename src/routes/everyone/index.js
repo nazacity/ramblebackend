@@ -44,7 +44,13 @@ const confirmPayment = async (req, res) => {
     .populate({ path: 'user', select: { device_token: 1, lineId: 1 } })
     .populate({
       path: 'activity.id',
-      select: { title: 1, location: 1, courses: 1, report_infomation: 1 },
+      select: {
+        title: 1,
+        location: 1,
+        courses: 1,
+        report_infomation: 1,
+        activity_picture_url: 1,
+      },
     });
 
   const activity = updatedUserActivity.activity.id;
