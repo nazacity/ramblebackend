@@ -632,6 +632,7 @@ const createUserAdressEmergencyActivity = async (req, res) => {
   } else {
     newAddress = { _id: data.address._id };
   }
+
   await UserService.updateAddress(data.user, newAddress._id);
   let newEmergencyContact = await EmergencyContactService.createEmergencyContact(
     data.emergency
