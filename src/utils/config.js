@@ -29,7 +29,7 @@ const config = {
   },
   line: {
     message_api: 'https://api.line.me/v2/bot/message',
-    header: {
+    headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer +uniMVPzDtJP6aWzmxYkYOUpzXjtaiezdLDeOEpbOfGRSSFgmOMY7VOYy/AoxKzfxjvhrP4kSVzEaYwms/lTC+IIp6BlBSHcwlkGwLRlH70irpG8o6+RVQM4pxm/oKjCVesV4vLhdKRfhjRDfQvSLQdB04t89/1O/w1cDnyilFU=`,
     },
