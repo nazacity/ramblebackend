@@ -18,6 +18,8 @@ const {
   OnboardingService,
 } = require('../../services');
 const model = require('../../models');
+const axios = require('axios');
+const config = require('../../utils/config');
 
 const listEmployees = standardize(async (req, res) => {
   const schema = Joi.object({
@@ -771,8 +773,9 @@ const confirmPayment = async (req, res) => {
   );
   const amount = oldUserActivity.transaction.reduce(
     (sum, transaction) => sum + transaction.amount,
-    req.body.amount
+    parseInt(req.body.amount)
   );
+
   let state = 'waiting_payment';
   if (amount >= oldUserActivity.activity.course.price) {
     state = 'upcoming';
@@ -805,33 +808,33 @@ const confirmPayment = async (req, res) => {
   const activity = updatedUserActivity.activity.id;
   const user_device_token = updatedUserActivity.user.device_token;
 
-  if (amount >= oldUserActivity.activity.course.price) {
-    const courses = activity.courses;
-    const courseIndex = activity.courses.findIndex(
-      (item) => item._id.toString() === updatedUserActivity.activity.course._id
-    );
-    courses[courseIndex].revenue = courses[courseIndex].revenue
-      ? courses[courseIndex].revenue + updatedUserActivity.activity.course.price
-      : updatedUserActivity.activity.course.price;
+  const courses = activity.courses;
+  const courseIndex = activity.courses.findIndex(
+    (item) => item._id.toString() === updatedUserActivity.activity.course._id
+  );
+  courses[courseIndex].revenue = courses[courseIndex].revenue
+    ? courses[courseIndex].revenue + parseInt(req.body.amount)
+    : parseInt(req.body.amount);
 
-    let mailfee = activity.report_infomation.mailfee
-      ? activity.report_infomation.mailfee
-      : 0;
+  let mailfee = activity.report_infomation.mailfee
+    ? activity.report_infomation.mailfee
+    : 0;
 
-    if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
-      mailfee += 80;
-    }
-
-    await model.Activity.findByIdAndUpdate(activity._id, {
-      $set: {
-        report_infomation: {
-          ...activity.report_infomation,
-          mailfee: mailfee,
-        },
-        courses: courses,
-      },
-    });
+  if (
+    updatedUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd'
+  ) {
+    mailfee += 80;
   }
+
+  await model.Activity.findByIdAndUpdate(activity._id, {
+    $set: {
+      report_infomation: {
+        ...activity.report_infomation,
+        mailfee: mailfee,
+      },
+      courses: courses,
+    },
+  });
 
   if (user_device_token) {
     try {
@@ -853,7 +856,7 @@ const confirmPayment = async (req, res) => {
         },
       });
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
   }
 
@@ -1044,7 +1047,7 @@ const confirmPayment = async (req, res) => {
         headers: config.line.headers,
       });
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
   }
 
