@@ -17,6 +17,7 @@ const {
   MainAdvertizeService,
   OnboardingService,
 } = require('../../services');
+const model = require('../../models');
 
 const listEmployees = standardize(async (req, res) => {
   const schema = Joi.object({
@@ -762,5 +763,282 @@ const updateVaccineState = standardize(async (req, res) => {
 });
 
 router.post('/updatevaccinestate/:id', updateVaccineState);
+
+const confirmPayment = async (req, res) => {
+  // console.log(req.body);
+  const oldUserActivity = await model.UserActivity.findById(
+    req.body.userActivityId
+  );
+  const amount = oldUserActivity.transaction.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    req.body.amount
+  );
+  let state = 'waiting_payment';
+  if (amount >= oldUserActivity.activity.course.price) {
+    state = 'upcoming';
+  }
+
+  const updatedUserActivity = await model.UserActivity.findByIdAndUpdate(
+    req.body.userActivityId,
+    {
+      $set: {
+        state: state,
+        transaction: [
+          ...oldUserActivity.transaction,
+          {
+            payDate: new Date(),
+            amount: req.body.amount,
+          },
+        ],
+      },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate({ path: 'user' })
+    .populate({ path: 'address' })
+    .populate({
+      path: 'activity.id',
+    });
+
+  const activity = updatedUserActivity.activity.id;
+  const user_device_token = updatedUserActivity.user.device_token;
+
+  const courses = activity.courses;
+  const courseIndex = activity.courses.findIndex(
+    (item) => item._id.toString() === updatedUserActivity.activity.course._id
+  );
+  courses[courseIndex].revenue = courses[courseIndex].revenue
+    ? courses[courseIndex].revenue + updatedUserActivity.activity.course.price
+    : updatedUserActivity.activity.course.price;
+
+  let mailfee = activity.report_infomation.mailfee
+    ? activity.report_infomation.mailfee
+    : 0;
+
+  if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
+    mailfee += 80;
+  }
+
+  await model.Activity.findByIdAndUpdate(activity._id, {
+    $set: {
+      report_infomation: {
+        ...activity.report_infomation,
+        mailfee: mailfee,
+      },
+      courses: courses,
+    },
+  });
+
+  if (user_device_token) {
+    try {
+      const sendNotification = await axios({
+        method: 'post',
+        url: 'https://onesignal.com/api/v1/notifications',
+        data: {
+          app_id: config.onesignal.app_id,
+          include_player_ids: [user_device_token],
+          headings: { en: 'Payment Confirmed', th: 'ยืนยันการชำระเรียบร้อย' },
+          contents: {
+            en: `Thank you for joining ${activity.title}`,
+            th: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+          },
+        },
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          Authorization: `Basic ${config.onesignal.rest_api_key}`,
+        },
+      });
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
+  if (updatedUserActivity.user.lineId) {
+    try {
+      const data = JSON.stringify({
+        to: updatedUserActivity.user.lineId,
+        messages: [
+          {
+            type: 'flex',
+            altText: `ยืนยันการชำระเงิน`,
+            contents: {
+              type: 'bubble',
+              size: 'giga',
+              header: {
+                type: 'box',
+                layout: 'vertical',
+                contents: [
+                  {
+                    type: 'box',
+                    layout: 'horizontal',
+                    contents: [
+                      {
+                        type: 'image',
+                        url: activity.activity_picture_url,
+                        size: 'full',
+                        aspectMode: 'cover',
+                        aspectRatio: '300:200',
+                        gravity: 'center',
+                        flex: 1,
+                      },
+                      {
+                        type: 'box',
+                        layout: 'horizontal',
+                        contents: [
+                          {
+                            type: 'text',
+                            text: 'Registered',
+                            size: 'xs',
+                            color: '#ffffff',
+                            align: 'center',
+                            gravity: 'center',
+                          },
+                        ],
+                        backgroundColor: '#EC3D44',
+                        paddingAll: '2px',
+                        paddingStart: '4px',
+                        paddingEnd: '4px',
+                        flex: 0,
+                        position: 'absolute',
+                        offsetStart: '18px',
+                        offsetTop: '18px',
+                        cornerRadius: '100px',
+                        width: '100px',
+                        height: '25px',
+                      },
+                    ],
+                  },
+                ],
+                paddingAll: '0px',
+              },
+              body: {
+                type: 'box',
+                layout: 'vertical',
+                contents: [
+                  {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                      {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                          {
+                            type: 'text',
+                            contents: [],
+                            size: 'xl',
+                            wrap: true,
+                            text: 'ยืนยันการชำระเรียบร้อย',
+                            color: '#ffffff',
+                            weight: 'bold',
+                            align: 'center',
+                          },
+                          {
+                            type: 'text',
+                            text: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+                            color: '#ffffffcc',
+                            size: 'sm',
+                            align: 'center',
+                          },
+                        ],
+                        spacing: 'sm',
+                      },
+                      {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                          {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                              {
+                                type: 'text',
+                                contents: [],
+                                size: 'sm',
+                                wrap: true,
+                                margin: 'lg',
+                                color: '#ffffffde',
+                                text: 'พบกับฟีเจอร์อื่นๆ เพิ่มเติมได้ใน',
+                                align: 'center',
+                              },
+                              {
+                                type: 'text',
+                                text: 'Ramble Mobile Application',
+                                color: '#ffffffde',
+                                margin: 'lg',
+                                size: 'sm',
+                                align: 'center',
+                              },
+                            ],
+                          },
+                          {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                              {
+                                type: 'image',
+                                url:
+                                  'https://firebasestorage.googleapis.com/v0/b/ramble-73f09.appspot.com/o/applystore.png?alt=media&token=f35d484e-fd0c-4fb5-8116-a5188db82711',
+                                aspectRatio: '292:70',
+                                size: '4xl',
+                                backgroundColor: '#00000099',
+                                aspectMode: 'fit',
+                                margin: 'md',
+                                action: {
+                                  type: 'uri',
+                                  label: 'action',
+                                  uri:
+                                    'https://apps.apple.com/th/app/ramble/id1551268864?l=th',
+                                },
+                              },
+                              {
+                                type: 'image',
+                                url:
+                                  'https://firebasestorage.googleapis.com/v0/b/ramble-73f09.appspot.com/o/googleplay.png?alt=media&token=1549b9f6-8deb-4259-9408-850fecfb6d82',
+                                margin: 'lg',
+                                size: '4xl',
+                                aspectRatio: '292:70',
+                                backgroundColor: '#00000099',
+                                aspectMode: 'fit',
+                                action: {
+                                  type: 'uri',
+                                  label: 'action',
+                                  uri:
+                                    'https://play.google.com/store/apps/details?id=com.ramble',
+                                },
+                              },
+                            ],
+                          },
+                        ],
+                        paddingAll: '13px',
+                        backgroundColor: '#ffffff1A',
+                        cornerRadius: '2px',
+                        margin: 'xl',
+                      },
+                    ],
+                  },
+                ],
+                paddingAll: '20px',
+                backgroundColor: '#8a1776',
+              },
+            },
+          },
+        ],
+      });
+
+      await axios.post(`${config.line.message_api}/push`, data, {
+        headers: config.line.headers,
+      });
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
+  res.status(200).send({ status: 200, data: updatedUserActivity });
+};
+
+router.post('/confirmpayment', confirmPayment);
 
 module.exports = router;
