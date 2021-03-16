@@ -841,8 +841,8 @@ const confirmPayment = async (req, res) => {
           include_player_ids: [user_device_token],
           headings: { en: 'Payment Confirmed', th: 'ยืนยันการชำระเรียบร้อย' },
           contents: {
-            en: `Thank you for joining ${activity.title}`,
-            th: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+            en: `Thank you for joining ${activity.title} Payment amount ${req.body.amount} บาท`,
+            th: `ขอบคุณที่ร่วมรายการ ${activity.title} ยอดชำระ ${req.body.amount} บาท`,
           },
         },
         headers: {
@@ -931,6 +931,16 @@ const confirmPayment = async (req, res) => {
                             size: 'xl',
                             wrap: true,
                             text: 'ยืนยันการชำระเรียบร้อย',
+                            color: '#ffffff',
+                            weight: 'bold',
+                            align: 'center',
+                          },
+                          {
+                            type: 'text',
+                            contents: [],
+                            size: 'xl',
+                            wrap: true,
+                            text: `ยอดชำระ ${req.body.amount} บาท`,
                             color: '#ffffff',
                             weight: 'bold',
                             align: 'center',
