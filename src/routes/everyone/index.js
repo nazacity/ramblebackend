@@ -76,30 +76,30 @@ const confirmPayment = async (req, res) => {
     },
   });
 
-  try {
-    const sendNotification = await axios({
-      method: 'post',
-      url: 'https://onesignal.com/api/v1/notifications',
-      data: {
-        app_id: config.onesignal.app_id,
-        include_player_ids: [user_device_token],
-        headings: { en: 'Payment Confirmed', th: 'ยืนยันการชำระเรียบร้อย' },
-        contents: {
-          en: `Thank you for joining ${activity.title}`,
-          th: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+  if (user_device_token) {
+    try {
+      const sendNotification = await axios({
+        method: 'post',
+        url: 'https://onesignal.com/api/v1/notifications',
+        data: {
+          app_id: config.onesignal.app_id,
+          include_player_ids: [user_device_token],
+          headings: { en: 'Payment Confirmed', th: 'ยืนยันการชำระเรียบร้อย' },
+          contents: {
+            en: `Thank you for joining ${activity.title}`,
+            th: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+          },
         },
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Basic ${config.onesignal.rest_api_key}`,
-      },
-    });
-  } catch (error) {
-    console.log(error.response);
-    res.status(400).send(error);
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          Authorization: `Basic ${config.onesignal.rest_api_key}`,
+        },
+      });
+    } catch (error) {
+      console.log(error.response);
+      // res.status(400).send(error);
+    }
   }
-
-  console.log(updatedUserActivity.user.lineId);
 
   if (updatedUserActivity.user.lineId) {
     try {
@@ -279,7 +279,7 @@ const confirmPayment = async (req, res) => {
       });
     } catch (error) {
       console.log(error.response);
-      res.status(400).send(error);
+      // res.status(400).send(error);
     }
   }
 
