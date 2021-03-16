@@ -28,7 +28,7 @@ const confirmPayment = async (req, res) => {
       req.body.billPaymentRef2.toLowerCase(),
     {
       $set: {
-        state: 'upcoming',
+        // state: 'upcoming',
         transaction: [
           ...oldUserActivity.transaction,
           {
@@ -97,6 +97,188 @@ const confirmPayment = async (req, res) => {
   } catch (error) {
     console.log(error.response);
     res.status(400).send(error);
+  }
+
+  if (updatedUserActivity.user.lineId) {
+    try {
+      const data = JSON.stringify({
+        to: updatedUserActivity.user.lineId,
+        messages: [
+          {
+            type: 'flex',
+            altText: `ส่งสินค้าเรียบร้อย`,
+            contents: {
+              type: 'bubble',
+              size: 'giga',
+              header: {
+                type: 'box',
+                layout: 'vertical',
+                contents: [
+                  {
+                    type: 'box',
+                    layout: 'horizontal',
+                    contents: [
+                      {
+                        type: 'image',
+                        url: activity.activity_picture_url,
+                        size: 'full',
+                        aspectMode: 'cover',
+                        aspectRatio: '300:200',
+                        gravity: 'center',
+                        flex: 1,
+                      },
+                      {
+                        type: 'box',
+                        layout: 'horizontal',
+                        contents: [
+                          {
+                            type: 'text',
+                            text: 'Registered',
+                            size: 'xs',
+                            color: '#ffffff',
+                            align: 'center',
+                            gravity: 'center',
+                          },
+                        ],
+                        backgroundColor: '#EC3D44',
+                        paddingAll: '2px',
+                        paddingStart: '4px',
+                        paddingEnd: '4px',
+                        flex: 0,
+                        position: 'absolute',
+                        offsetStart: '18px',
+                        offsetTop: '18px',
+                        cornerRadius: '100px',
+                        width: '100px',
+                        height: '25px',
+                      },
+                    ],
+                  },
+                ],
+                paddingAll: '0px',
+              },
+              body: {
+                type: 'box',
+                layout: 'vertical',
+                contents: [
+                  {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                      {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                          {
+                            type: 'text',
+                            contents: [],
+                            size: 'xl',
+                            wrap: true,
+                            text: 'ยืนยันการชำระเรียบร้อย',
+                            color: '#ffffff',
+                            weight: 'bold',
+                            align: 'center',
+                          },
+                          {
+                            type: 'text',
+                            text: `ขอบคุณที่ร่วมรายการ ${activity.title}`,
+                            color: '#ffffffcc',
+                            size: 'sm',
+                            align: 'center',
+                          },
+                        ],
+                        spacing: 'sm',
+                      },
+                      {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                          {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                              {
+                                type: 'text',
+                                contents: [],
+                                size: 'sm',
+                                wrap: true,
+                                margin: 'lg',
+                                color: '#ffffffde',
+                                text: 'พบกับฟีเจอร์อื่นๆ เพิ่มเติมได้ใน',
+                                align: 'center',
+                              },
+                              {
+                                type: 'text',
+                                text: 'Ramble Mobile Application',
+                                color: '#ffffffde',
+                                margin: 'lg',
+                                size: 'sm',
+                                align: 'center',
+                              },
+                            ],
+                          },
+                          {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                              {
+                                type: 'image',
+                                url:
+                                  'https://firebasestorage.googleapis.com/v0/b/ramble-73f09.appspot.com/o/applystore.png?alt=media&token=f35d484e-fd0c-4fb5-8116-a5188db82711',
+                                aspectRatio: '292:70',
+                                size: '4xl',
+                                backgroundColor: '#00000099',
+                                aspectMode: 'fit',
+                                margin: 'md',
+                                action: {
+                                  type: 'uri',
+                                  label: 'action',
+                                  uri:
+                                    'https://apps.apple.com/th/app/ramble/id1551268864?l=th',
+                                },
+                              },
+                              {
+                                type: 'image',
+                                url:
+                                  'https://firebasestorage.googleapis.com/v0/b/ramble-73f09.appspot.com/o/googleplay.png?alt=media&token=1549b9f6-8deb-4259-9408-850fecfb6d82',
+                                margin: 'lg',
+                                size: '4xl',
+                                aspectRatio: '292:70',
+                                backgroundColor: '#00000099',
+                                aspectMode: 'fit',
+                                action: {
+                                  type: 'uri',
+                                  label: 'action',
+                                  uri:
+                                    'https://play.google.com/store/apps/details?id=com.ramble',
+                                },
+                              },
+                            ],
+                          },
+                        ],
+                        paddingAll: '13px',
+                        backgroundColor: '#ffffff1A',
+                        cornerRadius: '2px',
+                        margin: 'xl',
+                      },
+                    ],
+                  },
+                ],
+                paddingAll: '20px',
+                backgroundColor: '#8a1776',
+              },
+            },
+          },
+        ],
+      });
+
+      await axios.post(`${config.line.message_api}/push`, data, {
+        headers: config.line.header,
+      });
+    } catch (error) {
+      console.log(error.response);
+      res.status(400).send(error);
+    }
   }
 
   res.status(200).send({

@@ -29,9 +29,9 @@ const config = {
   },
   line: {
     message_api: 'https://api.line.me/v2/bot/message',
-    line_header: {
+    header: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer hT3PdJDVY/oOycNSdzNGbQMHRtLyfTpw/E9G/66wgmMJhNlfBaqNM1HH2EgXz/ErH/NbNo3vxM0SH+AjUFFM7yCE5FA7g3Evr4sxy/sSPzqNPnWftduPoIxl0gMVSbTQ/KKz2IdZnZNlhBnJWtABYQdB04t89/1O/w1cDnyilFU=`,
+      Authorization: `Bearer +uniMVPzDtJP6aWzmxYkYOUpzXjtaiezdLDeOEpbOfGRSSFgmOMY7VOYy/AoxKzfxjvhrP4kSVzEaYwms/lTC+IIp6BlBSHcwlkGwLRlH70irpG8o6+RVQM4pxm/oKjCVesV4vLhdKRfhjRDfQvSLQdB04t89/1O/w1cDnyilFU=`,
     },
   },
   S3: new AWS.S3({
