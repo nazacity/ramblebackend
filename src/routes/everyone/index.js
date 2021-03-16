@@ -18,7 +18,7 @@ const {
 const { user_gender, blood_type } = require('../../utils/constants/user');
 
 const confirmPayment = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const oldUserActivity = await model.UserActivity.findById(
     req.body.billPaymentRef1.toLowerCase() +
       req.body.billPaymentRef2.toLowerCase()
@@ -98,6 +98,8 @@ const confirmPayment = async (req, res) => {
     console.log(error.response);
     res.status(400).send(error);
   }
+
+  console.log(updatedUserActivity.user);
 
   if (updatedUserActivity.user.lineId) {
     try {
