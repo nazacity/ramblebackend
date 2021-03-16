@@ -805,31 +805,33 @@ const confirmPayment = async (req, res) => {
   const activity = updatedUserActivity.activity.id;
   const user_device_token = updatedUserActivity.user.device_token;
 
-  const courses = activity.courses;
-  const courseIndex = activity.courses.findIndex(
-    (item) => item._id.toString() === updatedUserActivity.activity.course._id
-  );
-  courses[courseIndex].revenue = courses[courseIndex].revenue
-    ? courses[courseIndex].revenue + updatedUserActivity.activity.course.price
-    : updatedUserActivity.activity.course.price;
+  if (amount >= oldUserActivity.activity.course.price) {
+    const courses = activity.courses;
+    const courseIndex = activity.courses.findIndex(
+      (item) => item._id.toString() === updatedUserActivity.activity.course._id
+    );
+    courses[courseIndex].revenue = courses[courseIndex].revenue
+      ? courses[courseIndex].revenue + updatedUserActivity.activity.course.price
+      : updatedUserActivity.activity.course.price;
 
-  let mailfee = activity.report_infomation.mailfee
-    ? activity.report_infomation.mailfee
-    : 0;
+    let mailfee = activity.report_infomation.mailfee
+      ? activity.report_infomation.mailfee
+      : 0;
 
-  if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
-    mailfee += 80;
-  }
+    if (updatedUserActivity.address.toString() !== '5ff6600d20ed83388ab4ccbd') {
+      mailfee += 80;
+    }
 
-  await model.Activity.findByIdAndUpdate(activity._id, {
-    $set: {
-      report_infomation: {
-        ...activity.report_infomation,
-        mailfee: mailfee,
+    await model.Activity.findByIdAndUpdate(activity._id, {
+      $set: {
+        report_infomation: {
+          ...activity.report_infomation,
+          mailfee: mailfee,
+        },
+        courses: courses,
       },
-      courses: courses,
-    },
-  });
+    });
+  }
 
   if (user_device_token) {
     try {
@@ -841,7 +843,7 @@ const confirmPayment = async (req, res) => {
           include_player_ids: [user_device_token],
           headings: { en: 'Payment Confirmed', th: 'ยืนยันการชำระเรียบร้อย' },
           contents: {
-            en: `Thank you for joining ${activity.title} Payment amount ${req.body.amount} บาท`,
+            en: `Thank you for joining ${activity.title} Payment amount ${req.body.amount} baht`,
             th: `ขอบคุณที่ร่วมรายการ ${activity.title} ยอดชำระ ${req.body.amount} บาท`,
           },
         },
