@@ -24,6 +24,7 @@ const {
   UserYearRecordService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
+const { UserYearRecord } = require('../../models');
 
 function _calculateAge(birthday) {
   // birthday is a date
@@ -782,7 +783,8 @@ const checkoutActivity = standardize(async (req, res) => {
 
   await UserYearRecordService.updateUserYearRecord(
     req.user.id,
-    updatedUserActivity.activity.course.range
+    updatedUserActivity.activity.course.range,
+    updatedUserActivity._id
   );
 
   res.status(200).send({
@@ -898,5 +900,28 @@ const sendCovidResult = standardize(async (req, res) => {
 });
 
 router.post('/sendcovidresult', sendCovidResult);
+
+const getUserYearRecord = standardize(async (req, res) => {
+  const schema = Joi.object({
+    year: Joi.string().required(),
+  });
+
+  const { year } = Joi.attempt(req.body, schema);
+
+  res.status(201).send({
+    status: 200,
+    data: await UserYearRecordService.findByUserAndYear(req.user._id, year),
+  });
+});
+
+const getUserYearRecords = standardize(async (req, res) => {
+  res.status(201).send({
+    status: 200,
+    data: await UserYearRecordService.findByIds(req.user.user_records),
+  });
+});
+
+router.post('/getuseryearrecord', getUserYearRecord);
+router.get('/getuseryearrecords', getUserYearRecords);
 
 module.exports = router;

@@ -29,7 +29,6 @@ class UserService extends AbstractService {
       .limit(+limit)
       .populate({ path: 'addresses' })
       .populate({ path: 'emergency_contacts' })
-      .populate({ path: 'user_records' })
       .populate({
         path: 'user_posts',
         populate: {
@@ -67,7 +66,6 @@ class UserService extends AbstractService {
     )
       .populate({ path: 'addresses' })
       .populate({ path: 'emergency_contacts' })
-      .populate({ path: 'user_records' })
       .populate({
         path: 'user_posts',
         populate: {
@@ -119,7 +117,6 @@ class UserService extends AbstractService {
       )
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_records' })
         .populate({
           path: 'user_posts',
           populate: {
@@ -193,9 +190,7 @@ class UserService extends AbstractService {
     data = await this._preProcessedUser(data);
     const newUser = await this.models.User.create(data);
     const useryearrecord = await this.models.UserYearRecord.create({
-      $set: {
-        user: newUser._id,
-      },
+      user: newUser._id,
     });
     await this.models.User.findByIdAndUpdate(newUser._id, {
       $set: {
@@ -236,7 +231,6 @@ class UserService extends AbstractService {
     )
       .populate({ path: 'addresses' })
       .populate({ path: 'emergency_contacts' })
-      .populate({ path: 'user_records' })
       .populate({
         path: 'user_posts',
         populate: {
@@ -490,7 +484,6 @@ class UserService extends AbstractService {
     )
       .populate({ path: 'addresses' })
       .populate({ path: 'emergency_contacts' })
-      .populate({ path: 'user_records' })
       .populate({
         path: 'user_posts',
         populate: {
@@ -534,7 +527,6 @@ class UserService extends AbstractService {
     )
       .populate({ path: 'addresses' })
       .populate({ path: 'emergency_contacts' })
-      .populate({ path: 'user_records' })
       .populate({
         path: 'user_posts',
         populate: {

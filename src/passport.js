@@ -56,7 +56,6 @@ passport.use(
         )
           .populate({ path: 'addresses' })
           .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
           .populate({
             path: 'user_posts',
             populate: {
@@ -87,7 +86,6 @@ passport.use(
         })
           .populate({ path: 'addresses' })
           .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
           .populate({
             path: 'user_posts',
             populate: {
@@ -155,7 +153,6 @@ passport.use(
         )
           .populate({ path: 'addresses' })
           .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
           .populate({
             path: 'user_posts',
             populate: {
@@ -188,7 +185,6 @@ passport.use(
         })
           .populate({ path: 'addresses' })
           .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
           .populate({
             path: 'user_posts',
             populate: {
@@ -244,7 +240,6 @@ passport.use(
       })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_records' })
         .populate({
           path: 'user_posts',
           populate: {
@@ -365,7 +360,6 @@ passport.use(
       let user = await User.findOne({ _id: jwt_payload.sub }, { password: 0 })
         .populate({ path: 'addresses' })
         .populate({ path: 'emergency_contacts' })
-        .populate({ path: 'user_records' })
         .populate({
           path: 'user_posts',
           populate: {
@@ -411,7 +405,6 @@ passport.use(
         )
           .populate({ path: 'addresses' })
           .populate({ path: 'emergency_contacts' })
-          .populate({ path: 'user_records' })
           .populate({
             path: 'user_posts',
             populate: {

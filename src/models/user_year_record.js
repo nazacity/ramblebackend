@@ -15,6 +15,12 @@ const user_year_record = new Schema(
     time_hr: { type: Number, required: true, default: 0 },
     time_min: { type: Number, required: true, default: 0 },
     average: { type: Number, required: true, default: 0 },
+    user_activities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User_Activity',
+      },
+    ],
   },
   { timestamps: true }
 );
