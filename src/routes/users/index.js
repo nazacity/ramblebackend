@@ -24,7 +24,7 @@ const {
   UserYearRecordService,
 } = require('../../services');
 const { user_gender, blood_type } = require('../../utils/constants/user');
-const { UserYearRecord } = require('../../models');
+const { UserYearRecord, User } = require('../../models');
 
 function _calculateAge(birthday) {
   // birthday is a date
@@ -915,9 +915,10 @@ const getUserYearRecord = standardize(async (req, res) => {
 });
 
 const getUserYearRecords = standardize(async (req, res) => {
+  const user = await UserService.findById(req.user._id);
   res.status(201).send({
     status: 200,
-    data: await UserYearRecordService.findByIds(req.user.user_records),
+    data: await UserYearRecordService.findByIds(user.user_records),
   });
 });
 
