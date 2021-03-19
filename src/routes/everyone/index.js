@@ -358,7 +358,7 @@ const createUser = async (req, res) => {
     blood_type: Joi.string()
       .valid(...blood_type)
       .required(),
-    user_picture_url: Joi.string().required(),
+    user_picture_url: Joi.string().allow(''),
     lineId: Joi.string().allow(''),
     appleId: Joi.string().allow(''),
   });
