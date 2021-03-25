@@ -161,6 +161,7 @@ const activity = new Schema(
     contact: {
       phone_number: { type: String },
       line: { type: String },
+      facebook: { type: String },
     },
   },
   { timestamps: true }
