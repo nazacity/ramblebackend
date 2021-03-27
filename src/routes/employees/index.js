@@ -787,9 +787,15 @@ const confirmPayment = async (req, res) => {
     ? activity.report_infomation.mailfee
     : 0;
   let state = 'waiting_payment';
-  console.log(oldUserActivity.activity.course.price);
+  let totalPrice = 0;
+  if (oldUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd') {
+    totalPrice = oldUserActivity.activity.course.price + 80;
+  } else {
+    totalPrice = oldUserActivity.activity.course.price;
+  }
+  console.log(totalPrice);
   console.log(amount);
-  if (amount >= oldUserActivity.activity.course.price) {
+  if (amount >= totalPrice) {
     state = 'upcoming';
     if (oldUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd') {
       mailfee += 80;
