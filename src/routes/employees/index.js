@@ -776,6 +776,19 @@ const confirmPayment = async (req, res) => {
     parseInt(req.body.amount)
   );
 
+  let mailfee = activity.report_infomation.mailfee
+    ? activity.report_infomation.mailfee
+    : 0;
+  let state = 'waiting_payment';
+  if (amount >= oldUserActivity.activity.course.price) {
+    state = 'upcoming';
+    if (
+      updatedUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd'
+    ) {
+      mailfee += 80;
+    }
+  }
+
   const updatedUserActivity = await model.UserActivity.findByIdAndUpdate(
     req.body.userActivityId,
     {
@@ -799,19 +812,6 @@ const confirmPayment = async (req, res) => {
     .populate({
       path: 'activity.id',
     });
-
-  let mailfee = activity.report_infomation.mailfee
-    ? activity.report_infomation.mailfee
-    : 0;
-  let state = 'waiting_payment';
-  if (amount >= oldUserActivity.activity.course.price) {
-    state = 'upcoming';
-    if (
-      updatedUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd'
-    ) {
-      mailfee += 80;
-    }
-  }
 
   const activity = updatedUserActivity.activity.id;
   const user_device_token = updatedUserActivity.user.device_token;
