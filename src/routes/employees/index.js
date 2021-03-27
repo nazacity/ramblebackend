@@ -771,10 +771,17 @@ const confirmPayment = async (req, res) => {
   const oldUserActivity = await model.UserActivity.findById(
     req.body.userActivityId
   );
-  const amount = oldUserActivity.transaction.reduce(
-    (sum, transaction) => sum + transaction.amount,
-    parseInt(req.body.amount)
-  );
+  const amount = oldUserActivity.transaction
+    .reduce(
+      (sum, transaction) => sum + transaction.amount,
+      parseInt(req.body.amount)
+    )
+    .populate({ path: 'address' })
+    .populate({
+      path: 'activity.id',
+    });
+
+  const activity = oldUserActivity.activity.id;
 
   let mailfee = activity.report_infomation.mailfee
     ? activity.report_infomation.mailfee
@@ -782,9 +789,7 @@ const confirmPayment = async (req, res) => {
   let state = 'waiting_payment';
   if (amount >= oldUserActivity.activity.course.price) {
     state = 'upcoming';
-    if (
-      updatedUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd'
-    ) {
+    if (oldUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd') {
       mailfee += 80;
     }
   }
@@ -813,7 +818,6 @@ const confirmPayment = async (req, res) => {
       path: 'activity.id',
     });
 
-  const activity = updatedUserActivity.activity.id;
   const user_device_token = updatedUserActivity.user.device_token;
 
   const courses = activity.courses;
