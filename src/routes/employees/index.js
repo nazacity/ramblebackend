@@ -770,16 +770,16 @@ const confirmPayment = async (req, res) => {
   // console.log(req.body);
   const oldUserActivity = await model.UserActivity.findById(
     req.body.userActivityId
-  );
-  const amount = oldUserActivity.transaction
-    .reduce(
-      (sum, transaction) => sum + transaction.amount,
-      parseInt(req.body.amount)
-    )
+  )
     .populate({ path: 'address' })
     .populate({
       path: 'activity.id',
     });
+
+  const amount = oldUserActivity.transaction.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    parseInt(req.body.amount)
+  );
 
   const activity = oldUserActivity.activity.id;
 
