@@ -102,15 +102,20 @@ passport.use(
           })
           .populate({
             path: 'user_activities',
-            populate: {
-              path: 'activity.id',
-              select: {
-                activity_picture_url: 1,
-                title: 1,
-                actual_date: 1,
-                state: 1,
+            populate: [
+              {
+                path: 'activity.id',
+                select: {
+                  activity_picture_url: 1,
+                  title: 1,
+                  actual_date: 1,
+                  state: 1,
+                },
               },
-            },
+              {
+                path: 'address',
+              },
+            ],
           });
       }
 
@@ -204,16 +209,20 @@ passport.use(
           })
           .populate({
             path: 'user_activities',
-            populate: {
-              path: 'activity.id',
-              select: {
-                activity_picture_url: 1,
-                title: 1,
-                actual_date: 1,
-                state: 1,
-                location: 1,
+            populate: [
+              {
+                path: 'activity.id',
+                select: {
+                  activity_picture_url: 1,
+                  title: 1,
+                  actual_date: 1,
+                  state: 1,
+                },
               },
-            },
+              {
+                path: 'address',
+              },
+            ],
           });
       }
       if (!user) {
@@ -260,16 +269,20 @@ passport.use(
         })
         .populate({
           path: 'user_activities',
-          populate: {
-            path: 'activity.id',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
-              location: 1,
+          populate: [
+            {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
             },
-          },
+            {
+              path: 'address',
+            },
+          ],
         });
 
       if (!user) {
@@ -380,15 +393,20 @@ passport.use(
         })
         .populate({
           path: 'user_activities',
-          populate: {
-            path: 'activity.id',
-            select: {
-              activity_picture_url: 1,
-              title: 1,
-              actual_date: 1,
-              state: 1,
+          populate: [
+            {
+              path: 'activity.id',
+              select: {
+                activity_picture_url: 1,
+                title: 1,
+                actual_date: 1,
+                state: 1,
+              },
             },
-          },
+            {
+              path: 'address',
+            },
+          ],
         });
 
       let age = 0;
@@ -426,15 +444,20 @@ passport.use(
           })
           .populate({
             path: 'user_activities',
-            populate: {
-              path: 'activity.id',
-              select: {
-                activity_picture_url: 1,
-                title: 1,
-                actual_date: 1,
-                state: 1,
+            populate: [
+              {
+                path: 'activity.id',
+                select: {
+                  activity_picture_url: 1,
+                  title: 1,
+                  actual_date: 1,
+                  state: 1,
+                },
               },
-            },
+              {
+                path: 'address',
+              },
+            ],
           });
       }
 
