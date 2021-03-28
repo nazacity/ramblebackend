@@ -21,7 +21,16 @@ class UserActivityService extends AbstractService {
   }
 
   findById(id) {
-    return this.models.UserActivity.findById(id);
+    return this.models.UserActivity.findById(id)
+      .populate({
+        path: 'user',
+      })
+      .populate({
+        path: 'address',
+      })
+      .populate({
+        path: 'emergency_contacts',
+      });
   }
 
   async updateCheckedin(id) {

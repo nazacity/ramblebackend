@@ -793,8 +793,6 @@ const confirmPayment = async (req, res) => {
   } else {
     totalPrice = oldUserActivity.activity.course.price;
   }
-  console.log(totalPrice);
-  console.log(amount);
   if (amount >= totalPrice) {
     state = 'upcoming';
     if (oldUserActivity.address._id.toString() !== '5ff6600d20ed83388ab4ccbd') {

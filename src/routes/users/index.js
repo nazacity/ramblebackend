@@ -227,6 +227,10 @@ const createUserActivity = standardize(async (req, res) => {
     newUserActivity.id
   );
 
+  const returnUserActivity = await UserActivityService.findById(
+    newUserActivity.id
+  );
+
   await ActivityService.updateUserActivity(
     req.body.activity.id,
     newUserActivity.id,
@@ -235,7 +239,7 @@ const createUserActivity = standardize(async (req, res) => {
     userActivity.activity.course,
     userActivity.address
   );
-  res.status(201).send({ data: newUserActivity });
+  res.status(201).send({ data: returnUserActivity });
 });
 
 const getUserByJwt = standardize(async (req, res) => {
