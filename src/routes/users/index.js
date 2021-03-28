@@ -235,7 +235,7 @@ const createUserActivity = standardize(async (req, res) => {
     userActivity.activity.course,
     userActivity.address
   );
-  res.status(201).send({ id: newUserActivity.id });
+  res.status(201).send({ data: newUserActivity });
 });
 
 const getUserByJwt = standardize(async (req, res) => {
