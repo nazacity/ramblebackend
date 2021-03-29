@@ -16,7 +16,7 @@ class UserActivityService extends AbstractService {
         path: 'address',
       })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       });
   }
 
@@ -55,7 +55,7 @@ class UserActivityService extends AbstractService {
         path: 'address',
       })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       });
   }
 
@@ -87,7 +87,7 @@ class UserActivityService extends AbstractService {
           path: 'address',
         })
         .populate({
-          path: 'emergency_contacts',
+          path: 'emergency_contact',
         });
     } else if (user_activities.state === 'checked_out') {
       return 'Already checked out';
@@ -179,7 +179,7 @@ class UserActivityService extends AbstractService {
       })
       .populate({ path: 'activity.id' })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       });
   }
   async updatePrintedState(id) {
@@ -202,7 +202,7 @@ class UserActivityService extends AbstractService {
       })
       .populate({ path: 'activity.id' })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       });
   }
   async updateReadState(user_activity_id, item_id) {
@@ -236,7 +236,7 @@ class UserActivityService extends AbstractService {
         })
         .populate({ path: 'activity.id' })
         .populate({
-          path: 'emergency_contacts',
+          path: 'emergency_contact',
         });
     } else {
       return 'Error';
@@ -321,7 +321,7 @@ class UserActivityService extends AbstractService {
         path: 'address',
       })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       });
     return newUserActivity;
   }

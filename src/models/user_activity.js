@@ -62,7 +62,7 @@ const user_activity = new Schema(
     },
     emergency_contact: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'EmergencyContact',
+      ref: 'Emergency_Contact',
     },
     user_record: {
       time_hr: { type: Number, default: 0 },
