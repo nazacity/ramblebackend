@@ -230,7 +230,6 @@ const createUserActivity = standardize(async (req, res) => {
   const returnUserActivity = await UserActivityService.findById(
     newUserActivity.id
   );
-
   await ActivityService.updateUserActivity(
     req.body.activity.id,
     newUserActivity.id,

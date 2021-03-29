@@ -30,6 +30,9 @@ class UserActivityService extends AbstractService {
       })
       .populate({
         path: 'emergency_contacts',
+      })
+      .populate({
+        path: 'activity.id',
       });
   }
 
