@@ -41,6 +41,15 @@ const activity = new Schema(
       },
     ],
 
+    routes: [
+      // เส้นทางวิ่ง
+      {
+        title: { type: String, required: true },
+        range: { type: Number, required: true },
+        route_picture_url: { type: String, required: true },
+      },
+    ],
+
     timeline: [
       {
         id: { type: String, required: true },

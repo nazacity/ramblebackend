@@ -768,11 +768,11 @@ const lineConnect = async (req, res) => {
   }
 };
 
-const test = async (req, res) => {
-  res.status(200).json({ social: config.social.URL });
+const version = async (req, res) => {
+  res.status(200).json({ version: config.version });
 };
 
-router.get('/test', test);
+router.get('/version', version);
 
 router.post('/lineconnect', lineConnect);
 

@@ -41,6 +41,7 @@ const config = {
     endpoint: `nyc3.digitaloceanspaces.com`,
     signatureVersion: 'v4',
   }),
+  version: '1.3.3',
 };
 
 module.exports = config;
