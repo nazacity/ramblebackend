@@ -115,6 +115,9 @@ passport.use(
               {
                 path: 'address',
               },
+              {
+                path: 'emergency_contact',
+              },
             ],
           });
       }
@@ -222,6 +225,9 @@ passport.use(
               {
                 path: 'address',
               },
+              {
+                path: 'emergency_contact',
+              },
             ],
           });
       }
@@ -281,6 +287,9 @@ passport.use(
             },
             {
               path: 'address',
+            },
+            {
+              path: 'emergency_contact',
             },
           ],
         });
@@ -406,6 +415,9 @@ passport.use(
             {
               path: 'address',
             },
+            {
+              path: 'emergency_contact',
+            },
           ],
         });
 
@@ -456,6 +468,9 @@ passport.use(
               },
               {
                 path: 'address',
+              },
+              {
+                path: 'emergency_contact',
               },
             ],
           });

@@ -29,7 +29,7 @@ class UserActivityService extends AbstractService {
         path: 'address',
       })
       .populate({
-        path: 'emergency_contacts',
+        path: 'emergency_contact',
       })
       .populate({
         path: 'activity.id',
