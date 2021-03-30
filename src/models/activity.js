@@ -50,6 +50,14 @@ const activity = new Schema(
       },
     ],
 
+    racepack: [
+      // เส้นทางวิ่ง
+      {
+        title: { type: String, required: true },
+        racepack_picture_url: { type: String, required: true },
+      },
+    ],
+
     timeline: [
       {
         id: { type: String, required: true },

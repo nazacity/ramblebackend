@@ -252,7 +252,10 @@ const createActivity = standardize(async (req, res) => {
       range: Joi.number().required(),
       route_picture_url: Joi.string().required(),
     }),
-
+    racepack: Joi.array().items({
+      title: Joi.string().required(),
+      racepack_picture_url: Joi.string().required(),
+    }),
     timeline: Joi.array().items({
       id: Joi.string().required(),
       time: Joi.string().required(),
@@ -358,6 +361,21 @@ const editActivity = standardize(async (req, res) => {
         range: Joi.number().required(),
         price: Joi.number().required(),
         course_picture_url: Joi.string().required(),
+      }),
+    });
+  } else if (req.body.type === 'routes') {
+    schema = Joi.object({
+      routes: Joi.array().items({
+        title: Joi.string().required(),
+        range: Joi.number().required(),
+        route_picture_url: Joi.string().required(),
+      }),
+    });
+  } else if (req.body.type === 'racepack') {
+    schema = Joi.object({
+      racepack: Joi.array().items({
+        title: Joi.string().required(),
+        racepack_picture_url: Joi.string().required(),
       }),
     });
   } else if (req.body.type === 'timeline') {
