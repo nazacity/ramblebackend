@@ -247,6 +247,11 @@ const createActivity = standardize(async (req, res) => {
       price: Joi.number().required(),
       course_picture_url: Joi.string().required(),
     }),
+    routes: Joi.array().items({
+      title: Joi.string().required(),
+      range: Joi.number().required(),
+      route_picture_url: Joi.string().required(),
+    }),
 
     timeline: Joi.array().items({
       id: Joi.string().required(),
@@ -290,6 +295,7 @@ const createActivity = standardize(async (req, res) => {
     contact: {
       phone_number: Joi.string().required(),
       line: Joi.string().required(),
+      facebook: Joi.string().required(),
     },
   });
 
