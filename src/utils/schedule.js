@@ -93,7 +93,7 @@ const updateActivitiesState = async () => {
         new: true,
       }
     );
-    await updateUserActivitiesFinished(item.user_activities);
+    // await updateUserActivitiesFinished(item.user_activities);
   });
 
   const endRegisterActivities = await models.Activity.find({
@@ -103,8 +103,6 @@ const updateActivitiesState = async () => {
       $lt: new Date(Date.now()),
     },
   });
-
-  console.log(endRegisterActivities);
 
   endRegisterActivities.map(async (item) => {
     await models.Activity.findByIdAndUpdate(
@@ -140,23 +138,23 @@ const updateUserActivitiesActualDate = async (userActivities) => {
   );
 };
 
-const updateUserActivitiesFinished = async (userActivities) => {
-  return Promise.all(
-    userActivities.map(async (item) => {
-      await models.UserActivity.findOneAndUpdate(
-        { _id: item, state: 'actual_date' },
-        {
-          $set: {
-            state: 'not_finished',
-          },
-        },
-        {
-          new: true,
-        }
-      );
-    })
-  );
-};
+// const updateUserActivitiesFinished = async (userActivities) => {
+//   return Promise.all(
+//     userActivities.map(async (item) => {
+//       await models.UserActivity.findOneAndUpdate(
+//         { _id: item, state: 'actual_date' },
+//         {
+//           $set: {
+//             state: 'not_finished',
+//           },
+//         },
+//         {
+//           new: true,
+//         }
+//       );
+//     })
+//   );
+// };
 
 const sendNotification14DaysBefore = async () => {
   const upcoming14DaysActivities = await models.Activity.find({

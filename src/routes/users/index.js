@@ -103,6 +103,10 @@ const editUser = standardize(async (req, res) => {
     schema = Joi.object({
       phone_number: Joi.string().required(),
     });
+  } else if (req.body.type === 'idcard') {
+    schema = Joi.object({
+      idcard: Joi.string().required(),
+    });
   } else if (req.body.type === 'new_register') {
     schema = Joi.object({
       phone_number: Joi.string().required(),
