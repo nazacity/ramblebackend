@@ -89,12 +89,10 @@ class ActivityService extends AbstractService {
   }
 
   getUserActivities(id) {
-    return this.models.Activity.findById(id, { user_activities: 1 })
-      .populate({
-        path: 'user_activities',
-        populate: ['user', 'address', 'emergency_contacts'],
-      })
-      .sort({ createdAt: -1 });
+    return this.models.Activity.findById(id, { user_activities: 1 }).populate({
+      path: 'user_activities',
+      populate: ['user', 'address', 'emergency_contacts'],
+    });
   }
 
   listPromoteActivity(activityIds, skip, limit) {
@@ -161,6 +159,7 @@ class ActivityService extends AbstractService {
         user_activities: 0,
       }
     )
+      .sort({ createdAt: -1 })
       .skip(+skip)
       .limit(+limit);
   }
