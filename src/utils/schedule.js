@@ -4,7 +4,7 @@ const models = require('../models');
 const config = require('./config');
 
 module.exports = job = schedule.scheduleJob('1 59 0 * * 0-6', async () => {
-  // module.exports = job = schedule.scheduleJob('* * 10 * * 0-6', async () => {
+  // module.exports = job = schedule.scheduleJob('30 16 19 * * 0-6', async () => {
   console.log(new Date());
   await updateOpenRegister();
   await updateEndRegister();
@@ -93,7 +93,7 @@ const updateActivitiesState = async () => {
         new: true,
       }
     );
-    // await updateUserActivitiesFinished(item.user_activities);
+    await updateUserActivitiesFinished(item.user_activities);
   });
 
   const endRegisterActivities = await models.Activity.find({
@@ -138,23 +138,74 @@ const updateUserActivitiesActualDate = async (userActivities) => {
   );
 };
 
-// const updateUserActivitiesFinished = async (userActivities) => {
-//   return Promise.all(
-//     userActivities.map(async (item) => {
-//       await models.UserActivity.findOneAndUpdate(
-//         { _id: item, state: 'actual_date' },
-//         {
-//           $set: {
-//             state: 'not_finished',
-//           },
-//         },
-//         {
-//           new: true,
-//         }
-//       );
-//     })
-//   );
-// };
+const updateUserActivitiesFinished = async (userActivities) => {
+  return Promise.all(
+    userActivities.map(async (item) => {
+      const userActivity = await models.UserActivity.findById(item);
+
+      await models.UserActivity.findByIdAndUpdate(
+        item,
+        {
+          $set: {
+            state: 'history',
+            user_record: {
+              distance: userActivity.activity.course.range,
+            },
+          },
+        },
+        {
+          new: true,
+        }
+      );
+
+      let userYearRecord;
+      userYearRecord = await models.UserYearRecord.findOne({
+        user: userActivity.user,
+        year: new Date().getFullYear(),
+      });
+
+      if (!userYearRecord) {
+        userYearRecord = await models.UserYearRecord.create({
+          user: userActivity.user,
+          activity_number: 1,
+          distance: userActivity.activity.course.range,
+          time_hr: 0,
+          time_min: 0,
+          average: 0,
+          user_activities: [item],
+        });
+
+        const user = await models.User.findById(userActivity.user);
+        const newUserRecords = [...user.user_records, userYearRecord._id];
+        await models.User.findByIdAndUpdate(userActivity.user, {
+          $set: {
+            user_records: newUserRecords,
+          },
+        });
+      } else {
+        const newDistance =
+          userYearRecord.distance + userActivity.activity.course.range;
+        const newActivityNumber = userYearRecord.activity_number + 1;
+        const updated_user_activities = [
+          item,
+          ...userYearRecord.user_activities,
+        ];
+
+        await models.UserYearRecord.findByIdAndUpdate(
+          userYearRecord._id,
+          {
+            $set: {
+              activity_number: newActivityNumber,
+              distance: newDistance,
+              user_activities: updated_user_activities,
+            },
+          },
+          { new: true }
+        );
+      }
+    })
+  );
+};
 
 const sendNotification14DaysBefore = async () => {
   const upcoming14DaysActivities = await models.Activity.find({
