@@ -53,8 +53,8 @@ const activity = new Schema(
     racepack: [
       // เส้นทางวิ่ง
       {
-        title: { type: String, required: true },
-        racepack_picture_url: { type: String, required: true },
+        title: { type: String },
+        racepack_picture_url: { type: String },
       },
     ],
 
@@ -69,8 +69,8 @@ const activity = new Schema(
 
     rules: [
       {
-        id: { type: String, required: true },
-        title: { type: String, required: true },
+        id: { type: String },
+        title: { type: String },
         detail: [
           {
             id: { type: String },
@@ -130,11 +130,11 @@ const activity = new Schema(
       age_50: { type: Number, required: true, default: 0 },
     },
 
-    rules1: { type: String, required: true },
+    rules1: { type: String },
 
-    more_detail: { type: String, required: true },
+    more_detail: { type: String },
 
-    condition: { type: String, required: true },
+    condition: { type: String },
 
     state: { type: String, enum: activityStateEnum, default: 'pre_register' },
 

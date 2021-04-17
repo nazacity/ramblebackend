@@ -422,8 +422,6 @@ const requestBillpaymentByInquiry = standardize(async (req, res) => {
       },
     });
 
-    console.log(inquryRes.data);
-
     return res.status(200).send(inquryRes.data);
   } catch (error) {
     console.log('error: ', error);
@@ -527,8 +525,6 @@ const listFilteredUserPosts = standardize(async (req, res) => {
 
   const filter = Joi.attempt(req.body, schema);
   const { skip, limit } = filter;
-
-  // console.log(filter);
 
   delete filter.skip;
   delete filter.limit;
@@ -729,7 +725,38 @@ const userListActivities = standardize(async (req, res) => {
   });
 });
 
+const userListAllActivities = standardize(async (req, res) => {
+  const schema = Joi.object({
+    skip: Joi.string().default(0),
+    limit: Joi.string().default(25),
+  });
+
+  const filter = Joi.attempt(req.query, schema);
+
+  const { skip, limit } = filter;
+
+  delete filter.skip;
+  delete filter.limit;
+
+  const user = await UserService.findById(req.user.id).populate({
+    path: 'user_activities',
+  });
+
+  const activityIds = user.user_activities.map((item) => item.activity.id);
+
+  res.json({
+    status: 200,
+    data: await ActivityService.userListAllActivities(
+      activityIds,
+      filter,
+      skip,
+      limit
+    ),
+  });
+});
+
 router.get('/getactivities', userListActivities);
+router.get('/getallactivities', userListAllActivities);
 
 const listPromoteActivities = standardize(async (req, res) => {
   const schema = Joi.object({

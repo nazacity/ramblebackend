@@ -232,8 +232,8 @@ const createActivity = standardize(async (req, res) => {
     sub_title: Joi.string().required(),
     description: Joi.string().required(),
     location: {
-      lat: Joi.number().required(),
-      lng: Joi.number().required(),
+      lat: Joi.number(),
+      lng: Joi.number(),
       province: Joi.string().required(),
       place_name: Joi.string().required(),
     },
@@ -253,8 +253,8 @@ const createActivity = standardize(async (req, res) => {
       route_picture_url: Joi.string().required(),
     }),
     racepack: Joi.array().items({
-      title: Joi.string().required(),
-      racepack_picture_url: Joi.string().required(),
+      title: Joi.string().allow(''),
+      racepack_picture_url: Joi.string().allow(''),
     }),
     timeline: Joi.array().items({
       id: Joi.string().required(),
@@ -270,7 +270,7 @@ const createActivity = standardize(async (req, res) => {
         description: Joi.string().allow(''),
       }),
     }),
-    rules1: Joi.string().required(),
+    rules1: Joi.string(),
     more_detail: Joi.string().required(),
     shirt_detail: Joi.array().items({
       id: Joi.string().required(),
@@ -296,18 +296,19 @@ const createActivity = standardize(async (req, res) => {
       phone_number: Joi.string().required(),
     },
     contact: {
-      phone_number: Joi.string().required(),
-      line: Joi.string().required(),
-      facebook: Joi.string().required(),
+      phone_number: Joi.string(),
+      line: Joi.string(),
+      facebook: Joi.string(),
     },
   });
 
-  const data = Joi.attempt(req.body, schema);
-  if (req.body.gifts.length === 0) {
-    delete data.gifts;
-  }
-  const resData = await ActivityService.createActivity(data);
-  await PartnerService.updatePartnerActivity(data.partner, resData.id);
+  // const data = Joi.attempt(req.body, schema);
+  // if (req.body.gifts.length === 0) {
+  //   delete data.gifts;
+  // }
+
+  const resData = await ActivityService.createActivity(req.body);
+  await PartnerService.updatePartnerActivity(req.body.partner, resData.id);
 
   // const createdSocialActivity = await postSocial(
   //   '/api/employees/createactivity',

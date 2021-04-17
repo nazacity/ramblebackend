@@ -16,6 +16,7 @@ module.exports = {
     'ภาคตะวันออก',
     'ภาคตะวันออกเฉียงเหนือ',
     'ภาคตะวันตก',
+    'virtual',
   ],
   constant: provinces,
   provinceDict,
