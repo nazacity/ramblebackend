@@ -266,9 +266,9 @@ const requestPayment = standardize(async (req, res) => {
   try {
     const scbRes = await axios({
       method: 'post',
-      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
-      url: `
-      https://api.partners.scb/partners/v1/oauth/token`,
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      // url: `
+      // https://api.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -284,8 +284,8 @@ const requestPayment = standardize(async (req, res) => {
 
     const qrcodeRes = await axios({
       method: 'post',
-      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
-      url: `https://api.partners.scb/partners/v1/payment/qrcode/create`,
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create`,
+      // url: `https://api.partners.scb/partners/v1/payment/qrcode/create`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -326,9 +326,9 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
   try {
     const scbRes = await axios({
       method: 'post',
-      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
-      url: `
-      https://api.partners.scb/partners/v1/oauth/token`,
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token`,
+      // url: `
+      // https://api.partners.scb/partners/v1/oauth/token`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,
@@ -344,8 +344,8 @@ const requestBillpaymentByTransactions = standardize(async (req, res) => {
 
     const transactionRes = await axios({
       method: 'get',
-      // url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
-      url: `https://api.partners.scb/partners/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
+      url: `https://api-sandbox.partners.scb/partners/sandbox/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
+      // url: `https://api.partners.scb/partners/v1/payment/billpayment/transactions/${transRef.id}?sendingBank=014`,
       headers: {
         'Content-Type': 'application/json',
         resourceOwnerId: config.scb.key,

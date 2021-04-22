@@ -148,8 +148,8 @@ class ActivityService extends AbstractService {
       {
         _id: { $nin: activityIds },
         title: filter.title ? filter.title : { $ne: null },
-        // 'location.region': filter.region ? filter.region : { $ne: 'virtual' },
-        'location.region': filter.region ? filter.region : { $ne: null },
+        'location.region': filter.region ? filter.region : { $ne: 'virtual' },
+        // 'location.region': filter.region ? filter.region : { $ne: null },
         'location.province': filter.province ? filter.province : { $ne: null },
 
         register_end_date: filter.from

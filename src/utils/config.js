@@ -17,13 +17,13 @@ const config = {
   },
   scb: {
     // sandbox
-    // billerId: '041031474109502',
-    // key: 'l7d1103e09fe5e49b2b0fc22b42f604fdf',
-    // secret: '96d19247927c4b1d804b8c2d0d09b003',
+    billerId: '041031474109502',
+    key: 'l7d1103e09fe5e49b2b0fc22b42f604fdf',
+    secret: '96d19247927c4b1d804b8c2d0d09b003',
     // production
-    billerId: '010556400829301',
-    key: 'l743a7baaa29a84cb8a907c39c3512395c',
-    secret: '3d0c99dd9fda4ae3a3fb85adcb3b60e8',
+    // billerId: '010556400829301',
+    // key: 'l743a7baaa29a84cb8a907c39c3512395c',
+    // secret: '3d0c99dd9fda4ae3a3fb85adcb3b60e8',
   },
   onesignal: {
     app_id: 'a7cc39f9-5233-46a8-9bec-cb87d2c34b5d',
