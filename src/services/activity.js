@@ -144,49 +144,53 @@ class ActivityService extends AbstractService {
   }
 
   userListActivities(activityIds, filter, skip, limit) {
-    return this.models.Activity.find(
-      {
-        _id: { $nin: activityIds },
-        title: filter.title ? filter.title : { $ne: null },
-        'location.region': filter.region ? filter.region : { $ne: 'virtual' },
-        // 'location.region': filter.region ? filter.region : { $ne: null },
-        'location.province': filter.province ? filter.province : { $ne: null },
+    return (
+      this.models.Activity.find(
+        {
+          _id: { $nin: activityIds },
+          title: filter.title ? filter.title : { $ne: null },
+          'location.region': filter.region ? filter.region : { $ne: 'virtual' },
+          // 'location.region': filter.region ? filter.region : { $ne: null },
+          'location.province': filter.province
+            ? filter.province
+            : { $ne: null },
 
-        register_end_date: filter.from
-          ? { $gte: filter.from, $lte: filter.to }
-          : { $ne: null },
-        actual_date: filter.from
-          ? { $gte: filter.from, $lte: filter.to }
-          : { $ne: null },
+          register_end_date: filter.from
+            ? { $gte: filter.from, $lte: filter.to }
+            : { $ne: null },
+          actual_date: filter.from
+            ? { $gte: filter.from, $lte: filter.to }
+            : { $ne: null },
 
-        courses: filter.range_min
-          ? {
-              $elemMatch: {
-                range: {
-                  $gte: filter.range_min ? +filter.range_min : 0,
-                  $lte: filter.range_max ? +filter.range_max : 150,
+          courses: filter.range_min
+            ? {
+                $elemMatch: {
+                  range: {
+                    $gte: filter.range_min ? +filter.range_min : 0,
+                    $lte: filter.range_max ? +filter.range_max : 150,
+                  },
                 },
-              },
-            }
-          : { $ne: null },
-        state: { $in: ['registering', 'pre_register'] },
-      },
-      {
-        user_activities: 0,
-        description: 0,
-        courses: 0,
-        timeline: 0,
-        rules: 0,
-        more_detail: 0,
-        shirt_detail: 0,
-        report_infomation: 0,
-        condition: 0,
-        user_activities: 0,
-      }
-    )
-      .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit);
+              }
+            : { $ne: null },
+          state: { $in: ['registering', 'pre_register'] },
+        },
+        {
+          user_activities: 0,
+          description: 0,
+          courses: 0,
+          timeline: 0,
+          rules: 0,
+          more_detail: 0,
+          shirt_detail: 0,
+          report_infomation: 0,
+          condition: 0,
+          user_activities: 0,
+        }
+      )
+        // .sort({ createdAt: -1 })
+        .skip(+skip)
+        .limit(+limit)
+    );
   }
 
   async createActivity(data) {
