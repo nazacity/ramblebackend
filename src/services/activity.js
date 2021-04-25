@@ -96,51 +96,55 @@ class ActivityService extends AbstractService {
   }
 
   listPromoteActivity(activityIds, skip, limit) {
-    return this.models.Activity.find(
-      {
-        state: { $in: ['registering', 'pre_register'] },
-        _id: { $nin: activityIds },
-      },
-      {
-        user_activities: 0,
-        description: 0,
-        courses: 0,
-        timeline: 0,
-        rules: 0,
-        more_detail: 0,
-        shirt_detail: 0,
-        report_infomation: 0,
-        condition: 0,
-        user_activities: 0,
-      }
-    )
-      .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit);
+    return (
+      this.models.Activity.find(
+        {
+          state: { $in: ['registering', 'pre_register'] },
+          _id: { $nin: activityIds },
+        },
+        {
+          user_activities: 0,
+          description: 0,
+          courses: 0,
+          timeline: 0,
+          rules: 0,
+          more_detail: 0,
+          shirt_detail: 0,
+          report_infomation: 0,
+          condition: 0,
+          user_activities: 0,
+        }
+      )
+        // .sort({ createdAt: -1 })
+        .skip(+skip)
+        .limit(+limit)
+    );
   }
 
   userListAllActivities(activityIds, filter, skip, limit) {
-    return this.models.Activity.find(
-      {
-        _id: { $nin: activityIds },
-        state: { $in: ['registering', 'pre_register'] },
-      },
-      {
-        user_activities: 0,
-        description: 0,
-        courses: 0,
-        timeline: 0,
-        rules: 0,
-        more_detail: 0,
-        shirt_detail: 0,
-        report_infomation: 0,
-        condition: 0,
-        user_activities: 0,
-      }
-    )
-      .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit);
+    return (
+      this.models.Activity.find(
+        {
+          _id: { $nin: activityIds },
+          state: { $in: ['registering', 'pre_register'] },
+        },
+        {
+          user_activities: 0,
+          description: 0,
+          courses: 0,
+          timeline: 0,
+          rules: 0,
+          more_detail: 0,
+          shirt_detail: 0,
+          report_infomation: 0,
+          condition: 0,
+          user_activities: 0,
+        }
+      )
+        // .sort({ createdAt: -1 })
+        .skip(+skip)
+        .limit(+limit)
+    );
   }
 
   userListActivities(activityIds, filter, skip, limit) {
